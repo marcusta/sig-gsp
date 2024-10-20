@@ -1,0 +1,2997 @@
+{
+  "gkversion": 2.0,
+  "CourseName": "Wolf Creek Golf Club",
+  "Location": "Mesquite, NV",
+  "Homage": "",
+  "Designer": "RaceTo100",
+  "CourseImageFileName": "wolf_creek_splash.png",
+  "ObjectTextureFileName": "",
+  "DescriptionTxtFileName": "",
+  "WindDirectionDefault": 0.0,
+  "WindStrengthDefault": 0,
+  "FairwayFirmnessDefault": 0,
+  "GreenFirmnessDefault": 0,
+  "DefaultStimp": 2,
+  "MaxStimp": 5,
+  "design": true,
+  "region": 0,
+  "KeywordBeginnerFriendly": false,
+  "KeywordCoastal": false,
+  "KeywordDesert": false,
+  "KeywordFantasy": false,
+  "KeywordHeathland": false,
+  "KeywordHistoric": false,
+  "KeywordLinks": false,
+  "KeywordLowPoly": false,
+  "KeywordMajorVenue": false,
+  "KeywordMountain": true,
+  "KeywordParkland": false,
+  "KeywordTourStop": false,
+  "KeywordTraining": false,
+  "KeywordTropical": false,
+  "KeywordsString": "Mountain",
+  "unitOfMeasure": 2,
+  "altitude": 0.0,
+  "altitudeV2": 2031.0,
+  "BlackSR": "74.3/148",
+  "WhiteSR": "68.8/1337",
+  "GreenSR": "",
+  "BlueSR": "71.3/142",
+  "YellowSR": "66.2/117",
+  "RedSR": "62.9/114",
+  "JuniorSR": "72.0/120",
+  "PAR3SR": "54.0/120",
+  "terrainMaterial": 2,
+  "hazardCount": 20,
+  "slope": 0.0,
+  "par": 0,
+  "teeTypeCount": 7,
+  "pOOB": {
+    "pointCount": 38,
+    "coords": [
+      { "x": 739.0977, "y": 47.4715271, "z": 343.781647 },
+      { "x": 867.096741, "y": 59.6359863, "z": 274.576569 },
+      { "x": 906.7013, "y": 60.7729645, "z": 336.0889 },
+      { "x": 928.064148, "y": 62.97566, "z": 374.810577 },
+      { "x": 949.0383, "y": 64.26752, "z": 415.27356 },
+      { "x": 934.665955, "y": 66.4845, "z": 479.587921 },
+      { "x": 936.097168, "y": 67.24749, "z": 493.276947 },
+      { "x": 883.873352, "y": 66.7915955, "z": 519.4784 },
+      { "x": 877.73114, "y": 67.27515, "z": 537.865051 },
+      { "x": 933.180969, "y": 68.2473145, "z": 642.8313 },
+      { "x": 969.4616, "y": 68.95676, "z": 654.7549 },
+      { "x": 994.2302, "y": 69.28049, "z": 689.6961 },
+      { "x": 1025.49719, "y": 70.70462, "z": 753.7013 },
+      { "x": 1048.83044, "y": 71.62186, "z": 816.499146 },
+      { "x": 1092.87488, "y": 72.40997, "z": 905.072266 },
+      { "x": 1131.25977, "y": 74.74347, "z": 912.7252 },
+      { "x": 1209.43872, "y": 76.6143341, "z": 974.900757 },
+      { "x": 1260.77637, "y": 84.52063, "z": 1016.98029 },
+      { "x": 1391.13367, "y": 87.49697, "z": 1221.93481 },
+      { "x": 1457.09509, "y": 87.1642456, "z": 1324.28455 },
+      { "x": 1537.517, "y": 93.59992, "z": 1438.60657 },
+      { "x": 1594.36267, "y": 107.160011, "z": 1802.89868 },
+      { "x": 1433.73938, "y": 77.8873138, "z": 1919.64709 },
+      { "x": 1186.32886, "y": 91.89911, "z": 1934.35339 },
+      { "x": 957.919, "y": 58.80776, "z": 1809.57593 },
+      { "x": 819.2609, "y": 82.59785, "z": 1833.53308 },
+      { "x": 625.415039, "y": 82.18123, "z": 1818.62183 },
+      { "x": 571.843445, "y": 55.6170959, "z": 1570.32813 },
+      { "x": 531.4487, "y": 55.225605, "z": 1485.88025 },
+      { "x": 592.559753, "y": 57.07101, "z": 1406.69983 },
+      { "x": 633.780457, "y": 50.88081, "z": 1257.38623 },
+      { "x": 626.2228, "y": 53.5346642, "z": 1146.78467 },
+      { "x": 598.996, "y": 56.461544, "z": 1111.36316 },
+      { "x": 536.8985, "y": 56.2500877, "z": 1074.47473 },
+      { "x": 528.6685, "y": 46.05585, "z": 999.7411 },
+      { "x": 534.07135, "y": 40.8939819, "z": 914.4655 },
+      { "x": 566.486, "y": 17.7868652, "z": 620.8319 },
+      { "x": 634.0243, "y": 45.3642731, "z": 391.3552 }
+    ]
+  },
+  "CourseInfo": "After finishing all eighteen holes, you are hard pressed to come up with just one signature hole and more often than not amazed with the picturesque beauty of the course rather than the score you shot.",
+  "Holes": [
+    {
+      "Enabled": true,
+      "HoleNumber": 1,
+      "Par": 5,
+      "Index": 9,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 532.795532,
+          "Position": { "x": 649.995361, "y": 50.5148926, "z": 422.3584 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 421.1748,
+          "Position": { "x": 669.6255, "y": 43.859375, "z": 533.474 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 455.387329,
+          "Position": { "x": 676.5066, "y": 48.6958, "z": 499.3766 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 411.289337,
+          "Position": { "x": 654.01416, "y": 42.3034668, "z": 543.8412 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 354.644775,
+          "Position": { "x": 636.287354, "y": 32.2255859, "z": 603.21814 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 285.674622,
+          "Position": { "x": 650.404541, "y": 22.5227051, "z": 669.1112 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 107.893074,
+          "Position": { "x": 669.3518, "y": 24.8250732, "z": 847.15 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 668.6245, "y": 20.7751465, "z": 764.172 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 662.0879, "y": 27.173584, "z": 886.4591 }
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 655.562744, "y": 32.39502, "z": 954.1583 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 656.948242, "y": 31.7861328, "z": 940.2062 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 656.8833, "y": 32.35254, "z": 952.8036 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 658.437744, "y": 32.30237, "z": 951.2977 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 655.06665, "y": 32.40515, "z": 954.174438 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 2,
+      "Par": 4,
+      "Index": 1,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 383.8301,
+          "Position": { "x": 582.144653, "y": 71.7832642, "z": 1034.78357 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 330.276978,
+          "Position": { "x": 639.319, "y": 58.611145, "z": 1063.18738 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 372.88028,
+          "Position": { "x": 594.3828, "y": 69.5108643, "z": 1039.78918 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 225.070786,
+          "Position": { "x": 736.27124, "y": 33.45813, "z": 1145.641 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 203.182739,
+          "Position": { "x": 750.3052, "y": 35.0386963, "z": 1168.539 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 172.440857,
+          "Position": { "x": 750.969238, "y": 36.7609863, "z": 1199.08875 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 114.677544,
+          "Position": { "x": 738.156, "y": 39.4431152, "z": 1256.31238 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 736.667, "y": 39.64502, "z": 1260.05847 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 690.030762, "y": 45.824585, "z": 1360.4032 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 694.027954, "y": 45.5185547, "z": 1352.40613 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 692.135, "y": 45.50292, "z": 1346.17017 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 694.3738, "y": 45.7944336, "z": 1362.66711 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 683.349854, "y": 46.223465, "z": 1363.18152 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 3,
+      "Par": 3,
+      "Index": 7,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 198.421631,
+          "Position": { "x": 731.5032, "y": 51.546875, "z": 1372.1405 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 153.907333,
+          "Position": { "x": 650.921143, "y": 60.3884277, "z": 1426.68542 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 154.764069,
+          "Position": { "x": 693.686768, "y": 54.2944336, "z": 1415.24939 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 150.863571,
+          "Position": { "x": 642.9585, "y": 61.3099365, "z": 1433.56287 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 69.53818,
+          "Position": { "x": 704.439941, "y": 62.35321, "z": 1499.87 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 67.08566,
+          "Position": { "x": 704.0603, "y": 62.38623, "z": 1502.35388 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 154.519669,
+          "Position": { "x": 631.0503, "y": 61.17517, "z": 1435.77332 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 708.869141, "y": 71.65497, "z": 1569.267 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 710.5676, "y": 71.28412, "z": 1560.29089 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 714.2114, "y": 71.36731, "z": 1561.65662 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 707.9834, "y": 71.87323, "z": 1574.4823 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 707.126465, "y": 71.87048, "z": 1574.26428 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 4,
+      "Par": 4,
+      "Index": 15,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 361.8874,
+          "Position": { "x": 602.7363, "y": 69.2509155, "z": 1478.17517 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 276.837524,
+          "Position": { "x": 642.1802, "y": 69.5864258, "z": 1557.23621 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 303.378418,
+          "Position": { "x": 636.6543, "y": 69.42059, "z": 1531.20984 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 275.054016,
+          "Position": { "x": 642.8291, "y": 69.55878, "z": 1558.94861 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 219.238861,
+          "Position": { "x": 656.2446, "y": 66.480896, "z": 1613.59851 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 117.187775,
+          "Position": { "x": 660.4082, "y": 67.3161, "z": 1681.43884 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 76.13139,
+          "Position": { "x": 667.637939, "y": 74.10071, "z": 1755.9989 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 669.344238, "y": 74.13422, "z": 1758.00476 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 743.3203, "y": 74.63373, "z": 1764.25525 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 744.303, "y": 74.63568, "z": 1762.84949 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 744.206543, "y": 74.65582, "z": 1759.02332 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 739.1582, "y": 74.5805054, "z": 1764.13367 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 742.218262, "y": 74.71356, "z": 1754.93787 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 5,
+      "Par": 5,
+      "Index": 3,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 437.098877,
+          "Position": { "x": 754.408447, "y": 79.9985352, "z": 1711.76111 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 403.742249,
+          "Position": { "x": 797.8218, "y": 85.21533, "z": 1763.36658 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 415.445068,
+          "Position": { "x": 780.259766, "y": 82.49512, "z": 1742.38513 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 304.071136,
+          "Position": { "x": 896.1369, "y": 66.3443, "z": 1742.23376 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 287.250671,
+          "Position": { "x": 907.643, "y": 62.4256, "z": 1724.10925 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 217.062729,
+          "Position": { "x": 973.7198, "y": 54.42932, "z": 1683.11755 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 117.4126,
+          "Position": { "x": 1054.22339, "y": 62.7679443, "z": 1741.62634 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 1008.42944, "y": 57.14807, "z": 1695.86267 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 1068.70093, "y": 64.04779, "z": 1756.99939 }
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 1149.01306, "y": 74.05487, "z": 1810.913 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 1148.81323, "y": 73.97223, "z": 1808.11218 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 1152.94189, "y": 75.27582, "z": 1830.0592 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 1153.28955, "y": 74.06427, "z": 1808.976 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 1151.13623, "y": 73.96295, "z": 1805.643 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 6,
+      "Par": 4,
+      "Index": 11,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 376.4697,
+          "Position": { "x": 1175.57227, "y": 84.45764, "z": 1646.40515 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 349.2257,
+          "Position": { "x": 1139.35229, "y": 72.87628, "z": 1670.68884 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 345.7377,
+          "Position": { "x": 1140.37854, "y": 73.25134, "z": 1658.03162 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 319.9948,
+          "Position": { "x": 1109.90881, "y": 66.72705, "z": 1665.11853 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 305.520264,
+          "Position": { "x": 1097.50488, "y": 64.37756, "z": 1657.4071 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 228.7577,
+          "Position": { "x": 1040.49023, "y": 57.2120361, "z": 1622.74548 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 155.896637,
+          "Position": { "x": 961.3053, "y": 52.6677246, "z": 1599.82556 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 961.5538, "y": 52.7297363, "z": 1597.38611 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 813.178955, "y": 58.79706, "z": 1648.42957 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 823.8887, "y": 58.2997437, "z": 1647.71179 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 826.019531, "y": 58.2838135, "z": 1650.9967 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 805.351563, "y": 59.45862, "z": 1654.79089 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 807.459, "y": 58.82202, "z": 1643.473 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 7,
+      "Par": 4,
+      "Index": 13,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 268.464233,
+          "Position": { "x": 706.3345, "y": 65.8417358, "z": 1630.77771 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 237.036682,
+          "Position": { "x": 735.192139, "y": 62.59375, "z": 1618.3136 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 251.621765,
+          "Position": { "x": 722.6599, "y": 64.21393, "z": 1626.17468 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 236.892517,
+          "Position": { "x": 737.20166, "y": 62.6040649, "z": 1622.70813 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 204.4585,
+          "Position": { "x": 763.2739, "y": 59.26001, "z": 1600.53455 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 154.6801,
+          "Position": { "x": 806.2285, "y": 54.70337, "z": 1585.91882 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 68.17136,
+          "Position": { "x": 891.5625, "y": 51.08374, "z": 1555.25623 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 895.282959, "y": 50.307373, "z": 1553.42859 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 938.6241, "y": 55.80945, "z": 1505.93542 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 937.6119, "y": 55.77417, "z": 1507.914 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 941.3721, "y": 55.8128662, "z": 1508.139 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 942.321655, "y": 55.5161133, "z": 1517.26233 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 934.3327, "y": 56.418396, "z": 1494.52234 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 8,
+      "Par": 3,
+      "Index": 5,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 215.968826,
+          "Position": { "x": 755.9263, "y": 60.9240723, "z": 1501.69519 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 132.950775,
+          "Position": { "x": 818.571045, "y": 51.8034668, "z": 1433.42664 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 191.217316,
+          "Position": { "x": 772.2505, "y": 56.13916, "z": 1481.48279 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 112.124046,
+          "Position": { "x": 810.4602, "y": 48.14563, "z": 1410.60291 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 72.31137,
+          "Position": { "x": 820.672363, "y": 41.5958252, "z": 1372.11755 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 71.36623,
+          "Position": { "x": 821.0112, "y": 41.56775, "z": 1371.22742 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 123.258224,
+          "Position": { "x": 818.416748, "y": 50.854248, "z": 1423.597 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 837.9009, "y": 38.3883057, "z": 1301.88855 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 837.6919, "y": 38.401, "z": 1300.73132 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 842.70874, "y": 38.39734, "z": 1307.10925 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 832.7988, "y": 38.2055664, "z": 1308.23669 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 838.1748, "y": 38.3515625, "z": 1294.06726 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 9,
+      "Par": 4,
+      "Index": 17,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 344.475647,
+          "Position": { "x": 726.6494, "y": 36.79773, "z": 1064.80017 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 239.002045,
+          "Position": { "x": 756.9773, "y": 29.5893555, "z": 961.302856 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 268.3771,
+          "Position": { "x": 747.520142, "y": 30.9780273, "z": 990.329 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 207.385681,
+          "Position": { "x": 755.3777, "y": 28.769165, "z": 929.6422 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 186.439713,
+          "Position": { "x": 753.578369, "y": 27.7891846, "z": 908.6046 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 107.263153,
+          "Position": { "x": 757.4739, "y": 26.5649414, "z": 829.537 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 79.51746,
+          "Position": { "x": 758.8025, "y": 27.4523926, "z": 801.7999 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 759.5178, "y": 27.7268066, "z": 795.1322 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 766.3706, "y": 35.1746826, "z": 722.643433 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 762.789063, "y": 35.09839, "z": 723.473 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 768.7793, "y": 35.1077881, "z": 729.920532 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 759.4475, "y": 35.1142578, "z": 723.1852 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 765.0298, "y": 35.668457, "z": 713.7699 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 10,
+      "Par": 4,
+      "Index": 2,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 420.3551,
+          "Position": { "x": 792.7283, "y": 52.9064941, "z": 500.977661 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 326.507568,
+          "Position": { "x": 850.895264, "y": 52.7507324, "z": 574.8185 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 394.737183,
+          "Position": { "x": 815.604248, "y": 52.3640137, "z": 516.3251 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 246.97644,
+          "Position": { "x": 883.2761, "y": 55.3652344, "z": 650.019165 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 197.51503,
+          "Position": { "x": 931.429565, "y": 59.5751953, "z": 676.5089 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 175.596634,
+          "Position": { "x": 943.208557, "y": 59.28412, "z": 694.947144 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 98.45,
+          "Position": { "x": 980.022949, "y": 62.1188354, "z": 762.8522 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 980.9005, "y": 62.237, "z": 764.9332 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 1021.08704, "y": 65.3800659, "z": 852.3292 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 1023.23895, "y": 65.57092, "z": 855.1725 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 1014.95367, "y": 65.04205, "z": 845.917847 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 1018.91254, "y": 65.63208, "z": 858.4176 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 1021.44489, "y": 65.59973, "z": 856.7445 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 11,
+      "Par": 3,
+      "Index": 16,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 186.446121,
+          "Position": { "x": 1070.29053, "y": 72.1270752, "z": 868.3568 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 142.98317,
+          "Position": { "x": 1065.4104, "y": 66.87433, "z": 913.233765 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 167.561661,
+          "Position": { "x": 1072.79346, "y": 70.40906, "z": 889.6354 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 132.19426,
+          "Position": { "x": 1050.98145, "y": 64.80762, "z": 919.067749 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 58.4645958,
+          "Position": { "x": 1055.46143, "y": 55.3770752, "z": 1011.15735 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 57.2725067,
+          "Position": { "x": 1056.85083, "y": 55.3359375, "z": 1015.6991 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 142.046036,
+          "Position": { "x": 1053.75171, "y": 66.2437744, "z": 909.598755 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 1006.88452, "y": 51.1181641, "z": 1043.69031 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 1005.3927, "y": 51.0603027, "z": 1040.69177 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 1010.47827, "y": 50.9289551, "z": 1033.47961 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 1005.69525, "y": 51.2177734, "z": 1046.99426 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 1010.2597, "y": 51.0986328, "z": 1042.18445 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 12,
+      "Par": 5,
+      "Index": 8,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 502.195282,
+          "Position": { "x": 1125.04443, "y": 79.96466, "z": 1072.88464 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 452.28064,
+          "Position": { "x": 1186.93445, "y": 79.85278, "z": 1091.34753 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 497.227844,
+          "Position": { "x": 1140.10486, "y": 82.16614, "z": 1067.76355 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 432.202728,
+          "Position": { "x": 1197.822, "y": 78.19812, "z": 1108.27625 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 390.149933,
+          "Position": { "x": 1228.80188, "y": 74.7249756, "z": 1139.83777 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 325.8922,
+          "Position": { "x": 1250.6792, "y": 64.86005, "z": 1197.37732 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 178.761963,
+          "Position": { "x": 1292.03345, "y": 54.02539, "z": 1336.87537 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 1292.85583, "y": 56.70227, "z": 1283.14978 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 1310.758, "y": 53.171875, "z": 1414.47351 }
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 1306.75464, "y": 55.79724, "z": 1515.03015 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 1304.81836, "y": 55.6505127, "z": 1509.06262 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 1308.03442, "y": 55.1311035, "z": 1497.72766 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 1309.166, "y": 55.6251221, "z": 1509.27966 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 1310.03235, "y": 56.04657, "z": 1525.03333 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 13,
+      "Par": 4,
+      "Index": 14,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 314.354645,
+          "Position": { "x": 1418.08154, "y": 69.35712, "z": 1451.51453 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 265.501648,
+          "Position": { "x": 1404.4718, "y": 66.30884, "z": 1498.98816 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 307.7844,
+          "Position": { "x": 1387.82727, "y": 70.28284, "z": 1447.77869 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 263.232819,
+          "Position": { "x": 1396.96716, "y": 66.29291, "z": 1498.08289 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 199.2587,
+          "Position": { "x": 1381.88074, "y": 55.9290771, "z": 1561.85681 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 130.140457,
+          "Position": { "x": 1320.74121, "y": 56.9436646, "z": 1614.10779 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 96.9967,
+          "Position": { "x": 1331.25073, "y": 57.9612427, "z": 1649.869 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 1331.09583, "y": 58.27417, "z": 1652.38611 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 1403.64453, "y": 67.84204, "z": 1714.42517 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 1396.37109, "y": 68.02307, "z": 1717.04871 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 1398.38782, "y": 67.99951, "z": 1717.67078 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 1397.392, "y": 68.01245, "z": 1718.473 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 1397.1842, "y": 68.00958, "z": 1717.67029 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 14,
+      "Par": 4,
+      "Index": 4,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 419.6346,
+          "Position": { "x": 1552.75574, "y": 106.186035, "z": 1798.04724 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 349.643524,
+          "Position": { "x": 1482.00964, "y": 100.142944, "z": 1816.43689 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 358.54538,
+          "Position": { "x": 1491.44922, "y": 100.935852, "z": 1787.15808 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 238.804489,
+          "Position": { "x": 1371.88049, "y": 67.86359, "z": 1800.909 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 179.812225,
+          "Position": { "x": 1292.589, "y": 72.58679, "z": 1845.83826 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 194.46843,
+          "Position": { "x": 1355.74316, "y": 63.4225464, "z": 1813.80115 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 116.433578,
+          "Position": { "x": 1234.95886, "y": 76.5840454, "z": 1805.55066 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 1245.3667, "y": 76.37366, "z": 1797.51257 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 1202.8457, "y": 82.55835, "z": 1693.63318 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 1200.8634, "y": 82.5091553, "z": 1694.98132 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 1205.291, "y": 82.60608, "z": 1693.4491 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 1199.6272, "y": 82.34558, "z": 1707.40759 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 1207.8728, "y": 82.70459, "z": 1689.87122 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 15,
+      "Par": 3,
+      "Index": 18,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 116.515442,
+          "Position": { "x": 1194.18237, "y": 87.04584, "z": 1649.6283 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 106.654,
+          "Position": { "x": 1223.51331, "y": 86.25116, "z": 1645.994 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 109.179329,
+          "Position": { "x": 1207.32092, "y": 86.7172241, "z": 1645.88293 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 104.57093,
+          "Position": { "x": 1238.23755, "y": 85.58899, "z": 1644.1991 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 89.8007355,
+          "Position": { "x": 1209.96509, "y": 83.9879761, "z": 1626.56311 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 87.42311,
+          "Position": { "x": 1209.90771, "y": 83.94556, "z": 1624.08533 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 107.588783,
+          "Position": { "x": 1221.37427, "y": 86.2468262, "z": 1646.722 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 1232.976, "y": 76.9749146, "z": 1539.76062 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 1232.27393, "y": 76.6471558, "z": 1554.01843 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 1232.42773, "y": 76.71924, "z": 1549.78918 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 1235.14038, "y": 76.97644, "z": 1539.58167 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 1237.8324, "y": 77.03729, "z": 1538.18054 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 16,
+      "Par": 4,
+      "Index": 10,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 367.211823,
+          "Position": { "x": 1194.5011, "y": 83.87091, "z": 1571.29431 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 323.104126,
+          "Position": { "x": 1175.833, "y": 82.29248, "z": 1525.40369 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 350.079437,
+          "Position": { "x": 1184.41235, "y": 82.9975, "z": 1556.97351 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 259.167328,
+          "Position": { "x": 1141.43237, "y": 77.6355, "z": 1461.80017 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 214.444885,
+          "Position": { "x": 1108.837, "y": 76.32959, "z": 1426.11511 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 159.391281,
+          "Position": { "x": 1059.36035, "y": 73.321106, "z": 1410.70642 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 89.1303253,
+          "Position": { "x": 991.6407, "y": 70.0412, "z": 1381.09387 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 989.728638, "y": 69.82196, "z": 1379.16345 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 932.024536, "y": 66.04791, "z": 1314.83582 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 933.335144, "y": 66.0202, "z": 1316.03113 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 928.0132, "y": 66.19031, "z": 1307.5531 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 935.46875, "y": 66.0357056, "z": 1310.5741 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 933.288147, "y": 65.6247559, "z": 1329.81873 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 17,
+      "Par": 5,
+      "Index": 6,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 506.263947,
+          "Position": { "x": 1077.63477, "y": 77.02295, "z": 1379.309 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 455.905762,
+          "Position": { "x": 1045.34058, "y": 69.9873047, "z": 1340.6405 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 471.754578,
+          "Position": { "x": 1057.24756, "y": 72.1193848, "z": 1351.431 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 433.856262,
+          "Position": { "x": 1017.47412, "y": 70.56677, "z": 1333.494 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 346.581726,
+          "Position": { "x": 1018.87018, "y": 37.9766846, "z": 1196.39392 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 307.4838,
+          "Position": { "x": 960.9752, "y": 37.8529053, "z": 1217.58142 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 123.860359,
+          "Position": { "x": 823.3606, "y": 30.8930664, "z": 1097.93591 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 902.850952, "y": 34.4963379, "z": 1158.24646 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 803.6941, "y": 29.5267334, "z": 1063.559 }
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 800.0547, "y": 28.4472656, "z": 976.287964 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 798.471436, "y": 28.5090332, "z": 973.260864 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 799.8733, "y": 28.425293, "z": 979.3253 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 801.9968, "y": 28.302002, "z": 986.703 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 796.1404, "y": 28.5582275, "z": 971.412231 }
+        }
+      ]
+    },
+    {
+      "Enabled": true,
+      "HoleNumber": 18,
+      "Par": 4,
+      "Index": 12,
+      "Tees": [
+        {
+          "TeeType": "Black",
+          "Enabled": true,
+          "Distance": 284.106018,
+          "Position": { "x": 887.6367, "y": 44.38684, "z": 985.630249 }
+        },
+        {
+          "TeeType": "White",
+          "Enabled": true,
+          "Distance": 257.994751,
+          "Position": { "x": 868.735352, "y": 41.02368, "z": 959.6959 }
+        },
+        {
+          "TeeType": "Green",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "Blue",
+          "Enabled": true,
+          "Distance": 272.781677,
+          "Position": { "x": 880.2908, "y": 42.31543, "z": 974.592651 }
+        },
+        {
+          "TeeType": "Yellow",
+          "Enabled": true,
+          "Distance": 252.530212,
+          "Position": { "x": 870.5862, "y": 40.94812, "z": 954.297241 }
+        },
+        {
+          "TeeType": "Red",
+          "Enabled": true,
+          "Distance": 155.61911,
+          "Position": { "x": 888.2893, "y": 44.4367676, "z": 856.4269 }
+        },
+        {
+          "TeeType": "Junior",
+          "Enabled": true,
+          "Distance": 135.758209,
+          "Position": { "x": 885.136, "y": 44.5805664, "z": 837.909546 }
+        },
+        {
+          "TeeType": "Par3",
+          "Enabled": true,
+          "Distance": 90.7182159,
+          "Position": { "x": 875.3186, "y": 45.88965, "z": 792.5316 }
+        },
+        {
+          "TeeType": "AimPoint1",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": { "x": 876.102539, "y": 45.86499, "z": 786.213745 }
+        },
+        {
+          "TeeType": "AimPoint2",
+          "Enabled": true,
+          "Distance": 0.0,
+          "Position": null
+        },
+        {
+          "TeeType": "GreenCenterPoint",
+          "Enabled": false,
+          "Distance": 0.0,
+          "Position": { "x": 883.2859, "y": 49.5432129, "z": 702.16394 }
+        }
+      ],
+      "Pins": [
+        {
+          "Day": "Thursday",
+          "Position": { "x": 886.1802, "y": 48.85669, "z": 716.354858 }
+        },
+        {
+          "Day": "Friday",
+          "Position": { "x": 883.8718, "y": 48.88452, "z": 713.7186 }
+        },
+        {
+          "Day": "Saturday",
+          "Position": { "x": 882.82666, "y": 49.58374, "z": 699.6852 }
+        },
+        {
+          "Day": "Sunday",
+          "Position": { "x": 877.6013, "y": 49.5893555, "z": 700.9474 }
+        }
+      ]
+    }
+  ],
+  "Hazards": [
+    {
+      "pointCount": 111,
+      "coords": [
+        { "x": 796.162, "y": 51.15985, "z": 531.62 },
+        { "x": 789.545837, "y": 51.2024765, "z": 512.4462 },
+        { "x": 791.2615, "y": 51.21614, "z": 512.1393 },
+        { "x": 795.6339, "y": 51.1915474, "z": 512.279236 },
+        { "x": 800.1696, "y": 51.16433, "z": 512.312256 },
+        { "x": 802.5114, "y": 51.15988, "z": 513.073 },
+        { "x": 806.075745, "y": 51.17397, "z": 515.2416 },
+        { "x": 808.882263, "y": 51.15988, "z": 517.648743 },
+        { "x": 812.562439, "y": 51.1635971, "z": 521.7757 },
+        { "x": 816.822266, "y": 51.1773834, "z": 524.037231 },
+        { "x": 819.436646, "y": 51.23224, "z": 524.191 },
+        { "x": 825.8064, "y": 51.15988, "z": 522.577 },
+        { "x": 827.3064, "y": 51.1729126, "z": 522.782 },
+        { "x": 829.934, "y": 51.16234, "z": 524.600769 },
+        { "x": 834.258545, "y": 51.1598854, "z": 528.5987 },
+        { "x": 840.5511, "y": 51.1633835, "z": 536.9496 },
+        { "x": 842.87854, "y": 51.1842461, "z": 544.467041 },
+        { "x": 844.13385, "y": 51.1635246, "z": 551.5788 },
+        { "x": 846.327332, "y": 51.1198921, "z": 561.97644 },
+        { "x": 845.898865, "y": 51.1661339, "z": 563.6251 },
+        { "x": 843.340332, "y": 51.1634369, "z": 569.8093 },
+        { "x": 842.807861, "y": 51.1629, "z": 572.4731 },
+        { "x": 843.59845, "y": 51.17193, "z": 576.084961 },
+        { "x": 844.878235, "y": 51.16759, "z": 579.469849 },
+        { "x": 847.2186, "y": 51.17979, "z": 583.005 },
+        { "x": 849.6459, "y": 51.184, "z": 585.6128 },
+        { "x": 853.0999, "y": 51.1598969, "z": 587.554932 },
+        { "x": 855.810364, "y": 51.17541, "z": 588.4381 },
+        { "x": 859.475464, "y": 51.165802, "z": 589.749 },
+        { "x": 861.6217, "y": 51.138092, "z": 590.848 },
+        { "x": 864.085632, "y": 51.1598969, "z": 596.1041 },
+        { "x": 866.195068, "y": 51.1598969, "z": 603.097046 },
+        { "x": 867.575867, "y": 51.1599, "z": 609.597168 },
+        { "x": 867.2953, "y": 51.1599, "z": 612.401733 },
+        { "x": 866.5056, "y": 51.18058, "z": 613.95166 },
+        { "x": 867.267761, "y": 51.4483643, "z": 616.1303 },
+        { "x": 868.399353, "y": 51.83379, "z": 618.5396 },
+        { "x": 871.106262, "y": 52.2192841, "z": 622.545837 },
+        { "x": 872.8207, "y": 52.26675, "z": 624.1759 },
+        { "x": 875.8034, "y": 52.1302071, "z": 625.8819 },
+        { "x": 877.5022, "y": 52.1302071, "z": 628.0749 },
+        { "x": 878.6533, "y": 52.13021, "z": 631.5153 },
+        { "x": 879.2585, "y": 52.1302223, "z": 632.5166 },
+        { "x": 882.1721, "y": 52.1386566, "z": 634.9637 },
+        { "x": 884.609253, "y": 52.7307167, "z": 636.7213 },
+        { "x": 885.6148, "y": 54.79092, "z": 638.259949 },
+        { "x": 888.0268, "y": 54.79091, "z": 639.4484 },
+        { "x": 889.9926, "y": 54.80525, "z": 641.8194 },
+        { "x": 891.595947, "y": 54.79091, "z": 646.4148 },
+        { "x": 893.4192, "y": 54.79091, "z": 649.090149 },
+        { "x": 896.9438, "y": 54.5072, "z": 649.144836 },
+        { "x": 899.3249, "y": 55.6285057, "z": 649.2562 },
+        { "x": 901.10675, "y": 56.066967, "z": 649.9397 },
+        { "x": 903.0816, "y": 56.3848839, "z": 650.9415 },
+        { "x": 906.4111, "y": 56.6887131, "z": 653.2857 },
+        { "x": 908.3634, "y": 56.65574, "z": 656.153564 },
+        { "x": 909.9184, "y": 56.67486, "z": 658.990051 },
+        { "x": 911.028564, "y": 56.7235756, "z": 661.4489 },
+        { "x": 911.687439, "y": 56.9908524, "z": 663.143433 },
+        { "x": 913.5111, "y": 56.814003, "z": 664.2791 },
+        { "x": 916.078, "y": 56.98335, "z": 664.889954 },
+        { "x": 923.2851, "y": 58.745327, "z": 661.343 },
+        { "x": 924.530762, "y": 58.9923019, "z": 661.802 },
+        { "x": 924.843567, "y": 59.0226555, "z": 663.3318 },
+        { "x": 923.772949, "y": 58.6721649, "z": 664.2094 },
+        { "x": 918.8756, "y": 57.64748, "z": 666.7199 },
+        { "x": 916.099731, "y": 57.1077538, "z": 666.8429 },
+        { "x": 912.5647, "y": 57.0603027, "z": 666.694458 },
+        { "x": 909.320557, "y": 56.9829063, "z": 663.9616 },
+        { "x": 906.9645, "y": 56.6978455, "z": 659.255432 },
+        { "x": 904.842834, "y": 56.618187, "z": 655.468567 },
+        { "x": 901.027832, "y": 56.30961, "z": 652.498535 },
+        { "x": 899.4104, "y": 56.0913925, "z": 652.873047 },
+        { "x": 896.873352, "y": 54.98439, "z": 653.2937 },
+        { "x": 892.70874, "y": 54.827652, "z": 653.483032 },
+        { "x": 890.056458, "y": 54.83496, "z": 652.8271 },
+        { "x": 888.1439, "y": 54.8123322, "z": 651.336 },
+        { "x": 885.634033, "y": 54.81554, "z": 644.0845 },
+        { "x": 884.839, "y": 54.79091, "z": 642.1793 },
+        { "x": 884.1439, "y": 54.17382, "z": 640.647644 },
+        { "x": 882.3262, "y": 52.82954, "z": 639.5901 },
+        { "x": 880.6968, "y": 52.298172, "z": 638.922241 },
+        { "x": 879.138245, "y": 52.20451, "z": 639.2248 },
+        { "x": 875.9208, "y": 52.14253, "z": 639.838135 },
+        { "x": 868.0101, "y": 52.2458458, "z": 629.103333 },
+        { "x": 865.375549, "y": 52.5538, "z": 625.545349 },
+        { "x": 861.8552, "y": 51.4787064, "z": 619.8242 },
+        { "x": 860.5445, "y": 51.1788559, "z": 616.574768 },
+        { "x": 858.1616, "y": 51.1599, "z": 615.971558 },
+        { "x": 855.48175, "y": 51.1599, "z": 616.702942 },
+        { "x": 852.102539, "y": 51.1599, "z": 618.007446 },
+        { "x": 850.174133, "y": 51.1599, "z": 620.4016 },
+        { "x": 846.3984, "y": 51.1599, "z": 621.7727 },
+        { "x": 843.204041, "y": 51.1599, "z": 618.8283 },
+        { "x": 843.092346, "y": 51.1599, "z": 613.3616 },
+        { "x": 841.0702, "y": 51.1599, "z": 608.065857 },
+        { "x": 839.906, "y": 51.1598969, "z": 605.390747 },
+        { "x": 836.4566, "y": 51.1598969, "z": 601.987061 },
+        { "x": 833.7567, "y": 51.1598969, "z": 597.3693 },
+        { "x": 828.6408, "y": 51.1598969, "z": 588.489563 },
+        { "x": 826.636047, "y": 51.159893, "z": 581.49054 },
+        { "x": 823.341248, "y": 51.159893, "z": 575.2635 },
+        { "x": 818.6496, "y": 51.159893, "z": 570.574 },
+        { "x": 818.0054, "y": 51.159893, "z": 567.4737 },
+        { "x": 814.7365, "y": 51.15989, "z": 563.982239 },
+        { "x": 814.0257, "y": 51.15989, "z": 559.673645 },
+        { "x": 811.2904, "y": 51.15989, "z": 556.8548 },
+        { "x": 810.1176, "y": 51.15989, "z": 551.2712 },
+        { "x": 807.432, "y": 51.15989, "z": 545.8122 },
+        { "x": 805.128, "y": 51.1598854, "z": 543.553955 },
+        { "x": 800.662231, "y": 51.1598854, "z": 538.0366 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 92,
+      "coords": [
+        { "x": 704.727539, "y": 27.0344849, "z": 866.419067 },
+        { "x": 702.2971, "y": 26.7957764, "z": 861.9972 },
+        { "x": 698.896362, "y": 26.3901367, "z": 857.1577 },
+        { "x": 697.374, "y": 26.2053833, "z": 851.321 },
+        { "x": 696.9562, "y": 26.114502, "z": 846.7148 },
+        { "x": 697.379944, "y": 26.2130737, "z": 842.919861 },
+        { "x": 699.024048, "y": 26.3045044, "z": 837.62085 },
+        { "x": 699.6984, "y": 26.3232422, "z": 833.083862 },
+        { "x": 700.4609, "y": 26.4849243, "z": 826.057251 },
+        { "x": 702.357361, "y": 26.3510132, "z": 819.9915 },
+        { "x": 705.772644, "y": 26.2531128, "z": 813.9358 },
+        { "x": 710.3364, "y": 25.9437256, "z": 811.953552 },
+        { "x": 717.999756, "y": 25.7696838, "z": 811.860168 },
+        { "x": 725.922363, "y": 25.7939568, "z": 815.218567 },
+        { "x": 728.7014, "y": 25.7578125, "z": 818.5574 },
+        { "x": 730.392639, "y": 25.757803, "z": 823.033447 },
+        { "x": 734.242859, "y": 25.7578011, "z": 830.990662 },
+        { "x": 735.829468, "y": 25.7578068, "z": 836.1523 },
+        { "x": 737.151, "y": 25.7893238, "z": 841.0554 },
+        { "x": 737.5009, "y": 26.012825, "z": 845.010437 },
+        { "x": 737.90094, "y": 25.8504181, "z": 850.4433 },
+        { "x": 738.2079, "y": 25.81554, "z": 852.9047 },
+        { "x": 739.920837, "y": 26.718647, "z": 854.8397 },
+        { "x": 744.702942, "y": 26.1297, "z": 855.8002 },
+        { "x": 748.098, "y": 26.0012131, "z": 853.415161 },
+        { "x": 752.459, "y": 26.0089264, "z": 848.5317 },
+        { "x": 756.171265, "y": 25.9194641, "z": 846.6323 },
+        { "x": 758.52356, "y": 25.9510765, "z": 846.028931 },
+        { "x": 762.0895, "y": 25.8538589, "z": 845.730652 },
+        { "x": 764.639954, "y": 26.05965, "z": 844.03894 },
+        { "x": 767.7195, "y": 26.0826416, "z": 841.4361 },
+        { "x": 769.8544, "y": 26.0632935, "z": 839.376 },
+        { "x": 773.8168, "y": 25.84634, "z": 838.369 },
+        { "x": 777.169434, "y": 25.6465836, "z": 839.703735 },
+        { "x": 779.9771, "y": 25.6471863, "z": 842.3484 },
+        { "x": 783.1342, "y": 25.6657333, "z": 845.964233 },
+        { "x": 784.3864, "y": 25.6928024, "z": 849.2072 },
+        { "x": 785.5469, "y": 25.71481, "z": 852.544556 },
+        { "x": 786.104858, "y": 25.6778946, "z": 856.545044 },
+        { "x": 787.3112, "y": 25.7217064, "z": 863.9731 },
+        { "x": 788.170532, "y": 25.69851, "z": 869.7681 },
+        { "x": 789.191956, "y": 25.7850571, "z": 875.5498 },
+        { "x": 792.1692, "y": 25.7918739, "z": 880.4457 },
+        { "x": 798.1727, "y": 25.6650543, "z": 886.185852 },
+        { "x": 805.3541, "y": 25.79535, "z": 891.388855 },
+        { "x": 812.1098, "y": 25.9937744, "z": 896.8791 },
+        { "x": 816.4574, "y": 25.8753052, "z": 900.1874 },
+        { "x": 821.2048, "y": 26.032959, "z": 903.1019 },
+        { "x": 827.060364, "y": 26.0421753, "z": 905.6144 },
+        { "x": 831.9779, "y": 26.1316528, "z": 908.8687 },
+        { "x": 837.987, "y": 26.0354, "z": 910.5765 },
+        { "x": 840.4753, "y": 25.9384766, "z": 913.944031 },
+        { "x": 840.613159, "y": 25.867981, "z": 917.910645 },
+        { "x": 839.084534, "y": 25.8606567, "z": 921.6233 },
+        { "x": 836.8556, "y": 26.0864868, "z": 923.870239 },
+        { "x": 832.8064, "y": 26.1593018, "z": 928.7422 },
+        { "x": 827.355469, "y": 25.7096939, "z": 933.318665 },
+        { "x": 823.733948, "y": 25.78127, "z": 937.789063 },
+        { "x": 821.8806, "y": 25.77515, "z": 941.407654 },
+        { "x": 820.3766, "y": 25.789402, "z": 945.9813 },
+        { "x": 818.4286, "y": 25.72602, "z": 948.7851 },
+        { "x": 814.5478, "y": 25.7901573, "z": 949.9618 },
+        { "x": 809.7455, "y": 26.0815544, "z": 949.0172 },
+        { "x": 802.9249, "y": 25.9307861, "z": 945.1976 },
+        { "x": 798.935059, "y": 25.8175316, "z": 944.515564 },
+        { "x": 795.0291, "y": 25.7662277, "z": 946.578 },
+        { "x": 793.3998, "y": 25.7904778, "z": 947.4404 },
+        { "x": 789.4361, "y": 25.8141861, "z": 948.0817 },
+        { "x": 785.1259, "y": 25.8373337, "z": 948.3547 },
+        { "x": 781.670166, "y": 25.7988663, "z": 948.7931 },
+        { "x": 780.209167, "y": 25.8655968, "z": 949.097351 },
+        { "x": 773.3385, "y": 25.8947372, "z": 945.9116 },
+        { "x": 773.7843, "y": 26.1912575, "z": 942.2789 },
+        { "x": 774.3806, "y": 26.2331581, "z": 936.246948 },
+        { "x": 773.3394, "y": 26.4004059, "z": 931.4303 },
+        { "x": 769.4775, "y": 26.5380859, "z": 924.2964 },
+        { "x": 767.7516, "y": 26.62738, "z": 919.8525 },
+        { "x": 764.123169, "y": 26.6681519, "z": 913.7755 },
+        { "x": 760.689453, "y": 26.64441, "z": 907.6146 },
+        { "x": 757.305, "y": 26.7259521, "z": 903.368164 },
+        { "x": 753.521362, "y": 26.7227783, "z": 900.1854 },
+        { "x": 749.039551, "y": 26.3234253, "z": 894.6432 },
+        { "x": 742.687744, "y": 26.32959, "z": 885.9027 },
+        { "x": 740.0759, "y": 26.336853, "z": 879.637634 },
+        { "x": 739.2521, "y": 26.588398, "z": 875.2707 },
+        { "x": 737.997742, "y": 26.6585083, "z": 873.7624 },
+        { "x": 734.361, "y": 26.2478714, "z": 872.72644 },
+        { "x": 732.3183, "y": 25.94526, "z": 873.5417 },
+        { "x": 727.2475, "y": 25.8241768, "z": 875.259338 },
+        { "x": 723.4788, "y": 26.043911, "z": 875.7007 },
+        { "x": 716.8983, "y": 26.2561646, "z": 872.838562 },
+        { "x": 712.4173, "y": 26.9358521, "z": 871.407043 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 49,
+      "coords": [
+        { "x": 701.987854, "y": 27.6737366, "z": 883.672852 },
+        { "x": 700.6239, "y": 27.6578865, "z": 888.7132 },
+        { "x": 699.5443, "y": 27.7122879, "z": 890.902 },
+        { "x": 695.907043, "y": 27.8989182, "z": 896.060669 },
+        { "x": 695.2287, "y": 27.8924065, "z": 900.9431 },
+        { "x": 693.569153, "y": 27.8861084, "z": 904.6251 },
+        { "x": 692.6292, "y": 28.2502747, "z": 907.577637 },
+        { "x": 694.524658, "y": 28.24585, "z": 910.283142 },
+        { "x": 694.237854, "y": 28.8473778, "z": 911.9229 },
+        { "x": 693.329, "y": 29.2395535, "z": 913.915039 },
+        { "x": 691.7579, "y": 29.0799236, "z": 915.460266 },
+        { "x": 689.329956, "y": 29.1921139, "z": 917.6834 },
+        { "x": 688.109253, "y": 29.30282, "z": 921.4404 },
+        { "x": 687.5572, "y": 29.6809311, "z": 925.9217 },
+        { "x": 687.0175, "y": 29.7813721, "z": 929.3195 },
+        { "x": 685.0295, "y": 30.4438782, "z": 931.2724 },
+        { "x": 684.6203, "y": 30.3103027, "z": 934.1876 },
+        { "x": 681.962158, "y": 30.4674683, "z": 937.533569 },
+        { "x": 681.997131, "y": 30.6422462, "z": 941.5705 },
+        { "x": 683.1201, "y": 30.76903, "z": 944.148865 },
+        { "x": 686.2834, "y": 31.96045, "z": 945.713562 },
+        { "x": 689.004944, "y": 33.42005, "z": 946.3166 },
+        { "x": 692.8064, "y": 34.99666, "z": 948.762 },
+        { "x": 696.744568, "y": 35.08774, "z": 949.1996 },
+        { "x": 700.0485, "y": 35.61489, "z": 947.759 },
+        { "x": 699.2848, "y": 34.810997, "z": 945.0315 },
+        { "x": 697.285156, "y": 34.5579376, "z": 942.7099 },
+        { "x": 694.7323, "y": 34.35541, "z": 942.8597 },
+        { "x": 692.8753, "y": 33.3587, "z": 941.7179 },
+        { "x": 691.5583, "y": 31.41707, "z": 939.4109 },
+        { "x": 691.5145, "y": 30.5179253, "z": 937.493958 },
+        { "x": 692.574036, "y": 29.3609543, "z": 935.2398 },
+        { "x": 696.6791, "y": 29.282032, "z": 934.6361 },
+        { "x": 700.7778, "y": 29.50232, "z": 932.436 },
+        { "x": 703.053833, "y": 29.1613064, "z": 927.3821 },
+        { "x": 706.511963, "y": 29.3086014, "z": 922.1257 },
+        { "x": 706.729431, "y": 29.14538, "z": 917.156067 },
+        { "x": 705.533447, "y": 28.799118, "z": 913.1661 },
+        { "x": 707.7068, "y": 28.0249557, "z": 909.008362 },
+        { "x": 710.1918, "y": 27.7476578, "z": 903.5009 },
+        { "x": 713.4906, "y": 27.6884422, "z": 901.550354 },
+        { "x": 713.2749, "y": 27.6200256, "z": 897.245056 },
+        { "x": 716.08, "y": 27.68475, "z": 895.0189 },
+        { "x": 718.3346, "y": 27.89518, "z": 892.183655 },
+        { "x": 719.9422, "y": 27.4764042, "z": 888.674744 },
+        { "x": 719.694153, "y": 27.45023, "z": 882.9616 },
+        { "x": 716.915161, "y": 27.4200439, "z": 879.703 },
+        { "x": 711.7473, "y": 27.4335327, "z": 877.648865 },
+        { "x": 705.377136, "y": 27.7733459, "z": 879.0303 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 66,
+      "coords": [
+        { "x": 785.471069, "y": 26.9800415, "z": 990.1854 },
+        { "x": 779.9846, "y": 26.9902954, "z": 983.9874 },
+        { "x": 778.4781, "y": 26.97339, "z": 977.4951 },
+        { "x": 774.744568, "y": 26.9550686, "z": 969.3982 },
+        { "x": 774.172241, "y": 27.0066, "z": 967.341 },
+        { "x": 774.4406, "y": 27.1152973, "z": 964.864746 },
+        { "x": 775.2419, "y": 27.1744385, "z": 963.064453 },
+        { "x": 775.881042, "y": 25.8480568, "z": 959.5189 },
+        { "x": 776.5874, "y": 25.914669, "z": 956.357239 },
+        { "x": 777.9497, "y": 25.8171387, "z": 953.5744 },
+        { "x": 779.9657, "y": 26.026123, "z": 951.2012 },
+        { "x": 780.0009, "y": 25.8881226, "z": 949.62085 },
+        { "x": 773.5042, "y": 25.758728, "z": 946.682556 },
+        { "x": 770.9467, "y": 26.4559326, "z": 946.640869 },
+        { "x": 769.7536, "y": 26.5649414, "z": 950.7933 },
+        { "x": 771.000366, "y": 26.19545, "z": 952.708252 },
+        { "x": 768.1704, "y": 27.1729736, "z": 957.0651 },
+        { "x": 767.6072, "y": 27.7840576, "z": 960.0 },
+        { "x": 768.489136, "y": 27.8642673, "z": 964.046143 },
+        { "x": 768.3273, "y": 27.218811, "z": 968.1083 },
+        { "x": 765.6992, "y": 27.0929985, "z": 971.1755 },
+        { "x": 762.822266, "y": 27.13541, "z": 974.243042 },
+        { "x": 762.0121, "y": 27.1701736, "z": 979.8758 },
+        { "x": 765.2831, "y": 27.0710831, "z": 993.563049 },
+        { "x": 764.3339, "y": 27.197319, "z": 996.422546 },
+        { "x": 763.3967, "y": 27.1851559, "z": 1001.31903 },
+        { "x": 764.5757, "y": 27.13374, "z": 1005.98712 },
+        { "x": 767.4465, "y": 26.9927254, "z": 1008.07239 },
+        { "x": 773.1097, "y": 26.9000244, "z": 1008.02716 },
+        { "x": 779.0446, "y": 27.0212574, "z": 1008.92365 },
+        { "x": 782.439331, "y": 26.9599419, "z": 1009.42657 },
+        { "x": 786.3517, "y": 27.0198174, "z": 1011.17151 },
+        { "x": 794.420166, "y": 27.06378, "z": 1015.92505 },
+        { "x": 798.139038, "y": 26.98946, "z": 1017.45465 },
+        { "x": 801.8036, "y": 27.0222569, "z": 1018.01196 },
+        { "x": 807.7972, "y": 27.0577984, "z": 1020.80811 },
+        { "x": 811.746338, "y": 27.06361, "z": 1024.67322 },
+        { "x": 814.037659, "y": 27.2437458, "z": 1029.10852 },
+        { "x": 816.549255, "y": 27.3286133, "z": 1032.62366 },
+        { "x": 819.3844, "y": 27.20632, "z": 1034.54749 },
+        { "x": 822.9475, "y": 27.5281029, "z": 1040.80042 },
+        { "x": 826.1375, "y": 28.3929272, "z": 1046.42737 },
+        { "x": 831.4333, "y": 29.0075359, "z": 1054.02124 },
+        { "x": 835.038757, "y": 29.3656235, "z": 1061.43237 },
+        { "x": 837.2445, "y": 30.0179615, "z": 1068.17932 },
+        { "x": 837.829163, "y": 30.0647125, "z": 1069.07593 },
+        { "x": 842.584656, "y": 29.86359, "z": 1069.26318 },
+        { "x": 842.695251, "y": 29.8052616, "z": 1067.72681 },
+        { "x": 840.6026, "y": 29.4560127, "z": 1062.24072 },
+        { "x": 837.487244, "y": 29.26175, "z": 1055.93848 },
+        { "x": 834.4429, "y": 28.9673271, "z": 1050.85852 },
+        { "x": 830.2596, "y": 28.47913, "z": 1045.51477 },
+        { "x": 827.728455, "y": 27.7660618, "z": 1039.54211 },
+        { "x": 825.493835, "y": 26.95627, "z": 1033.23914 },
+        { "x": 826.140869, "y": 26.97739, "z": 1028.87048 },
+        { "x": 825.4897, "y": 27.0496826, "z": 1023.81787 },
+        { "x": 822.8913, "y": 26.9536133, "z": 1016.90259 },
+        { "x": 822.0712, "y": 26.9691772, "z": 1010.74152 },
+        { "x": 819.6823, "y": 27.0244751, "z": 1003.09125 },
+        { "x": 817.673, "y": 27.0379028, "z": 997.8029 },
+        { "x": 814.4982, "y": 27.2603149, "z": 995.9288 },
+        { "x": 810.550232, "y": 27.46222, "z": 995.414734 },
+        { "x": 806.1235, "y": 27.4866333, "z": 997.120361 },
+        { "x": 800.809448, "y": 26.963623, "z": 998.5545 },
+        { "x": 795.034546, "y": 26.9230347, "z": 996.1526 },
+        { "x": 790.0849, "y": 27.001009, "z": 992.6056 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 52,
+      "coords": [
+        { "x": 844.5696, "y": 30.2561035, "z": 1072.46887 },
+        { "x": 840.034851, "y": 30.282959, "z": 1072.3197 },
+        { "x": 841.380066, "y": 30.3178749, "z": 1076.08459 },
+        { "x": 843.3607, "y": 30.9429283, "z": 1079.71924 },
+        { "x": 844.853455, "y": 31.2549248, "z": 1081.467 },
+        { "x": 847.5318, "y": 30.832077, "z": 1083.31384 },
+        { "x": 848.5931, "y": 31.3428841, "z": 1086.79419 },
+        { "x": 849.9255, "y": 31.2835083, "z": 1090.18225 },
+        { "x": 850.773865, "y": 31.3130989, "z": 1096.892 },
+        { "x": 851.0006, "y": 31.55066, "z": 1100.24634 },
+        { "x": 851.598145, "y": 31.8397217, "z": 1105.06262 },
+        { "x": 851.4827, "y": 32.05783, "z": 1109.44653 },
+        { "x": 849.915161, "y": 32.07425, "z": 1114.229 },
+        { "x": 848.935852, "y": 31.774519, "z": 1118.21472 },
+        { "x": 848.62854, "y": 31.88734, "z": 1123.8811 },
+        { "x": 848.4359, "y": 32.2319336, "z": 1132.88855 },
+        { "x": 846.0281, "y": 32.2940063, "z": 1136.83252 },
+        { "x": 843.275452, "y": 32.1336365, "z": 1140.89917 },
+        { "x": 843.1589, "y": 31.8828983, "z": 1146.08289 },
+        { "x": 843.982, "y": 31.8954182, "z": 1149.0647 },
+        { "x": 844.577637, "y": 32.0427628, "z": 1152.4353 },
+        { "x": 844.4963, "y": 32.2600937, "z": 1162.95569 },
+        { "x": 843.5745, "y": 32.3814621, "z": 1168.04846 },
+        { "x": 842.8127, "y": 32.22879, "z": 1173.85681 },
+        { "x": 842.596863, "y": 32.2883224, "z": 1179.51733 },
+        { "x": 844.418457, "y": 32.11462, "z": 1184.36841 },
+        { "x": 846.7757, "y": 32.38134, "z": 1189.00671 },
+        { "x": 846.818359, "y": 32.619957, "z": 1189.85352 },
+        { "x": 850.221069, "y": 33.432888, "z": 1195.36938 },
+        { "x": 852.6121, "y": 32.6264954, "z": 1193.32141 },
+        { "x": 850.1697, "y": 32.3969727, "z": 1186.56042 },
+        { "x": 846.930542, "y": 32.3062325, "z": 1182.08032 },
+        { "x": 846.5492, "y": 32.45986, "z": 1175.37756 },
+        { "x": 847.162659, "y": 32.4646378, "z": 1171.68384 },
+        { "x": 847.9008, "y": 32.32509, "z": 1165.8927 },
+        { "x": 848.842163, "y": 32.3999023, "z": 1158.84961 },
+        { "x": 848.320251, "y": 32.06418, "z": 1152.73389 },
+        { "x": 847.24054, "y": 31.9817638, "z": 1144.9126 },
+        { "x": 848.48175, "y": 31.8992767, "z": 1141.61182 },
+        { "x": 852.085632, "y": 32.08792, "z": 1136.8623 },
+        { "x": 852.7373, "y": 31.7748737, "z": 1131.92383 },
+        { "x": 852.557861, "y": 31.7776489, "z": 1123.461 },
+        { "x": 852.687866, "y": 31.6124859, "z": 1117.16309 },
+        { "x": 854.8926, "y": 31.53965, "z": 1111.55591 },
+        { "x": 855.4014, "y": 31.3835, "z": 1109.03931 },
+        { "x": 856.427551, "y": 31.1831665, "z": 1102.248 },
+        { "x": 856.1043, "y": 30.87381, "z": 1093.44666 },
+        { "x": 855.9798, "y": 30.58023, "z": 1083.37585 },
+        { "x": 854.4297, "y": 30.600769, "z": 1079.87537 },
+        { "x": 851.5323, "y": 30.55603, "z": 1077.867 },
+        { "x": 847.8688, "y": 30.4573059, "z": 1076.913 },
+        { "x": 845.3904, "y": 30.1534424, "z": 1075.40784 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 92,
+      "coords": [
+        { "x": 821.072937, "y": 35.64615, "z": 1287.82581 },
+        { "x": 827.3908, "y": 35.89984, "z": 1287.58862 },
+        { "x": 831.2241, "y": 37.1966553, "z": 1286.19336 },
+        { "x": 834.9259, "y": 38.1189728, "z": 1284.27649 },
+        { "x": 839.4374, "y": 38.1498146, "z": 1283.411 },
+        { "x": 844.4721, "y": 37.95874, "z": 1282.98633 },
+        { "x": 847.6611, "y": 38.0854454, "z": 1283.543 },
+        { "x": 849.791, "y": 38.24768, "z": 1285.05188 },
+        { "x": 850.8727, "y": 38.45224, "z": 1287.01929 },
+        { "x": 850.7892, "y": 38.4973145, "z": 1290.87439 },
+        { "x": 849.2469, "y": 38.4632263, "z": 1297.32324 },
+        { "x": 848.6833, "y": 38.3059158, "z": 1303.25964 },
+        { "x": 849.6341, "y": 38.1508331, "z": 1307.92578 },
+        { "x": 850.4705, "y": 38.0751343, "z": 1311.04333 },
+        { "x": 851.8863, "y": 38.0021744, "z": 1314.23242 },
+        { "x": 851.211365, "y": 38.2245026, "z": 1316.784 },
+        { "x": 849.504, "y": 38.119915, "z": 1318.30737 },
+        { "x": 845.939453, "y": 38.2202568, "z": 1318.27673 },
+        { "x": 838.815735, "y": 38.1319427, "z": 1317.3938 },
+        { "x": 834.715637, "y": 38.0894165, "z": 1317.87109 },
+        { "x": 831.493042, "y": 38.0270081, "z": 1319.73083 },
+        { "x": 829.864, "y": 38.0589333, "z": 1321.28467 },
+        { "x": 827.3693, "y": 38.55028, "z": 1323.57251 },
+        { "x": 827.418945, "y": 38.54574, "z": 1326.58569 },
+        { "x": 828.5494, "y": 38.399704, "z": 1328.99487 },
+        { "x": 831.7661, "y": 38.39959, "z": 1333.02148 },
+        { "x": 832.4255, "y": 38.61814, "z": 1334.90442 },
+        { "x": 831.876038, "y": 38.8412247, "z": 1336.09143 },
+        { "x": 829.2149, "y": 39.0997162, "z": 1340.024 },
+        { "x": 827.346069, "y": 39.3149376, "z": 1343.74829 },
+        { "x": 827.327637, "y": 39.2418976, "z": 1347.86475 },
+        { "x": 827.9562, "y": 39.4194946, "z": 1351.468 },
+        { "x": 829.8788, "y": 39.42724, "z": 1354.96362 },
+        { "x": 832.2757, "y": 39.2813873, "z": 1355.25549 },
+        { "x": 837.4622, "y": 39.2862, "z": 1354.081 },
+        { "x": 842.442, "y": 39.4549942, "z": 1352.836 },
+        { "x": 845.5393, "y": 39.43254, "z": 1353.30054 },
+        { "x": 848.4913, "y": 39.6022568, "z": 1353.99268 },
+        { "x": 853.3255, "y": 40.03193, "z": 1355.4325 },
+        { "x": 857.530762, "y": 39.8188477, "z": 1358.51965 },
+        { "x": 858.3731, "y": 39.5561523, "z": 1360.84863 },
+        { "x": 859.7858, "y": 40.10852, "z": 1362.34558 },
+        { "x": 860.868958, "y": 40.05636, "z": 1365.56152 },
+        { "x": 862.4877, "y": 40.4774551, "z": 1365.67139 },
+        { "x": 861.367065, "y": 40.41349, "z": 1361.66125 },
+        { "x": 859.1057, "y": 40.10482, "z": 1358.58936 },
+        { "x": 856.7805, "y": 40.18235, "z": 1355.158 },
+        { "x": 854.1012, "y": 39.8695068, "z": 1353.61707 },
+        { "x": 850.8894, "y": 39.7551041, "z": 1352.194 },
+        { "x": 848.594666, "y": 39.64788, "z": 1351.13416 },
+        { "x": 844.746948, "y": 39.3307838, "z": 1350.07678 },
+        { "x": 840.08374, "y": 39.44777, "z": 1350.34082 },
+        { "x": 836.2708, "y": 39.3986473, "z": 1351.60217 },
+        { "x": 832.1707, "y": 39.3873978, "z": 1352.7345 },
+        { "x": 831.584656, "y": 39.365448, "z": 1351.95056 },
+        { "x": 831.3071, "y": 38.6944046, "z": 1344.48682 },
+        { "x": 833.044861, "y": 38.6542358, "z": 1341.7218 },
+        { "x": 835.4741, "y": 38.4815674, "z": 1338.62793 },
+        { "x": 838.3793, "y": 38.54123, "z": 1335.47437 },
+        { "x": 838.5121, "y": 38.5175476, "z": 1333.56677 },
+        { "x": 835.2279, "y": 38.1116028, "z": 1331.5437 },
+        { "x": 832.3302, "y": 37.987793, "z": 1327.92358 },
+        { "x": 831.7682, "y": 37.9601974, "z": 1325.49634 },
+        { "x": 832.7212, "y": 37.90839, "z": 1323.88525 },
+        { "x": 835.0182, "y": 37.86243, "z": 1321.915 },
+        { "x": 837.0713, "y": 37.8809471, "z": 1321.59924 },
+        { "x": 840.9909, "y": 37.7955, "z": 1321.84521 },
+        { "x": 845.8936, "y": 37.7802162, "z": 1322.64636 },
+        { "x": 851.5877, "y": 37.88578, "z": 1322.34058 },
+        { "x": 854.0279, "y": 37.81103, "z": 1320.78149 },
+        { "x": 855.6631, "y": 37.8514175, "z": 1317.38574 },
+        { "x": 855.485352, "y": 37.82036, "z": 1312.11707 },
+        { "x": 853.1345, "y": 38.0049667, "z": 1306.47437 },
+        { "x": 852.585938, "y": 37.8999825, "z": 1302.81 },
+        { "x": 852.835938, "y": 37.88819, "z": 1298.43835 },
+        { "x": 853.395569, "y": 37.9219666, "z": 1294.51563 },
+        { "x": 854.98, "y": 37.8328972, "z": 1288.55945 },
+        { "x": 854.821167, "y": 37.9588852, "z": 1283.36963 },
+        { "x": 853.547241, "y": 37.9021835, "z": 1279.71179 },
+        { "x": 851.3326, "y": 37.9284058, "z": 1277.54016 },
+        { "x": 845.531433, "y": 37.9294434, "z": 1275.31165 },
+        { "x": 839.234, "y": 37.92666, "z": 1274.558 },
+        { "x": 834.329, "y": 38.9738464, "z": 1274.1 },
+        { "x": 827.963867, "y": 38.44406, "z": 1275.04407 },
+        { "x": 823.02, "y": 36.80243, "z": 1275.927 },
+        { "x": 817.9102, "y": 36.5845032, "z": 1276.89648 },
+        { "x": 816.0384, "y": 36.29077, "z": 1278.78784 },
+        { "x": 814.720032, "y": 35.6890869, "z": 1279.84216 },
+        { "x": 814.745544, "y": 35.63322, "z": 1282.53247 },
+        { "x": 814.8141, "y": 35.8367, "z": 1285.57935 },
+        { "x": 815.208069, "y": 36.0163269, "z": 1288.1084 },
+        { "x": 818.6223, "y": 35.9265, "z": 1288.7019 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 52,
+      "coords": [
+        { "x": 902.7756, "y": 46.55316, "z": 1506.54041 },
+        { "x": 898.1437, "y": 46.415802, "z": 1507.02 },
+        { "x": 894.331055, "y": 46.5927124, "z": 1505.72534 },
+        { "x": 887.898438, "y": 46.6506348, "z": 1502.00378 },
+        { "x": 883.782, "y": 46.619812, "z": 1501.2373 },
+        { "x": 879.8261, "y": 46.3118019, "z": 1501.59131 },
+        { "x": 876.6171, "y": 46.5760765, "z": 1501.05872 },
+        { "x": 872.871155, "y": 46.4708366, "z": 1500.12451 },
+        { "x": 865.770752, "y": 46.3118019, "z": 1496.90918 },
+        { "x": 861.695068, "y": 46.4444046, "z": 1492.4895 },
+        { "x": 858.694336, "y": 46.633812, "z": 1492.93237 },
+        { "x": 857.093567, "y": 46.8114052, "z": 1494.66821 },
+        { "x": 857.237, "y": 46.78573, "z": 1497.17175 },
+        { "x": 860.3329, "y": 46.4525642, "z": 1500.15747 },
+        { "x": 865.9948, "y": 46.31351, "z": 1502.9679 },
+        { "x": 874.4091, "y": 46.3118019, "z": 1506.02039 },
+        { "x": 883.065, "y": 46.3334541, "z": 1510.12708 },
+        { "x": 889.15625, "y": 46.49977, "z": 1512.60742 },
+        { "x": 895.316, "y": 46.3167725, "z": 1513.86914 },
+        { "x": 900.0321, "y": 46.3830681, "z": 1516.0481 },
+        { "x": 905.523, "y": 46.3449554, "z": 1518.21887 },
+        { "x": 908.3887, "y": 46.5218544, "z": 1520.24817 },
+        { "x": 911.0382, "y": 47.77652, "z": 1522.8335 },
+        { "x": 913.907837, "y": 48.5564575, "z": 1525.38245 },
+        { "x": 915.0755, "y": 48.6102, "z": 1527.79028 },
+        { "x": 915.5924, "y": 48.4828339, "z": 1531.32471 },
+        { "x": 917.150146, "y": 48.3482628, "z": 1534.33008 },
+        { "x": 920.5513, "y": 48.72003, "z": 1536.93689 },
+        { "x": 923.047363, "y": 48.87094, "z": 1539.51831 },
+        { "x": 924.137939, "y": 48.821106, "z": 1542.51489 },
+        { "x": 925.0926, "y": 48.6896667, "z": 1545.34668 },
+        { "x": 926.8698, "y": 48.4873352, "z": 1547.608 },
+        { "x": 929.3245, "y": 48.359436, "z": 1547.837 },
+        { "x": 930.311951, "y": 49.5304871, "z": 1550.88892 },
+        { "x": 934.4505, "y": 49.67566, "z": 1549.17358 },
+        { "x": 933.7804, "y": 48.359436, "z": 1546.273 },
+        { "x": 936.885864, "y": 48.359436, "z": 1543.23767 },
+        { "x": 937.373, "y": 48.3370972, "z": 1539.38416 },
+        { "x": 938.3126, "y": 48.5263672, "z": 1536.84009 },
+        { "x": 937.3828, "y": 48.4929581, "z": 1533.97583 },
+        { "x": 935.1635, "y": 48.6571159, "z": 1530.60034 },
+        { "x": 933.5131, "y": 49.5965271, "z": 1527.804 },
+        { "x": 930.3786, "y": 49.4954834, "z": 1526.06982 },
+        { "x": 928.313965, "y": 49.2319031, "z": 1523.36292 },
+        { "x": 925.8321, "y": 48.9169, "z": 1522.62366 },
+        { "x": 922.5596, "y": 48.86435, "z": 1522.51331 },
+        { "x": 919.4902, "y": 48.3550453, "z": 1522.29578 },
+        { "x": 918.307434, "y": 48.5016747, "z": 1520.9093 },
+        { "x": 912.703247, "y": 46.3525162, "z": 1513.6554 },
+        { "x": 911.200745, "y": 46.2936, "z": 1510.25659 },
+        { "x": 909.4031, "y": 46.4572, "z": 1508.82471 },
+        { "x": 905.823, "y": 46.3578568, "z": 1507.83521 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 63,
+      "coords": [
+        { "x": 949.6225, "y": 51.04413, "z": 1553.3324 },
+        { "x": 943.3842, "y": 50.37732, "z": 1552.519 },
+        { "x": 938.1731, "y": 50.04608, "z": 1553.02014 },
+        { "x": 935.0106, "y": 49.58799, "z": 1553.37317 },
+        { "x": 932.937134, "y": 49.6118164, "z": 1553.585 },
+        { "x": 931.010254, "y": 49.6886253, "z": 1555.06689 },
+        { "x": 927.905457, "y": 49.85045, "z": 1558.50757 },
+        { "x": 926.4662, "y": 49.7542343, "z": 1560.57446 },
+        { "x": 924.0354, "y": 49.62715, "z": 1561.9364 },
+        { "x": 921.307, "y": 49.6714172, "z": 1562.60742 },
+        { "x": 918.17395, "y": 49.73096, "z": 1564.829 },
+        { "x": 915.9254, "y": 49.85086, "z": 1567.532 },
+        { "x": 914.8449, "y": 49.9047241, "z": 1571.36414 },
+        { "x": 912.865234, "y": 49.88867, "z": 1573.76782 },
+        { "x": 910.4493, "y": 50.0126038, "z": 1576.00073 },
+        { "x": 908.327454, "y": 50.0551758, "z": 1579.07446 },
+        { "x": 908.708557, "y": 50.26892, "z": 1582.56921 },
+        { "x": 910.6715, "y": 50.3085632, "z": 1586.55054 },
+        { "x": 912.825134, "y": 50.4450378, "z": 1589.2771 },
+        { "x": 914.423462, "y": 50.7202148, "z": 1591.914 },
+        { "x": 918.744, "y": 50.5882568, "z": 1592.67432 },
+        { "x": 919.6364, "y": 50.4276123, "z": 1590.29 },
+        { "x": 920.5934, "y": 49.6711235, "z": 1587.51758 },
+        { "x": 924.3345, "y": 49.5902519, "z": 1582.6073 },
+        { "x": 927.9295, "y": 49.55995, "z": 1579.5354 },
+        { "x": 931.2428, "y": 49.4961548, "z": 1576.70483 },
+        { "x": 933.904541, "y": 49.4961548, "z": 1570.58887 },
+        { "x": 935.4617, "y": 49.5235329, "z": 1570.18726 },
+        { "x": 937.179565, "y": 49.77539, "z": 1570.26514 },
+        { "x": 940.241943, "y": 49.8142853, "z": 1571.03638 },
+        { "x": 943.626, "y": 49.62242, "z": 1571.35938 },
+        { "x": 947.988647, "y": 49.5413055, "z": 1570.58191 },
+        { "x": 951.467957, "y": 49.7742844, "z": 1568.9231 },
+        { "x": 954.8042, "y": 50.4838943, "z": 1565.43762 },
+        { "x": 956.017334, "y": 51.00888, "z": 1563.4 },
+        { "x": 958.4428, "y": 51.4227676, "z": 1562.11926 },
+        { "x": 960.636536, "y": 51.7039871, "z": 1561.871 },
+        { "x": 962.068, "y": 51.9719, "z": 1562.6875 },
+        { "x": 963.156738, "y": 52.16925, "z": 1564.71265 },
+        { "x": 965.3482, "y": 51.99373, "z": 1567.04578 },
+        { "x": 968.4972, "y": 51.77052, "z": 1568.64832 },
+        { "x": 971.415955, "y": 51.8767166, "z": 1569.74792 },
+        { "x": 977.892456, "y": 51.70883, "z": 1568.77991 },
+        { "x": 982.64856, "y": 51.7434464, "z": 1565.24341 },
+        { "x": 985.289734, "y": 51.78602, "z": 1564.55835 },
+        { "x": 988.2622, "y": 51.81355, "z": 1563.77 },
+        { "x": 990.4129, "y": 51.8098755, "z": 1562.77332 },
+        { "x": 991.005554, "y": 51.69116, "z": 1561.75317 },
+        { "x": 990.931763, "y": 51.6867752, "z": 1560.28931 },
+        { "x": 990.0456, "y": 51.7218552, "z": 1558.66638 },
+        { "x": 988.4189, "y": 51.77369, "z": 1558.00037 },
+        { "x": 985.220947, "y": 51.75299, "z": 1557.8407 },
+        { "x": 981.940063, "y": 51.77382, "z": 1558.05615 },
+        { "x": 978.2386, "y": 51.7792625, "z": 1557.61084 },
+        { "x": 974.46405, "y": 51.75354, "z": 1557.18384 },
+        { "x": 971.0896, "y": 51.7699356, "z": 1555.40552 },
+        { "x": 967.242432, "y": 51.8851776, "z": 1554.8175 },
+        { "x": 965.0672, "y": 51.89646, "z": 1556.78186 },
+        { "x": 963.321045, "y": 51.9577866, "z": 1557.43274 },
+        { "x": 960.633, "y": 51.87567, "z": 1557.51392 },
+        { "x": 958.5958, "y": 51.54251, "z": 1557.54956 },
+        { "x": 955.7821, "y": 51.13553, "z": 1557.19788 },
+        { "x": 953.4204, "y": 51.2131958, "z": 1555.619 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 44,
+      "coords": [
+        { "x": 879.19165, "y": 45.9868469, "z": 753.361755 },
+        { "x": 879.18866, "y": 45.9036522, "z": 750.3342 },
+        { "x": 879.7922, "y": 45.6014175, "z": 747.297058 },
+        { "x": 877.664063, "y": 45.777935, "z": 745.087341 },
+        { "x": 874.2982, "y": 45.64011, "z": 744.379944 },
+        { "x": 869.90155, "y": 45.57287, "z": 742.5822 },
+        { "x": 865.6374, "y": 45.96531, "z": 742.47644 },
+        { "x": 862.322144, "y": 45.87355, "z": 741.0989 },
+        { "x": 859.163269, "y": 44.3449936, "z": 738.3589 },
+        { "x": 856.796753, "y": 44.1526337, "z": 734.93396 },
+        { "x": 854.510864, "y": 42.12014, "z": 729.7344 },
+        { "x": 849.7481, "y": 39.0415573, "z": 724.424561 },
+        { "x": 843.5287, "y": 35.6323853, "z": 717.914368 },
+        { "x": 840.3446, "y": 35.1820374, "z": 715.493164 },
+        { "x": 843.9256, "y": 36.3611374, "z": 711.209 },
+        { "x": 848.2101, "y": 37.05349, "z": 712.79126 },
+        { "x": 854.2388, "y": 37.4613876, "z": 716.701538 },
+        { "x": 858.0082, "y": 39.0879974, "z": 721.651062 },
+        { "x": 864.3142, "y": 43.9648666, "z": 729.355652 },
+        { "x": 867.952759, "y": 44.46467, "z": 731.1407 },
+        { "x": 871.529968, "y": 45.084446, "z": 731.8897 },
+        { "x": 873.9341, "y": 45.51202, "z": 734.065247 },
+        { "x": 877.197144, "y": 46.6797066, "z": 734.6057 },
+        { "x": 880.008, "y": 46.1177673, "z": 736.9595 },
+        { "x": 881.7602, "y": 45.57616, "z": 740.016663 },
+        { "x": 884.345459, "y": 45.95266, "z": 742.4654 },
+        { "x": 887.5609, "y": 46.32947, "z": 746.1609 },
+        { "x": 887.925537, "y": 45.94676, "z": 748.4792 },
+        { "x": 888.5373, "y": 46.0927849, "z": 751.695 },
+        { "x": 889.5842, "y": 46.21225, "z": 754.5671 },
+        { "x": 890.7775, "y": 46.7281342, "z": 756.7489 },
+        { "x": 893.315247, "y": 47.32483, "z": 759.441467 },
+        { "x": 895.9853, "y": 47.71645, "z": 761.061 },
+        { "x": 899.5202, "y": 48.2727051, "z": 760.4241 },
+        { "x": 901.873657, "y": 47.9741058, "z": 763.684 },
+        { "x": 899.5488, "y": 47.90869, "z": 765.9425 },
+        { "x": 897.600647, "y": 47.5607147, "z": 766.882751 },
+        { "x": 895.0626, "y": 47.31954, "z": 767.1676 },
+        { "x": 891.8893, "y": 46.9817429, "z": 766.247437 },
+        { "x": 888.7011, "y": 46.8146248, "z": 763.745361 },
+        { "x": 886.613037, "y": 46.36518, "z": 760.7102 },
+        { "x": 885.4147, "y": 46.2313576, "z": 759.5562 },
+        { "x": 882.320251, "y": 46.1665039, "z": 759.244751 },
+        { "x": 880.0409, "y": 46.0251465, "z": 756.4528 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 11,
+      "coords": [
+        { "x": 908.8096, "y": 48.30948, "z": 761.4919 },
+        { "x": 905.1565, "y": 48.33078, "z": 762.436157 },
+        { "x": 902.129944, "y": 48.3027039, "z": 758.2203 },
+        { "x": 905.4068, "y": 50.09726, "z": 754.6729 },
+        { "x": 907.2774, "y": 52.0953445, "z": 752.9247 },
+        { "x": 908.637451, "y": 54.7478027, "z": 751.1326 },
+        { "x": 909.8541, "y": 56.4743652, "z": 750.486267 },
+        { "x": 912.399658, "y": 56.96112, "z": 748.791565 },
+        { "x": 917.5255, "y": 55.96881, "z": 753.148865 },
+        { "x": 917.254333, "y": 53.3450928, "z": 756.335144 },
+        { "x": 913.546265, "y": 50.8627625, "z": 758.788147 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 4,
+      "coords": [
+        { "x": 921.3416, "y": 57.6471558, "z": 743.320862 },
+        { "x": 913.1168, "y": 56.9711, "z": 746.4682 },
+        { "x": 917.6281, "y": 57.3978577, "z": 750.892761 },
+        { "x": 925.0084, "y": 57.73468, "z": 747.5616 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 17,
+      "coords": [
+        { "x": 890.9859, "y": 55.112, "z": 670.7099 },
+        { "x": 894.289063, "y": 55.3669739, "z": 673.606262 },
+        { "x": 896.4466, "y": 54.97998, "z": 671.9412 },
+        { "x": 894.001038, "y": 54.7214355, "z": 664.872 },
+        { "x": 891.936035, "y": 55.0025635, "z": 658.906738 },
+        { "x": 889.527344, "y": 54.97983, "z": 655.8014 },
+        { "x": 886.327759, "y": 55.0887146, "z": 655.0512 },
+        { "x": 884.9983, "y": 55.0311852, "z": 656.5086 },
+        { "x": 882.627136, "y": 54.39027, "z": 656.3346 },
+        { "x": 878.8821, "y": 53.8794479, "z": 652.7703 },
+        { "x": 879.139954, "y": 53.0906, "z": 656.66626 },
+        { "x": 877.494446, "y": 52.38832, "z": 659.0938 },
+        { "x": 875.3914, "y": 52.15398, "z": 659.226746 },
+        { "x": 876.6094, "y": 52.1293526, "z": 661.9176 },
+        { "x": 881.965759, "y": 52.2904243, "z": 668.004639 },
+        { "x": 884.899536, "y": 52.3069077, "z": 670.805847 },
+        { "x": 887.784546, "y": 54.2317963, "z": 668.6983 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 21,
+      "coords": [
+        { "x": 873.8335, "y": 51.9093, "z": 665.723633 },
+        { "x": 882.696838, "y": 52.21646, "z": 674.223145 },
+        { "x": 873.775757, "y": 50.600647, "z": 685.0763 },
+        { "x": 868.135, "y": 48.82852, "z": 693.677551 },
+        { "x": 865.1271, "y": 48.3906555, "z": 697.641235 },
+        { "x": 859.0742, "y": 45.95865, "z": 702.773254 },
+        { "x": 856.602844, "y": 42.62741, "z": 707.9738 },
+        { "x": 853.380859, "y": 37.4682, "z": 715.3792 },
+        { "x": 844.931, "y": 37.52597, "z": 709.7167 },
+        { "x": 815.779236, "y": 32.8286133, "z": 708.9423 },
+        { "x": 807.0952, "y": 33.82782, "z": 704.1072 },
+        { "x": 806.7281, "y": 37.4824524, "z": 698.046753 },
+        { "x": 806.1297, "y": 41.67453, "z": 691.8884 },
+        { "x": 808.1369, "y": 46.45982, "z": 684.9295 },
+        { "x": 810.1255, "y": 48.8622475, "z": 679.0258 },
+        { "x": 812.9313, "y": 49.2319641, "z": 675.198547 },
+        { "x": 822.2057, "y": 49.3258324, "z": 675.9365 },
+        { "x": 832.067139, "y": 49.4695129, "z": 675.8233 },
+        { "x": 844.0936, "y": 50.9080429, "z": 675.3438 },
+        { "x": 853.468933, "y": 49.673748, "z": 672.9728 },
+        { "x": 865.2191, "y": 51.0144653, "z": 669.9762 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 33,
+      "coords": [
+        { "x": 803.0265, "y": 33.2884827, "z": 741.9332 },
+        { "x": 809.8297, "y": 33.15912, "z": 741.310547 },
+        { "x": 812.6632, "y": 33.2809143, "z": 738.120239 },
+        { "x": 810.815247, "y": 33.0795, "z": 730.5972 },
+        { "x": 808.6658, "y": 33.2858276, "z": 723.5356 },
+        { "x": 808.0053, "y": 33.3369141, "z": 720.6542 },
+        { "x": 813.573, "y": 34.4484558, "z": 719.0661 },
+        { "x": 821.733032, "y": 34.3162079, "z": 716.4356 },
+        { "x": 828.9288, "y": 34.81791, "z": 715.5618 },
+        { "x": 837.3972, "y": 36.4915352, "z": 716.498657 },
+        { "x": 843.1572, "y": 36.530426, "z": 710.316956 },
+        { "x": 837.2066, "y": 35.46687, "z": 709.1881 },
+        { "x": 829.531555, "y": 32.8018723, "z": 708.404053 },
+        { "x": 823.7819, "y": 32.10772, "z": 708.3498 },
+        { "x": 816.5994, "y": 32.7098923, "z": 708.7833 },
+        { "x": 812.211365, "y": 33.1745033, "z": 709.137756 },
+        { "x": 806.720642, "y": 33.7936935, "z": 704.422241 },
+        { "x": 798.196, "y": 33.1606865, "z": 713.6375 },
+        { "x": 792.3413, "y": 33.18509, "z": 717.0837 },
+        { "x": 792.0249, "y": 33.38578, "z": 723.5233 },
+        { "x": 790.6698, "y": 33.343853, "z": 727.5198 },
+        { "x": 788.0037, "y": 33.2371368, "z": 730.744263 },
+        { "x": 784.7619, "y": 33.25328, "z": 731.9017 },
+        { "x": 783.562744, "y": 33.33174, "z": 735.0867 },
+        { "x": 782.947754, "y": 33.2606, "z": 741.7384 },
+        { "x": 783.817932, "y": 33.26509, "z": 745.614258 },
+        { "x": 786.0776, "y": 33.2093124, "z": 747.895935 },
+        { "x": 788.3683, "y": 33.20916, "z": 749.691833 },
+        { "x": 791.4786, "y": 33.26381, "z": 749.789856 },
+        { "x": 793.4427, "y": 33.1272621, "z": 749.1436 },
+        { "x": 795.82, "y": 33.179657, "z": 747.1388 },
+        { "x": 797.3745, "y": 33.1982956, "z": 744.133 },
+        { "x": 799.766663, "y": 33.28306, "z": 741.596252 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 8,
+      "coords": [
+        { "x": 806.064758, "y": 45.02838, "z": 686.7294 },
+        { "x": 805.5596, "y": 41.8807068, "z": 691.828857 },
+        { "x": 806.649353, "y": 34.07129, "z": 703.9321 },
+        { "x": 801.7918, "y": 33.1707153, "z": 707.834534 },
+        { "x": 796.998535, "y": 33.0810852, "z": 712.661255 },
+        { "x": 791.6793, "y": 33.5663147, "z": 715.833 },
+        { "x": 795.1868, "y": 38.6636658, "z": 702.7709 },
+        { "x": 800.9362, "y": 42.3976746, "z": 693.704346 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 33,
+      "coords": [
+        { "x": 809.0315, "y": 35.1896973, "z": 1285.23279 },
+        { "x": 811.156, "y": 35.6977844, "z": 1282.01489 },
+        { "x": 809.452759, "y": 35.4871826, "z": 1278.27332 },
+        { "x": 805.2403, "y": 35.23886, "z": 1274.8855 },
+        { "x": 801.871155, "y": 35.00482, "z": 1270.56982 },
+        { "x": 800.008545, "y": 34.75434, "z": 1265.12866 },
+        { "x": 800.324158, "y": 34.4703827, "z": 1255.75842 },
+        { "x": 800.937866, "y": 33.69181, "z": 1248.63159 },
+        { "x": 802.101135, "y": 33.4328957, "z": 1235.93579 },
+        { "x": 802.1816, "y": 32.81195, "z": 1223.7323 },
+        { "x": 804.2822, "y": 32.9657, "z": 1216.96167 },
+        { "x": 808.2911, "y": 32.87909, "z": 1212.93774 },
+        { "x": 837.3394, "y": 33.432888, "z": 1201.027 },
+        { "x": 850.24, "y": 32.6462631, "z": 1195.98926 },
+        { "x": 852.0737, "y": 32.54541, "z": 1193.37646 },
+        { "x": 849.582031, "y": 32.36148, "z": 1189.36353 },
+        { "x": 845.922546, "y": 32.7828369, "z": 1189.319 },
+        { "x": 828.430664, "y": 33.432888, "z": 1197.66541 },
+        { "x": 823.284363, "y": 33.432888, "z": 1199.52734 },
+        { "x": 813.9125, "y": 33.432888, "z": 1202.72559 },
+        { "x": 807.6478, "y": 33.5287476, "z": 1207.09253 },
+        { "x": 800.99176, "y": 33.4701233, "z": 1208.92883 },
+        { "x": 796.5688, "y": 33.9553757, "z": 1211.34937 },
+        { "x": 793.9997, "y": 33.96175, "z": 1217.68311 },
+        { "x": 795.612366, "y": 33.56156, "z": 1223.51245 },
+        { "x": 796.1985, "y": 33.9785156, "z": 1236.8407 },
+        { "x": 795.796265, "y": 34.096283, "z": 1247.73926 },
+        { "x": 794.911133, "y": 34.4225159, "z": 1252.31287 },
+        { "x": 794.2895, "y": 33.82529, "z": 1260.34778 },
+        { "x": 794.5232, "y": 34.08966, "z": 1265.18457 },
+        { "x": 795.8372, "y": 34.5627136, "z": 1271.2019 },
+        { "x": 799.708557, "y": 34.8056335, "z": 1278.61719 },
+        { "x": 803.7805, "y": 34.94821, "z": 1282.876 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 40,
+      "coords": [
+        { "x": 918.46344, "y": 50.57959, "z": 1595.75293 },
+        { "x": 918.1857, "y": 50.27408, "z": 1600.4707 },
+        { "x": 917.97, "y": 50.41931, "z": 1604.98389 },
+        { "x": 917.5152, "y": 50.6531372, "z": 1608.25464 },
+        { "x": 915.2934, "y": 50.57016, "z": 1611.26917 },
+        { "x": 913.6987, "y": 50.5742645, "z": 1613.86267 },
+        { "x": 913.7046, "y": 50.6882172, "z": 1623.77625 },
+        { "x": 915.3241, "y": 50.6837845, "z": 1628.88831 },
+        { "x": 916.1157, "y": 50.80231, "z": 1634.91492 },
+        { "x": 920.4833, "y": 51.0235977, "z": 1638.53149 },
+        { "x": 921.180359, "y": 50.8944626, "z": 1641.147 },
+        { "x": 921.687256, "y": 50.93905, "z": 1646.662 },
+        { "x": 923.5747, "y": 50.971138, "z": 1649.1709 },
+        { "x": 929.6975, "y": 51.05567, "z": 1654.22449 },
+        { "x": 931.924255, "y": 51.3196754, "z": 1656.88525 },
+        { "x": 933.3203, "y": 51.31435, "z": 1660.29773 },
+        { "x": 934.9767, "y": 51.1930161, "z": 1664.3783 },
+        { "x": 936.964355, "y": 51.81518, "z": 1667.45764 },
+        { "x": 935.185547, "y": 52.128952, "z": 1669.59753 },
+        { "x": 933.388245, "y": 52.0748138, "z": 1668.53442 },
+        { "x": 931.113831, "y": 51.93265, "z": 1664.28 },
+        { "x": 929.757263, "y": 51.62856, "z": 1659.56848 },
+        { "x": 928.308, "y": 51.5788422, "z": 1657.15967 },
+        { "x": 925.8933, "y": 51.52035, "z": 1655.31384 },
+        { "x": 922.3205, "y": 51.5813675, "z": 1653.2627 },
+        { "x": 919.5148, "y": 52.0951042, "z": 1650.83508 },
+        { "x": 917.5361, "y": 51.6679459, "z": 1645.59412 },
+        { "x": 917.288635, "y": 51.5019226, "z": 1642.60034 },
+        { "x": 916.2443, "y": 51.1246948, "z": 1640.36047 },
+        { "x": 913.611633, "y": 51.42801, "z": 1638.64319 },
+        { "x": 911.9715, "y": 51.5894775, "z": 1636.30139 },
+        { "x": 911.4811, "y": 51.3487244, "z": 1631.30713 },
+        { "x": 910.4672, "y": 51.1088867, "z": 1626.97229 },
+        { "x": 909.8465, "y": 51.1221924, "z": 1623.50256 },
+        { "x": 909.570251, "y": 50.8156738, "z": 1618.78247 },
+        { "x": 909.818665, "y": 50.947876, "z": 1613.78638 },
+        { "x": 910.927368, "y": 50.99292, "z": 1610.51184 },
+        { "x": 912.394348, "y": 50.87259, "z": 1607.59265 },
+        { "x": 913.545044, "y": 51.12039, "z": 1603.37817 },
+        { "x": 913.364746, "y": 50.771698, "z": 1594.94873 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 109,
+      "coords": [
+        { "x": 954.5093, "y": 53.3907776, "z": 1686.81384 },
+        { "x": 952.386169, "y": 53.25055, "z": 1683.75574 },
+        { "x": 950.3904, "y": 52.85858, "z": 1682.05457 },
+        { "x": 947.6726, "y": 52.43042, "z": 1680.01123 },
+        { "x": 944.782837, "y": 52.2698975, "z": 1678.25293 },
+        { "x": 941.5966, "y": 51.6871948, "z": 1676.288 },
+        { "x": 936.509766, "y": 52.0545044, "z": 1673.83179 },
+        { "x": 939.0226, "y": 52.040802, "z": 1671.062 },
+        { "x": 943.1127, "y": 51.803894, "z": 1673.40259 },
+        { "x": 947.729553, "y": 51.7160034, "z": 1675.94812 },
+        { "x": 952.9313, "y": 52.096405, "z": 1678.73633 },
+        { "x": 956.561, "y": 52.85565, "z": 1682.79236 },
+        { "x": 958.4285, "y": 53.052124, "z": 1685.63977 },
+        { "x": 960.8045, "y": 53.1706238, "z": 1691.08167 },
+        { "x": 963.3761, "y": 53.4384766, "z": 1697.20459 },
+        { "x": 967.4217, "y": 53.4736938, "z": 1704.5105 },
+        { "x": 970.024, "y": 53.56143, "z": 1708.51624 },
+        { "x": 973.006, "y": 53.5999146, "z": 1710.14709 },
+        { "x": 980.4055, "y": 53.973877, "z": 1709.83643 },
+        { "x": 982.8389, "y": 54.0328178, "z": 1710.99707 },
+        { "x": 985.832642, "y": 54.20878, "z": 1713.443 },
+        { "x": 987.9545, "y": 54.3747444, "z": 1713.91492 },
+        { "x": 992.802551, "y": 54.9905167, "z": 1713.95337 },
+        { "x": 996.687561, "y": 55.57666, "z": 1715.23767 },
+        { "x": 999.1294, "y": 55.64627, "z": 1717.69836 },
+        { "x": 1001.486, "y": 55.7120819, "z": 1723.08276 },
+        { "x": 1004.70618, "y": 55.881134, "z": 1730.18152 },
+        { "x": 1006.65961, "y": 55.80069, "z": 1734.48657 },
+        { "x": 1008.185, "y": 56.0941467, "z": 1742.58972 },
+        { "x": 1007.56421, "y": 56.4595337, "z": 1747.72766 },
+        { "x": 1004.181, "y": 56.5951843, "z": 1749.804 },
+        { "x": 1001.33411, "y": 56.80182, "z": 1751.99976 },
+        { "x": 999.849854, "y": 56.8555, "z": 1755.02222 },
+        { "x": 998.067566, "y": 57.12494, "z": 1759.5719 },
+        { "x": 997.28894, "y": 57.50827, "z": 1764.03125 },
+        { "x": 997.661743, "y": 57.3742065, "z": 1766.81519 },
+        { "x": 999.3989, "y": 57.4666977, "z": 1769.24414 },
+        { "x": 999.3159, "y": 57.5160446, "z": 1771.038 },
+        { "x": 997.5475, "y": 57.891655, "z": 1772.06726 },
+        { "x": 995.4997, "y": 58.8098564, "z": 1770.08752 },
+        { "x": 993.8378, "y": 58.88771, "z": 1766.82837 },
+        { "x": 993.654358, "y": 57.7892151, "z": 1759.33716 },
+        { "x": 994.9674, "y": 57.67682, "z": 1755.52991 },
+        { "x": 997.0807, "y": 57.8806152, "z": 1751.45874 },
+        { "x": 998.1101, "y": 58.4727173, "z": 1748.60449 },
+        { "x": 1003.07123, "y": 57.6607361, "z": 1745.79443 },
+        { "x": 1004.64331, "y": 57.130127, "z": 1743.93835 },
+        { "x": 1003.85254, "y": 57.2283325, "z": 1740.94128 },
+        { "x": 1003.2959, "y": 57.1700439, "z": 1736.076 },
+        { "x": 1001.98962, "y": 57.0386353, "z": 1732.27917 },
+        { "x": 999.0819, "y": 57.2891846, "z": 1726.60376 },
+        { "x": 998.203369, "y": 57.1664429, "z": 1723.763 },
+        { "x": 996.7518, "y": 56.94806, "z": 1720.03918 },
+        { "x": 995.7685, "y": 55.81487, "z": 1718.01331 },
+        { "x": 993.8165, "y": 55.85132, "z": 1717.5719 },
+        { "x": 991.112732, "y": 55.3244629, "z": 1717.4248 },
+        { "x": 987.008, "y": 54.73575, "z": 1716.72388 },
+        { "x": 983.757, "y": 54.31308, "z": 1715.22339 },
+        { "x": 981.0293, "y": 54.28415, "z": 1714.03784 },
+        { "x": 979.2952, "y": 53.96277, "z": 1713.2616 },
+        { "x": 975.5929, "y": 53.7836227, "z": 1713.5553 },
+        { "x": 972.2703, "y": 54.04012, "z": 1713.35144 },
+        { "x": 969.2124, "y": 54.0397568, "z": 1711.599 },
+        { "x": 967.162964, "y": 53.9081573, "z": 1709.24048 },
+        { "x": 965.1623, "y": 54.0358734, "z": 1706.40808 },
+        { "x": 963.2414, "y": 53.5042038, "z": 1702.88965 },
+        { "x": 961.961853, "y": 53.428196, "z": 1700.916 },
+        { "x": 959.6457, "y": 53.29878, "z": 1697.70422 },
+        { "x": 959.3502, "y": 53.369957, "z": 1700.04248 },
+        { "x": 958.6987, "y": 53.5157127, "z": 1703.47913 },
+        { "x": 959.055237, "y": 53.5484, "z": 1707.64612 },
+        { "x": 959.2133, "y": 53.52365, "z": 1710.30652 },
+        { "x": 960.5458, "y": 53.4699554, "z": 1712.90979 },
+        { "x": 963.6599, "y": 53.70874, "z": 1717.27625 },
+        { "x": 964.3683, "y": 53.7558937, "z": 1720.48 },
+        { "x": 963.615234, "y": 54.0539551, "z": 1724.42444 },
+        { "x": 961.462769, "y": 54.2734, "z": 1731.83752 },
+        { "x": 962.884033, "y": 54.5567322, "z": 1735.60791 },
+        { "x": 964.9824, "y": 54.72534, "z": 1739.86926 },
+        { "x": 963.0043, "y": 54.8363647, "z": 1745.07361 },
+        { "x": 959.695068, "y": 54.788208, "z": 1749.51855 },
+        { "x": 956.844666, "y": 55.0664368, "z": 1753.386 },
+        { "x": 953.4444, "y": 55.0281372, "z": 1755.65735 },
+        { "x": 949.8444, "y": 55.18875, "z": 1758.76074 },
+        { "x": 945.5376, "y": 56.08072, "z": 1761.58484 },
+        { "x": 943.9821, "y": 56.7053223, "z": 1763.74219 },
+        { "x": 944.2295, "y": 57.71469, "z": 1765.89246 },
+        { "x": 941.028931, "y": 56.4485474, "z": 1767.38757 },
+        { "x": 940.257935, "y": 55.9685059, "z": 1761.56433 },
+        { "x": 942.0252, "y": 56.04358, "z": 1758.31543 },
+        { "x": 945.6395, "y": 55.8246155, "z": 1756.7677 },
+        { "x": 949.3712, "y": 55.4115, "z": 1754.16638 },
+        { "x": 954.833069, "y": 54.9664, "z": 1749.8208 },
+        { "x": 957.8591, "y": 54.82608, "z": 1746.43823 },
+        { "x": 960.1686, "y": 54.54548, "z": 1742.93274 },
+        { "x": 960.747559, "y": 54.66543, "z": 1739.90283 },
+        { "x": 960.0548, "y": 54.5516739, "z": 1737.12073 },
+        { "x": 959.3255, "y": 54.4060326, "z": 1732.65674 },
+        { "x": 959.729248, "y": 54.2783356, "z": 1728.61267 },
+        { "x": 960.9362, "y": 54.1401978, "z": 1725.27319 },
+        { "x": 961.9067, "y": 53.8314171, "z": 1721.41138 },
+        { "x": 960.8623, "y": 53.6019745, "z": 1717.96216 },
+        { "x": 958.1365, "y": 53.4973869, "z": 1714.322 },
+        { "x": 956.705261, "y": 53.6211853, "z": 1711.87634 },
+        { "x": 956.1121, "y": 53.6158638, "z": 1708.396 },
+        { "x": 955.952759, "y": 53.51926, "z": 1703.30518 },
+        { "x": 956.303, "y": 53.3039551, "z": 1698.94873 },
+        { "x": 956.864746, "y": 53.22693, "z": 1693.49976 },
+        { "x": 956.144653, "y": 53.1867371, "z": 1689.67114 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 33,
+      "coords": [
+        { "x": 1331.82935, "y": 54.75009, "z": 1596.02771 },
+        { "x": 1328.47021, "y": 54.99759, "z": 1591.03076 },
+        { "x": 1324.22144, "y": 55.10797, "z": 1581.96948 },
+        { "x": 1323.01855, "y": 54.76355, "z": 1573.21 },
+        { "x": 1323.78088, "y": 54.49347, "z": 1569.75586 },
+        { "x": 1320.35669, "y": 55.0144653, "z": 1564.285 },
+        { "x": 1318.68188, "y": 54.839386, "z": 1549.46509 },
+        { "x": 1318.13977, "y": 55.4037476, "z": 1539.03369 },
+        { "x": 1318.66223, "y": 55.02481, "z": 1524.709 },
+        { "x": 1320.80615, "y": 54.82553, "z": 1515.81152 },
+        { "x": 1323.25293, "y": 54.6218872, "z": 1510.38342 },
+        { "x": 1327.983, "y": 54.6318359, "z": 1504.35376 },
+        { "x": 1335.60229, "y": 54.46573, "z": 1498.49792 },
+        { "x": 1343.72168, "y": 54.2542725, "z": 1498.643 },
+        { "x": 1352.02625, "y": 54.4035339, "z": 1503.06873 },
+        { "x": 1359.81152, "y": 54.2826843, "z": 1503.61926 },
+        { "x": 1362.588, "y": 54.35382, "z": 1508.79846 },
+        { "x": 1363.73682, "y": 54.3102722, "z": 1515.44116 },
+        { "x": 1367.58826, "y": 54.2362061, "z": 1518.85938 },
+        { "x": 1369.76489, "y": 54.0664368, "z": 1527.68958 },
+        { "x": 1366.99744, "y": 54.1088562, "z": 1534.40466 },
+        { "x": 1366.805, "y": 54.244812, "z": 1541.10107 },
+        { "x": 1367.994, "y": 54.26544, "z": 1547.63721 },
+        { "x": 1371.16064, "y": 54.29425, "z": 1554.88843 },
+        { "x": 1372.3905, "y": 54.3976135, "z": 1560.54053 },
+        { "x": 1374.01489, "y": 54.3216553, "z": 1567.28088 },
+        { "x": 1372.195, "y": 54.33603, "z": 1573.82239 },
+        { "x": 1365.91174, "y": 54.396698, "z": 1583.23389 },
+        { "x": 1361.39063, "y": 54.5080872, "z": 1589.23474 },
+        { "x": 1355.12329, "y": 54.607605, "z": 1594.6416 },
+        { "x": 1348.65283, "y": 54.34085, "z": 1597.759 },
+        { "x": 1340.58118, "y": 54.34494, "z": 1599.62952 },
+        { "x": 1335.58472, "y": 54.4697876, "z": 1598.92358 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    },
+    {
+      "pointCount": 49,
+      "coords": [
+        { "x": 1255.53577, "y": 51.8551025, "z": 1444.91528 },
+        { "x": 1256.9519, "y": 51.73752, "z": 1449.21045 },
+        { "x": 1259.3009, "y": 52.11322, "z": 1456.12231 },
+        { "x": 1265.53064, "y": 51.88965, "z": 1463.05322 },
+        { "x": 1272.31238, "y": 52.16519, "z": 1471.48938 },
+        { "x": 1276.6665, "y": 51.9813232, "z": 1474.6311 },
+        { "x": 1281.48022, "y": 51.70584, "z": 1474.51868 },
+        { "x": 1289.20154, "y": 51.4232178, "z": 1471.77991 },
+        { "x": 1292.81262, "y": 51.4637451, "z": 1468.8949 },
+        { "x": 1293.30762, "y": 51.3412781, "z": 1461.15027 },
+        { "x": 1290.6698, "y": 51.3327942, "z": 1449.83325 },
+        { "x": 1288.06909, "y": 51.3414, "z": 1442.43359 },
+        { "x": 1286.83044, "y": 51.33786, "z": 1436.88159 },
+        { "x": 1287.11035, "y": 51.3893738, "z": 1428.81152 },
+        { "x": 1288.306, "y": 51.40677, "z": 1422.05981 },
+        { "x": 1288.06714, "y": 51.355587, "z": 1407.66174 },
+        { "x": 1287.93628, "y": 51.35558, "z": 1395.9491 },
+        { "x": 1287.84009, "y": 51.3168335, "z": 1384.81421 },
+        { "x": 1284.87769, "y": 51.4189148, "z": 1372.86877 },
+        { "x": 1279.48486, "y": 51.421814, "z": 1363.12158 },
+        { "x": 1270.13147, "y": 51.3699036, "z": 1353.48486 },
+        { "x": 1264.50317, "y": 51.3547058, "z": 1344.53723 },
+        { "x": 1259.67529, "y": 51.32419, "z": 1334.03174 },
+        { "x": 1258.64758, "y": 51.4453735, "z": 1328.277 },
+        { "x": 1261.10559, "y": 51.39914, "z": 1314.38831 },
+        { "x": 1262.64648, "y": 51.47513, "z": 1301.91235 },
+        { "x": 1261.81409, "y": 51.4099426, "z": 1292.79187 },
+        { "x": 1256.52722, "y": 51.438385, "z": 1279.09375 },
+        { "x": 1252.70068, "y": 51.3255, "z": 1276.153 },
+        { "x": 1245.51843, "y": 51.3551025, "z": 1273.10376 },
+        { "x": 1238.81873, "y": 51.72592, "z": 1273.09875 },
+        { "x": 1232.34241, "y": 51.43445, "z": 1275.01538 },
+        { "x": 1222.58521, "y": 51.51129, "z": 1276.87329 },
+        { "x": 1215.85327, "y": 51.5080872, "z": 1282.20251 },
+        { "x": 1211.82141, "y": 51.61969, "z": 1288.82666 },
+        { "x": 1209.41211, "y": 51.81839, "z": 1298.65649 },
+        { "x": 1210.37952, "y": 51.7219238, "z": 1307.19348 },
+        { "x": 1213.513, "y": 51.678833, "z": 1317.13843 },
+        { "x": 1219.12537, "y": 52.0327148, "z": 1330.405 },
+        { "x": 1222.05151, "y": 52.07425, "z": 1341.45667 },
+        { "x": 1222.681, "y": 52.0899658, "z": 1356.08228 },
+        { "x": 1223.19922, "y": 51.9868164, "z": 1373.68616 },
+        { "x": 1225.7345, "y": 51.8085938, "z": 1387.20923 },
+        { "x": 1230.32678, "y": 51.9565125, "z": 1400.9093 },
+        { "x": 1234.89783, "y": 51.9223022, "z": 1413.42639 },
+        { "x": 1239.65991, "y": 51.7973938, "z": 1424.08032 },
+        { "x": 1244.895, "y": 51.91223, "z": 1432.10083 },
+        { "x": 1250.47058, "y": 51.6785278, "z": 1437.77954 },
+        { "x": 1253.78467, "y": 51.757843, "z": 1441.00964 }
+      ],
+      "DZpos": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "freeDrop": false,
+      "innerOOB": false,
+      "noAIL": false,
+      "hasDZ": false,
+      "islandGreen": false
+    }
+  ],
+  "TeeTypeTotalDistance": [
+    {
+      "TeeType": "Black",
+      "Enabled": true,
+      "Distance": 6236.49463,
+      "Position": null
+    },
+    {
+      "TeeType": "White",
+      "Enabled": true,
+      "Distance": 5224.729,
+      "Position": null
+    },
+    { "TeeType": "Green", "Enabled": true, "Distance": 0.0, "Position": null },
+    {
+      "TeeType": "Blue",
+      "Enabled": true,
+      "Distance": 5688.46045,
+      "Position": null
+    },
+    {
+      "TeeType": "Yellow",
+      "Enabled": true,
+      "Distance": 4606.28174,
+      "Position": null
+    },
+    {
+      "TeeType": "Red",
+      "Enabled": true,
+      "Distance": 3734.23218,
+      "Position": null
+    },
+    {
+      "TeeType": "Junior",
+      "Enabled": true,
+      "Distance": 2994.9458,
+      "Position": null
+    },
+    {
+      "TeeType": "Par3",
+      "Enabled": true,
+      "Distance": 2041.464,
+      "Position": null
+    }
+  ]
+}
