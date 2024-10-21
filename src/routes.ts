@@ -72,9 +72,15 @@ const routes = new Elysia()
         opcdVersion: courseChangeRequest.opcdInfo.opcdVersion,
         addedDate: courseChangeRequest.opcdInfo.addedDate,
         updatedDate: courseChangeRequest.opcdInfo.updatedDate,
-        sgtId: courseChangeRequest.sgtInfo.sgtId,
-        sgtSplashUrl: courseChangeRequest.sgtInfo.sgtSplashUrl,
-        sgtYoutubeUrl: courseChangeRequest.sgtInfo.sgtYoutubeUrl,
+        sgtId: courseChangeRequest.sgtInfo?.sgtId ?? courseFromDb.sgtId ?? "",
+        sgtSplashUrl:
+          courseChangeRequest.sgtInfo?.sgtSplashUrl ??
+          courseFromDb.sgtSplashUrl ??
+          "",
+        sgtYoutubeUrl:
+          courseChangeRequest.sgtInfo?.sgtYoutubeUrl ??
+          courseFromDb.sgtYoutubeUrl ??
+          "",
         par: courseChangeRequest.coursePar,
       };
       logger.info(
@@ -121,10 +127,10 @@ type UpdateFromFilesystemBody = {
   opcdName: string;
   gkdFileContents: CourseData;
   coursePar: number;
-  sgtInfo: {
-    sgtId: string;
-    sgtSplashUrl: string;
-    sgtYoutubeUrl: string;
+  sgtInfo?: {
+    sgtId?: string;
+    sgtSplashUrl?: string;
+    sgtYoutubeUrl?: string;
   };
   opcdInfo: {
     addedDate: string;
