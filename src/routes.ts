@@ -11,6 +11,7 @@ import { db } from "db/db";
 import { courses } from "db/schema";
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
+import logger from "logger";
 import { updateTeeBoxesFromCourseData } from "teebox-data";
 
 const routes = new Elysia()
@@ -24,14 +25,24 @@ const routes = new Elysia()
     message: `Hello, ${name}!`,
   }))
 
-  .get("/api/courses", () => db.query.courses.findMany())
+  .get("/api/courses", async () => {
+    const courses = await db.query.courses.findMany();
+    logger.info(`Getting ${courses.length} courses`);
+    return courses;
+  })
 
-  .get("/api/courses/:id", ({ params: { id } }) =>
-    db.query.courses.findFirst({
+  .get("/api/courses/:id", async ({ params: { id } }) => {
+    const course = await db.query.courses.findFirst({
       where: eq(courses.id, Number(id)),
       with: { gkData: true, teeBoxes: true, tags: true },
-    })
-  )
+    });
+    if (!course) {
+      logger.error(`Course not found ${id}`);
+      return { error: "Course not found" };
+    }
+    logger.info(`Getting course ${course.name}`);
+    return course;
+  })
 
   .post("/api/add-par-to-all-courses", async () => {
     const courseList = await db.query.courses.findMany();
@@ -66,6 +77,9 @@ const routes = new Elysia()
         sgtYoutubeUrl: courseChangeRequest.sgtInfo.sgtYoutubeUrl,
         par: courseChangeRequest.coursePar,
       };
+      logger.info(
+        `update-from-filesystem: Updating course ${courseFromDb.name}`
+      );
       await updateCourseFromCourseData(
         courseFromDb.id,
         courseChangeRequest.gkdFileContents
@@ -77,7 +91,7 @@ const routes = new Elysia()
       );
       return "success" + courseFromDb.name;
     } catch (e) {
-      console.error(e);
+      logger.error(`update-from-filesystem: Error updating course ${e}`);
       return "error";
     }
   })

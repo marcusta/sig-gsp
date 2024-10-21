@@ -19,6 +19,8 @@
     "@elysiajs/static": "^1.1.1",
     "better-sqlite3": "^11.4.0",
     "drizzle-orm": "^0.35.2",
-    "elysia": "^1.1.22"
+    "elysia": "^1.1.22",
+    "winston": "^3.15.0",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }
