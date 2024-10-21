@@ -55,7 +55,7 @@ const routes = new Elysia()
     };
   })
 
-  .post("/api/update-from-filesystem", async ({ body }) => {
+  .post("/api/update-from-filesystem", async ({ body, set }) => {
     const courseChangeRequest = body as UpdateFromFilesystemBody;
     try {
       let courseFromDb = await getCourseByName(courseChangeRequest.courseName);
@@ -95,12 +95,21 @@ const routes = new Elysia()
         courseFromDb.id,
         courseChangeRequest.gkdFileContents
       );
-      return "success" + courseFromDb.name;
+      let missingSgtInfo = "";
+      if (!courseChangeRequest.sgtInfo) {
+        missingSgtInfo = " !!! Missing sgt info";
+        logger.warn(
+          `update-from-filesystem: ${courseChangeRequest.courseName} Missing sgt info`
+        );
+      }
+
+      return "success" + courseFromDb.name + missingSgtInfo;
     } catch (e) {
       logger.error(
         `update-from-filesystem: ${courseChangeRequest.courseName} Error updating course ${e}`,
         e
       );
+      set.status = 500;
       return "error";
     }
   })
