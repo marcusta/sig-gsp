@@ -56,8 +56,8 @@ const routes = new Elysia()
   })
 
   .post("/api/update-from-filesystem", async ({ body }) => {
+    const courseChangeRequest = body as UpdateFromFilesystemBody;
     try {
-      const courseChangeRequest = body as UpdateFromFilesystemBody;
       let courseFromDb = await getCourseByName(courseChangeRequest.courseName);
       if (!courseFromDb) {
         console.log("course not found, creating new course");
@@ -91,7 +91,10 @@ const routes = new Elysia()
       );
       return "success" + courseFromDb.name;
     } catch (e) {
-      logger.error(`update-from-filesystem: Error updating course ${e}`);
+      logger.error(
+        `update-from-filesystem: ${courseChangeRequest.courseName} Error updating course ${e}`,
+        e
+      );
       return "error";
     }
   })
