@@ -82,7 +82,7 @@ const routes = new Elysia()
     }
   })
 
-  .get("/gspro-course-api/course-sync-list", async () => {
+  .get("/api/course-sync-list", async () => {
     const courses = await getCourses();
     const coursesToSync: {
       name: string | null;
