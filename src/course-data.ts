@@ -16,6 +16,10 @@ export async function getCourseByName(name: string): Promise<Course> {
   }))!;
 }
 
+export async function getCourses(): Promise<Course[]> {
+  return await db.query.courses.findMany();
+}
+
 export async function updateParOnCourses(
   courseList: Course[]
 ): Promise<[string[], string[]]> {

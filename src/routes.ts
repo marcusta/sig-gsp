@@ -1,6 +1,7 @@
 import {
   createCourseFromCourseData,
   getCourseByName,
+  getCourses,
   updateCourse,
   updateCourseFromCourseData,
   updateParOnCourses,
@@ -79,6 +80,22 @@ const routes = new Elysia()
       console.error(e);
       return "error";
     }
+  })
+
+  .get("/gspro-course-api/course-sync-list", async () => {
+    const courses = await getCourses();
+    const coursesToSync: {
+      name: string | null;
+      opcdName: string | null;
+      addedDate: string | null;
+      updatedDate: string | null;
+    }[] = courses.map((course) => ({
+      name: course.name,
+      opcdName: course.opcdName,
+      addedDate: course.addedDate,
+      updatedDate: course.updatedDate,
+    }));
+    return coursesToSync;
   });
 export default routes;
 
