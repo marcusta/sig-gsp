@@ -4,7 +4,8 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
-  base: process.env.NODE_ENV === "production" ? "/" : "/",
+  // Change this line to use /gsp/ in production
+  base: process.env.NODE_ENV === "production" ? "/gsp/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
