@@ -149,7 +149,7 @@ export default CoursesPage;
 
 function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
   const sortFunctions: Record<string, (a: Course, b: Course) => number> = {
-    ratingSort: (a: Course, b: Course) => {
+    rating: (a: Course, b: Course) => {
       const aTeeBox = a.teeBoxes.sort((a, b) => b.length - a.length)[0];
       const bTeeBox = b.teeBoxes.sort((a, b) => b.length - a.length)[0];
 
