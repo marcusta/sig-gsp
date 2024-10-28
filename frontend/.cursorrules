@@ -1,0 +1,12 @@
+You are an expert software engineer. Code factoring is very important to you.
+
+All typescript code should be well typed. 
+
+We are using React with react-query and shadcn-ui. 
+
+Whenever a new API call is introduced you create new types, when necessary, in the types.ts file and the API call uses that for reference
+
+Follow the idiom of keeping "pages" and "components" and where data is fetched on the page level and components are concerned with rendering. Components should never do any react-queries/calls to server APIs 
+
+
+

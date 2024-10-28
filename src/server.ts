@@ -6,8 +6,13 @@ const app = new Elysia()
   // Serve static files from the public directory
   .use(
     staticPlugin({
-      assets: "public",
-      prefix: "/public",
+      assets: "public/gsp",
+      alwaysStatic: true,
+      indexHTML: true,
+      prefix: "/",
+      noCache: true,
+      directive: "no-cache",
+      maxAge: 0,
     })
   )
   // Apply routes

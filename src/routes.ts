@@ -26,7 +26,9 @@ const routes = new Elysia()
   }))
 
   .get("/api/courses", async () => {
-    const courses = await db.query.courses.findMany();
+    const courses = await db.query.courses.findMany({
+      with: { teeBoxes: true, tags: true },
+    });
     logger.info(`Getting ${courses.length} courses`);
     return courses;
   })
@@ -41,7 +43,10 @@ const routes = new Elysia()
       return { error: "Course not found" };
     }
     logger.info(`Getting course ${course.name}`);
-    return course;
+    return {
+      ...course,
+      gkData: course.gkData?.gkData,
+    };
   })
 
   .post("/api/add-par-to-all-courses", async () => {
