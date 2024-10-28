@@ -9,7 +9,7 @@ const app = new Elysia()
       assets: "public/gsp",
       alwaysStatic: true,
       indexHTML: true,
-      prefix: "/",
+      prefix: "/gsp",
       noCache: true,
       directive: "no-cache",
       maxAge: 0,
