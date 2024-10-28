@@ -6,7 +6,8 @@ import type {
 } from "@/types";
 import axios from "axios";
 
-const api = axios.create({ baseURL: `${window.location.origin}/api` });
+const basePath = import.meta.env.PROD ? "/gsp/" : "/";
+const api = axios.create({ baseURL: `${basePath}api` });
 
 export const fetchCourseData = () =>
   api.get<CourseData>("/courses/10/gkd").then((res) => res.data);
