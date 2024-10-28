@@ -40,6 +40,7 @@ const CoursesPage: React.FC = () => {
   } = useQuery({
     queryKey: ["courses"],
     queryFn: fetchCourses,
+    staleTime: 5 * 60 * 1000,
   });
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
