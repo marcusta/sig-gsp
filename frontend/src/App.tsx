@@ -16,7 +16,12 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   const basePath = import.meta.env.PROD ? "/gsp/" : "/";
-  console.log("app: ", basePath, "PROD: ", import.meta.env.PROD);
+  console.log(
+    "app: basePath: ",
+    basePath,
+    " import.meta.env.PROD: ",
+    import.meta.env.PROD
+  );
   return (
     <QueryClientProvider client={queryClient}>
       <Router basename={basePath}>
