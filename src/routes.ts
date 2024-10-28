@@ -11,6 +11,7 @@ import { db } from "db/db";
 import { courses } from "db/schema";
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
+import { readFile } from "fs/promises";
 import logger from "logger";
 import { updateTeeBoxesFromCourseData } from "teebox-data";
 
@@ -128,6 +129,34 @@ const routes = new Elysia()
       updatedDate: course.updatedDate,
     }));
     return coursesToSync;
+  })
+
+  .get("/assets/*", async ({ path, set }) => {
+    try {
+      const filePath = `./public/gsp${path}`;
+      const file = await readFile(filePath);
+      // Set appropriate content-type based on file extension
+      const ext = path.split(".").pop();
+      if (ext === "css") set.headers["Content-Type"] = "text/css";
+      if (ext === "js") set.headers["Content-Type"] = "application/javascript";
+      return file;
+    } catch (e) {
+      set.status = 404;
+      return { error: "Asset not found" };
+    }
+  })
+
+  // Catch-all route to serve index.html
+  .all("*", async ({ set }) => {
+    try {
+      const html = await readFile("./public/gsp/index.html");
+      set.headers["Content-Type"] = "text/html";
+      return html;
+    } catch (e) {
+      set.status = 500;
+      logger.error("Could not load index.html", e);
+      return { error: "Could not load index.html" };
+    }
   });
 export default routes;
 
