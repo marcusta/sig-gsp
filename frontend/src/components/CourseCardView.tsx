@@ -54,8 +54,8 @@ const CourseCardView: React.FC<CardViewProps> = ({ courses }) => {
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
-              {course.tees &&
-                course.tees
+              {course.teeBoxes &&
+                course.teeBoxes
                   .sort((a, b) => b.length - a.length)
                   .filter(
                     (tee, index, self) =>

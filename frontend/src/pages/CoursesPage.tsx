@@ -54,59 +54,8 @@ const CoursesPage: React.FC = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
-  const sortCourses = (coursesList: Course[]) => {
-    return [...coursesList].sort((a, b) => {
-      const multiplier = sortOrder === "asc" ? 1 : -1;
-      switch (sortOption) {
-        case "updatedDate":
-          return (
-            multiplier *
-            (new Date(a.updatedDate).getTime() -
-              new Date(b.updatedDate).getTime())
-          );
-        case "longestTee":
-          return (
-            multiplier *
-            (Math.max(...a.tees.map((t: TeeBox) => t.length)) -
-              Math.max(...b.tees.map((t: TeeBox) => t.length)))
-          );
-        case "par3Tee":
-          const aPar3 =
-            a.tees.find((t: TeeBox) => t.name === "Par3")?.length ||
-            Math.max(...a.tees.map((t: TeeBox) => t.length));
-          const bPar3 =
-            b.tees.find((t: TeeBox) => t.name === "Par3")?.length ||
-            Math.max(...b.tees.map((t: TeeBox) => t.length));
-          return multiplier * (aPar3 - bPar3);
-        case "altitude":
-          return multiplier * (a.altitude - b.altitude);
-        case "difficulty":
-          const aGrade = gradeTeeBox(a.tees[0], a.altitude, a.par); // Grading the longest teebox
-          const bGrade = gradeTeeBox(b.tees[0], b.altitude, b.par);
-          return multiplier * (aGrade - bGrade);
-        case "rating":
-          const aTeeBox = a.tees.sort((a, b) => b.length - a.length)[0];
-          const bTeeBox = b.tees.sort((a, b) => b.length - a.length)[0];
-
-          // Check for invalid rating or slope for aTeeBox and set default values if broken
-          const aRating =
-            aTeeBox.rating > 160 || aTeeBox.slope > 83
-              ? 90 + 30 // default values for broken data
-              : aTeeBox.rating + aTeeBox.slope;
-
-          // Check for invalid rating or slope for bTeeBox and set default values if broken
-          const bRating =
-            bTeeBox.rating > 160 || bTeeBox.slope > 83
-              ? 90 + 30 // default values for broken data
-              : bTeeBox.rating + bTeeBox.slope;
-
-          return multiplier * (aRating - bRating);
-
-        case "alphabetical":
-        default:
-          return multiplier * a.name.localeCompare(b.name);
-      }
-    });
+  const handleAdvancedFilterChange = (newFilters: AdvancedFilters) => {
+    setAdvancedFilters(newFilters);
   };
 
   const filteredCourses = courses?.filter((course) => {
@@ -134,11 +83,13 @@ const CoursesPage: React.FC = () => {
     return textFilter && advancedFilter;
   });
 
+  const sortedCourses = sortCourses(
+    filteredCourses || [],
+    sortOption,
+    sortOrder
+  );
+
   console.log("filteredCourses", filteredCourses);
-  const sortedCourses = sortCourses(filteredCourses || []);
-  const handleAdvancedFilterChange = (newFilters: AdvancedFilters) => {
-    setAdvancedFilters(newFilters);
-  };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading courses</div>;
@@ -194,3 +145,62 @@ const CoursesPage: React.FC = () => {
 };
 
 export default CoursesPage;
+
+function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
+  const sortFunctions: Record<string, (a: Course, b: Course) => number> = {
+    ratingSort: (a: Course, b: Course) => {
+      const aTeeBox = a.teeBoxes.sort((a, b) => b.length - a.length)[0];
+      const bTeeBox = b.teeBoxes.sort((a, b) => b.length - a.length)[0];
+
+      // Check for invalid rating or slope for aTeeBox and set default values if broken
+      const aRating =
+        aTeeBox.rating > 160 || aTeeBox.slope > 83
+          ? 90 + 30 // default values for broken data
+          : aTeeBox.rating + aTeeBox.slope;
+
+      // Check for invalid rating or slope for bTeeBox and set default values if broken
+      const bRating =
+        bTeeBox.rating > 160 || bTeeBox.slope > 83
+          ? 90 + 30 // default values for broken data
+          : bTeeBox.rating + bTeeBox.slope;
+
+      return aRating - bRating;
+    },
+    updatedDate: (a: Course, b: Course) => {
+      return (
+        new Date(a.updatedDate).getTime() - new Date(b.updatedDate).getTime()
+      );
+    },
+    longestTee: (a: Course, b: Course) => {
+      return (
+        Math.max(...a.teeBoxes.map((t: TeeBox) => t.length)) -
+        Math.max(...b.teeBoxes.map((t: TeeBox) => t.length))
+      );
+    },
+    par3Tee: (a: Course, b: Course) => {
+      const aPar3 =
+        a.teeBoxes.find((t: TeeBox) => t.name === "Par3")?.length ||
+        Math.max(...a.teeBoxes.map((t: TeeBox) => t.length));
+      const bPar3 =
+        b.teeBoxes.find((t: TeeBox) => t.name === "Par3")?.length ||
+        Math.max(...b.teeBoxes.map((t: TeeBox) => t.length));
+      return aPar3 - bPar3;
+    },
+    altitude: (a: Course, b: Course) => {
+      return a.altitude - b.altitude;
+    },
+    difficulty: (a: Course, b: Course) => {
+      const aGrade = gradeTeeBox(a.teeBoxes[0], a.altitude, a.par); // Grading the longest teebox
+      const bGrade = gradeTeeBox(b.teeBoxes[0], b.altitude, b.par);
+      return aGrade - bGrade;
+    },
+    alphabetical: (a: Course, b: Course) => {
+      return a.name.localeCompare(b.name);
+    },
+  };
+
+  const sortFunc = sortFunctions[sortOption];
+  const multiplier = sortOrder === "asc" ? 1 : -1;
+  const fixAscDesc = (a: Course, b: Course) => sortFunc(a, b) * multiplier;
+  return [...courses].sort(fixAscDesc);
+}
