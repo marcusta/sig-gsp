@@ -16,13 +16,8 @@ import { updateTeeBoxesFromCourseData } from "teebox-data";
 
 const routes = new Elysia()
   // Home route
-  .get("/", () => ({
+  .get("/gsp-welcome", () => ({
     message: "Welcome to the Bun server with Elysia!",
-  }))
-
-  // Example route with a parameter
-  .get("/hello/:name", ({ params: { name } }) => ({
-    message: `Hello, ${name}!`,
   }))
 
   .get("/api/courses", async () => {
