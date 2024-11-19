@@ -48,7 +48,10 @@ const CourseCardView: React.FC<CardViewProps> = ({ courses }) => {
             <p className="text-sm italic text-muted-foreground">
               {course.location} by <b>{course.designer}</b>
               <br />
-              {course.holes} holes par {course.par} at {course.altitude} ft
+              {course.isPar3
+                ? `${course.holes} par 3 holes`
+                : `${course.holes} holes par ${course.par}`}{" "}
+              at {course.altitude} ft
               <br />
             </p>
           </CardHeader>

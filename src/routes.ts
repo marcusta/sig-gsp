@@ -83,6 +83,10 @@ const routes = new Elysia()
           courseFromDb.sgtYoutubeUrl ??
           "",
         par: courseChangeRequest.coursePar,
+        isPar3:
+          courseFromDb.holes === 0
+            ? false
+            : courseChangeRequest.coursePar / courseFromDb.holes === 3,
       };
       logger.info(
         `update-from-filesystem: Updating course ${courseFromDb.name}`

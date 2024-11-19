@@ -30,6 +30,10 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
     setLocalFilters((prev) => ({ ...prev, onlyEighteenHoles: checked }));
   };
 
+  const handlePar3SwitchChange = (checked: boolean) => {
+    setLocalFilters((prev) => ({ ...prev, isPar3: checked }));
+  };
+
   const handleApply = () => {
     onFilterChange(localFilters);
   };
@@ -46,6 +50,7 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
       difficulty: [0, 20],
       par: [MIN_PAR, MAX_PAR],
       onlyEighteenHoles: false,
+      isPar3: undefined,
     };
     setLocalFilters(clearedFilters);
     onFilterChange(clearedFilters);
@@ -123,6 +128,14 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
               onCheckedChange={handleSwitchChange}
             />
             <Label htmlFor="only-eighteen-holes">Only 18-hole courses</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="is-par3"
+              checked={localFilters.isPar3}
+              onCheckedChange={handlePar3SwitchChange}
+            />
+            <Label htmlFor="is-par3">Only Par 3 courses</Label>
           </div>
         </div>
         <div className="flex justify-between">

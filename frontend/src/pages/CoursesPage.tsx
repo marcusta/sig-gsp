@@ -20,6 +20,7 @@ const CoursesPage: React.FC = () => {
     difficulty: [0, 20],
     par: [MIN_PAR, MAX_PAR],
     onlyEighteenHoles: false,
+    isPar3: undefined,
   });
 
   const [sortOption, setSortOption] = useState<
@@ -79,7 +80,9 @@ const CoursesPage: React.FC = () => {
       course.grade <= advancedFilters.difficulty[1] &&
       course.par >= advancedFilters.par[0] &&
       course.par <= advancedFilters.par[1] &&
-      (!advancedFilters.onlyEighteenHoles || course.holes === 18);
+      (!advancedFilters.onlyEighteenHoles || course.holes === 18) &&
+      (advancedFilters.isPar3 === undefined ||
+        course.isPar3 === advancedFilters.isPar3);
 
     return textFilter && advancedFilter;
   });

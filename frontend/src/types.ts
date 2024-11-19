@@ -129,6 +129,7 @@ export interface NewCourse {
   sgtId: string;
   sgtSplashUrl: string;
   sgtYoutubeUrl: string;
+  isPar3: boolean;
 }
 
 export interface CourseWithData extends Course {
@@ -157,4 +158,5 @@ export interface AdvancedFilters {
   difficulty: [number, number];
   par: [number, number];
   onlyEighteenHoles: boolean;
+  isPar3: boolean | undefined;
 }

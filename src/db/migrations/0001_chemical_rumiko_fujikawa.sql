@@ -1,0 +1,1 @@
+ALTER TABLE `courses` ADD `is_par_3` integer DEFAULT 0;

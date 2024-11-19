@@ -41,7 +41,15 @@ export async function updateParOnCourses(
       0
     );
     course.par = par ?? null;
-    await db.update(courses).set({ par }).where(eq(courses.id, course.id));
+    course.isPar3 =
+      course.holes === 0 || !course.par
+        ? false
+        : course.par / course.holes === 3;
+    console.log(course.name, "course is par3: ", course.isPar3);
+    await db
+      .update(courses)
+      .set({ par, isPar3: course.isPar3 })
+      .where(eq(courses.id, course.id));
     successCourses.push(course.name);
   }
   return [failedCourses, successCourses];

@@ -30,6 +30,7 @@ export const courses = sqliteTable("courses", {
   sgtSplashUrl: text("sgt_splash_url").default(""),
   sgtYoutubeUrl: text("sgt_youtube_url").default(""),
   par: integer("par").default(72),
+  isPar3: integer("is_par_3", { mode: "boolean" }).default(false),
 });
 
 export type NewCourse = typeof courses.$inferInsert;
