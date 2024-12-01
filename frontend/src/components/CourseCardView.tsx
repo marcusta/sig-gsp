@@ -52,6 +52,11 @@ const CourseCardView: React.FC<CardViewProps> = ({ courses }) => {
                 ? `${course.holes} par 3 holes`
                 : `${course.holes} holes par ${course.par}`}{" "}
               at {course.altitude} ft
+              {course.opcdVersion && (
+                <span className="text-xs text-muted-foreground">
+                  , OPCD version {course.opcdVersion}
+                </span>
+              )}
               <br />
             </p>
           </CardHeader>
