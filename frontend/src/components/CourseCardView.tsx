@@ -54,7 +54,7 @@ const CourseCardView: React.FC<CardViewProps> = ({ courses }) => {
               at {course.altitude} ft
               {course.opcdVersion && (
                 <span className="text-xs text-muted-foreground">
-                  , OPCD version {course.opcdVersion}
+                  , {course.opcdVersion}
                 </span>
               )}
               <br />
