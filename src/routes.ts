@@ -22,11 +22,11 @@ const routes = new Elysia()
   }))
 
   .get("/api/courses", async () => {
-    const courses = await db.query.courses.findMany({
+    const courseList = await db.query.courses.findMany({
       with: { teeBoxes: true, tags: true },
     });
-    logger.info(`Getting ${courses.length} courses`);
-    return courses;
+    const result = courseList.filter((course) => course.sgtId !== "");
+    return result;
   })
 
   .get("/api/courses/:id", async ({ params: { id } }) => {
