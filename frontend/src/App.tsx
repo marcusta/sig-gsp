@@ -11,6 +11,7 @@ import Layout from "./components/Layout";
 import FormView from "./components/FormView";
 import CoursePage from "./pages/CoursePage"; // Import CoursePage
 import CoursesPage from "./pages/CoursesPage";
+import { UnitProvider } from "@/contexts/UnitContext";
 
 const queryClient = new QueryClient();
 
@@ -23,19 +24,21 @@ const App: React.FC = () => {
     import.meta.env.PROD
   );
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router basename={basePath}>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/courses" replace />} />
-            <Route path="courses" element={<CoursesPage />} />
-            <Route path="course/:courseId" element={<CoursePage />} />
-            <Route path="form" element={<FormView />} />
-          </Route>
-        </Routes>
-      </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <UnitProvider>
+      <QueryClientProvider client={queryClient}>
+        <Router basename={basePath}>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Navigate to="/courses" replace />} />
+              <Route path="courses" element={<CoursesPage />} />
+              <Route path="course/:courseId" element={<CoursePage />} />
+              <Route path="form" element={<FormView />} />
+            </Route>
+          </Routes>
+        </Router>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </UnitProvider>
   );
 };
 

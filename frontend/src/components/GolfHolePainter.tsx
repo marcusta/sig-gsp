@@ -8,6 +8,7 @@ import {
   getPin,
   getTee,
 } from "./course-data";
+import { useUnits } from "@/contexts/UnitContext";
 
 interface GolfCourseProps {
   courseData: CourseData;
@@ -23,6 +24,7 @@ const GolfHolePainter: React.FC<GolfCourseProps> = ({
   selectedPinDay,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const { unitSystem } = useUnits();
 
   useEffect(() => {
     if (!courseData) return;
@@ -54,7 +56,8 @@ const GolfHolePainter: React.FC<GolfCourseProps> = ({
         aimPoint2,
         greenCenterPoint,
         altitudeEffect,
-        hazards
+        hazards,
+        unitSystem === "metric"
       );
 
       // Clear existing content
@@ -72,7 +75,13 @@ const GolfHolePainter: React.FC<GolfCourseProps> = ({
         svgRef.current!.setAttribute(attr.name, attr.value);
       });
     }
-  }, [courseData, selectedHoleNumber, selectedTeeType, selectedPinDay]);
+  }, [
+    courseData,
+    selectedHoleNumber,
+    selectedTeeType,
+    selectedPinDay,
+    unitSystem,
+  ]);
 
   return (
     <div
@@ -82,8 +91,9 @@ const GolfHolePainter: React.FC<GolfCourseProps> = ({
         position: "relative",
         top: "-50px",
       }}
+      className="bg-slate-800/50 rounded-lg p-4"
     >
-      <svg ref={svgRef} />
+      <svg ref={svgRef} className="text-slate-200" />
     </div>
   );
 };

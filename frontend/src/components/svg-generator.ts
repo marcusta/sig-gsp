@@ -1,3 +1,9 @@
+import {
+  convertAltitude,
+  convertDistance,
+  getAltitudeUnit,
+  getDistanceUnit,
+} from "@/contexts/UnitContext";
 import type { Hazard, Pin, Position, Tee } from "@/types";
 import { calculatePlaysAsDistanceByEffect, distance3D } from "./course-data";
 
@@ -8,7 +14,8 @@ export function generateSVG(
   aimPoint2: Tee | null,
   greenCenterPoint: Tee | null,
   altitudeEffect: number,
-  hazards: Hazard[]
+  hazards: Hazard[],
+  isMetric: boolean
 ): SVGSVGElement {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
@@ -87,7 +94,8 @@ export function generateSVG(
     transformZ,
     altitudeEffect,
     scale,
-    rotation
+    rotation,
+    isMetric
   );
   drawGreenArea(mainGroup, greenCenterPoint, transformX, transformZ);
 
@@ -190,7 +198,8 @@ function drawPath(
   transformZ: (z: number) => number,
   altitudeEffect: number,
   scale: number,
-  rotation: number
+  rotation: number,
+  isMetric: boolean
 ): void {
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   let pathData = `M ${transformX(selectedTee.Position!.x)} ${transformZ(
@@ -208,7 +217,8 @@ function drawPath(
       transformZ,
       altitudeEffect,
       scale,
-      rotation
+      rotation,
+      isMetric
     );
     pathData += ` L ${transformX(aimPoint1.Position.x)} ${transformZ(
       aimPoint1.Position.z
@@ -224,7 +234,8 @@ function drawPath(
       transformZ,
       altitudeEffect,
       scale,
-      rotation
+      rotation,
+      isMetric
     );
     pathData += ` L ${transformX(aimPoint2.Position.x)} ${transformZ(
       aimPoint2.Position.z
@@ -239,7 +250,8 @@ function drawPath(
     transformZ,
     altitudeEffect,
     scale,
-    rotation
+    rotation,
+    isMetric
   );
   pathData += ` L ${transformX(selectedPin.Position.x)} ${transformZ(
     selectedPin.Position.z
@@ -262,7 +274,8 @@ function drawLineWithDistance(
   transformZ: (z: number) => number,
   altitudeEffect: number,
   scale: number,
-  rotation: number
+  rotation: number,
+  isMetric: boolean
 ): Position {
   const dist = distance3D(point1, point2);
   const elevationChange = point2.y - point1.y;
@@ -282,16 +295,27 @@ function drawLineWithDistance(
 
   const rotatedMid = rotatePoint(midX, midY, rotation, 400, 300);
 
-  const elevationText =
-    elevationChange > 0
-      ? `+${elevationChange.toFixed(1)}m`
-      : `${elevationChange.toFixed(1)}m`;
+  const distanceValue = isMetric ? dist : convertDistance(dist, "imperial");
+  const playsAsValue = isMetric
+    ? playsAsDistance
+    : convertDistance(playsAsDistance, "imperial");
+  const elevationValue = isMetric
+    ? elevationChange
+    : convertAltitude(elevationChange, "imperial");
+  const distUnit = getDistanceUnit(isMetric ? "metric" : "imperial");
+  const altUnit = getAltitudeUnit(isMetric ? "metric" : "imperial");
+
+  const elevationText = `${
+    elevationValue > 0 ? "+" : ""
+  }${elevationValue.toFixed(1)}${altUnit}`;
 
   const tspan1 = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "tspan"
   );
-  tspan1.textContent = `${label}${dist.toFixed(0)}m (${elevationText})`;
+  tspan1.textContent = `${label}${distanceValue.toFixed(
+    0
+  )}${distUnit} (${elevationText})`;
   tspan1.setAttribute("x", rotatedMid.x.toString());
   tspan1.setAttribute("dy", "0em");
 
@@ -299,7 +323,7 @@ function drawLineWithDistance(
     "http://www.w3.org/2000/svg",
     "tspan"
   );
-  tspan2.textContent = `Plays as: ${playsAsDistance.toFixed(0)}m`;
+  tspan2.textContent = `Plays as: ${playsAsValue.toFixed(0)}${distUnit}`;
   tspan2.setAttribute("x", rotatedMid.x.toString());
   tspan2.setAttribute("dy", "1.2em");
 
@@ -309,7 +333,7 @@ function drawLineWithDistance(
   text.setAttribute("font-size", Math.max(10, 12 / scale).toString());
   text.setAttribute("text-anchor", "middle");
   text.setAttribute("dominant-baseline", "middle");
-  text.setAttribute("fill", "#000000");
+  text.setAttribute("fill", "#aaa");
   text.appendChild(tspan1);
   text.appendChild(tspan2);
 

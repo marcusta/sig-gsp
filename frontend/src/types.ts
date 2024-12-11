@@ -127,7 +127,7 @@ export interface NewCourse {
   opcdName: string;
   opcdVersion: string;
   sgtId: string;
-  sgtSplashUrl: string;
+  sgtSplashUrl: string | null;
   sgtYoutubeUrl: string;
   isPar3: boolean;
 }

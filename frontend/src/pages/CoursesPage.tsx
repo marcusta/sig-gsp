@@ -99,41 +99,49 @@ const CoursesPage: React.FC = () => {
   if (error) return <div>Error loading courses</div>;
 
   return (
-    <div>
-      <div className="flex mb-4">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Golf Courses</h1>
+          <p className="text-slate-400">
+            {filteredCourses?.length || 0} courses available
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          className="text-white"
+          onClick={() => setShowAdvancedFilter(true)}
+        >
+          <FilterIcon className="mr-2 h-4 w-4" />
+          Filters
+        </Button>
+      </div>
+
+      <div className="flex gap-4">
         <input
           type="text"
           placeholder="Filter courses"
           value={filterText}
           onChange={handleFilterChange}
-          className="p-2 border border-gray-300 rounded mr-2 flex-grow"
+          className="flex-grow p-2 border border-gray-300 rounded bg-background text-foreground"
         />
-        <Button
-          onClick={() => setShowAdvancedFilter(true)}
-          className="flex items-center"
+        <select
+          id="sortOption"
+          value={sortOption}
+          onChange={handleSortChange}
+          className="p-2 border rounded bg-background text-foreground"
         >
-          <FilterIcon className="mr-2" />
-          Advanced Filter
+          <option value="alphabetical">Alphabetical</option>
+          <option value="updatedDate">Last Update Time</option>
+          <option value="longestTee">Longest Tee Length</option>
+          <option value="par3Tee">Par 3 Tee Length</option>
+          <option value="altitude">Altitude</option>
+          <option value="difficulty">Difficulty</option>
+          <option value="rating">Rating</option>
+        </select>
+        <Button onClick={handleSortOrderChange}>
+          {sortOrder === "asc" ? "Asc" : "Desc"}
         </Button>
-        <div className="flex items-center">
-          <select
-            id="sortOption"
-            value={sortOption}
-            onChange={handleSortChange}
-            className="ml-2 p-2 border rounded"
-          >
-            <option value="alphabetical">Alphabetical</option>
-            <option value="updatedDate">Last Update Time</option>
-            <option value="longestTee">Longest Tee Length</option>
-            <option value="par3Tee">Par 3 Tee Length</option>
-            <option value="altitude">Altitude</option>
-            <option value="difficulty">Difficulty</option>
-            <option value="rating">Rating</option>
-          </select>
-          <Button onClick={handleSortOrderChange} className="ml-2">
-            {sortOrder === "asc" ? "Asc" : "Desc"}
-          </Button>
-        </div>
       </div>
 
       <CourseCardView courses={sortedCourses || []} />
