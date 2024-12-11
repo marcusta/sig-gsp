@@ -35,6 +35,19 @@ const getTextColor = (teeName: string): string => {
 export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
   const { unitSystem } = useUnits();
 
+  if (!data.teeBoxes.length) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-card text-card-foreground rounded-lg p-6">
+          <p>No scorecard data available</p>
+          <Button onClick={onClose}>Close</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const numberOfHoles = data.teeBoxes[0].holes.length;
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-card text-card-foreground rounded-lg p-6 max-w-[90vw] max-h-[90vh] overflow-auto relative shadow-lg">
@@ -79,35 +92,37 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
               </tr>
             </thead>
             <tbody>
-              {Array.from({ length: 18 }, (_, i) => i + 1).map((holeNumber) => (
-                <tr
-                  key={holeNumber}
-                  className={holeNumber % 2 === 0 ? "bg-muted/50" : ""}
-                >
-                  <td className="border border-border px-3 py-2 text-center font-medium">
-                    {holeNumber}
-                  </td>
-                  <td className="border border-border px-3 py-2 text-center">
-                    {data.teeBoxes[0].holes[holeNumber - 1].par}
-                  </td>
-                  <td className="border border-border px-3 py-2 text-center">
-                    {data.teeBoxes[0].holes[holeNumber - 1].index}
-                  </td>
-                  {data.teeBoxes.map((tee) => (
-                    <td
-                      key={tee.name}
-                      className={`border border-border px-3 py-2 text-center ${getTeeColor(
-                        tee.name
-                      )} ${getTextColor(tee.name)}`}
-                    >
-                      {convertDistance(
-                        tee.holes[holeNumber - 1].length,
-                        unitSystem
-                      ).toFixed(0)}
+              {Array.from({ length: numberOfHoles }, (_, i) => i + 1).map(
+                (holeNumber) => (
+                  <tr
+                    key={holeNumber}
+                    className={holeNumber % 2 === 0 ? "bg-muted/50" : ""}
+                  >
+                    <td className="border border-border px-3 py-2 text-center font-medium">
+                      {holeNumber}
                     </td>
-                  ))}
-                </tr>
-              ))}
+                    <td className="border border-border px-3 py-2 text-center">
+                      {data.teeBoxes[0].holes[holeNumber - 1].par}
+                    </td>
+                    <td className="border border-border px-3 py-2 text-center">
+                      {data.teeBoxes[0].holes[holeNumber - 1].index}
+                    </td>
+                    {data.teeBoxes.map((tee) => (
+                      <td
+                        key={tee.name}
+                        className={`border border-border px-3 py-2 text-center ${getTeeColor(
+                          tee.name
+                        )} ${getTextColor(tee.name)}`}
+                      >
+                        {convertDistance(
+                          tee.holes[holeNumber - 1].length,
+                          unitSystem
+                        ).toFixed(0)}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              )}
               <tr className="font-bold">
                 <td className="border border-border px-3 py-2 text-center bg-muted">
                   Total
