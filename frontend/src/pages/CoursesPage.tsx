@@ -136,8 +136,7 @@ const CoursesPage: React.FC = () => {
           <option value="longestTee">Longest Tee Length</option>
           <option value="par3Tee">Par 3 Tee Length</option>
           <option value="altitude">Altitude</option>
-          <option value="difficulty">Difficulty</option>
-          <option value="rating">Rating</option>
+          <option value="rating">Course Rating</option>
         </select>
         <Button onClick={handleSortOrderChange}>
           {sortOrder === "asc" ? "Asc" : "Desc"}

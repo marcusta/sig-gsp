@@ -94,20 +94,6 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
             </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="col-span-4">Difficulty</Label>
-            <RangeSlider
-              className="col-span-3"
-              min={0}
-              max={20}
-              step={1}
-              value={localFilters.difficulty}
-              onValueChange={(value) => handleSliderChange("difficulty", value)}
-            />
-            <div className="col-span-1 text-right">
-              {localFilters.difficulty[0]} - {localFilters.difficulty[1]}
-            </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="col-span-4">Par</Label>
             <RangeSlider
               className="col-span-3"

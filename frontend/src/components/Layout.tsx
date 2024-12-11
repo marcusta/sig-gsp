@@ -13,7 +13,7 @@ const Layout: React.FC = () => {
         <div className="container mx-auto px-4 py-6">
           <nav className="flex justify-between items-center">
             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200 tracking-tight">
-              GSPro Courses
+              GSPro Courses delivered by SGT
             </h1>
             <ul className="flex items-center space-x-6">
               <li className="flex items-center space-x-2">

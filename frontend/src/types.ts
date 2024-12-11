@@ -160,3 +160,26 @@ export interface AdvancedFilters {
   onlyEighteenHoles: boolean;
   isPar3: boolean | undefined;
 }
+
+export interface TeeBoxHole {
+  number: number;
+  par: number;
+  index: number;
+  length: number;
+}
+
+export interface TeeBoxData {
+  name: string;
+  slope: number;
+  rating: number;
+  totalLength: number;
+  totalPar: number;
+  holes: TeeBoxHole[];
+}
+
+export interface ScoreCardData {
+  courseName: string;
+  location: string;
+  altitude: number;
+  teeBoxes: TeeBoxData[];
+}
