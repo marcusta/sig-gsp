@@ -16,6 +16,7 @@ import { Button } from "./ui/button";
 import { ScoreCard } from "./ScoreCard";
 import { useQuery } from "@tanstack/react-query";
 import { YouTubeEmbed } from "./YouTubeEmbed";
+import { fetchCourseById } from "@/api/useApi";
 
 interface CardViewProps {
   courses: Course[];
@@ -89,13 +90,9 @@ const CourseCard: React.FC<{ course: Course; onClick: () => void }> = ({
   const [showScoreCard, setShowScoreCard] = useState(false);
   const [showYouTube, setShowYouTube] = useState(false);
 
-  const { data: courseData } = useQuery({
+  const { data: courseData } = useQuery<CourseWithData>({
     queryKey: ["course", course.id],
-    queryFn: async () => {
-      const response = await fetch(`/api/courses/${course.id}`);
-      if (!response.ok) throw new Error("Failed to fetch course data");
-      return response.json() as Promise<CourseWithData>;
-    },
+    queryFn: () => fetchCourseById(course.id),
     enabled: showScoreCard,
   });
 
