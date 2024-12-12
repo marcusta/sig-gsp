@@ -25,7 +25,14 @@ const routes = new Elysia()
     const courseList = await db.query.courses.findMany({
       with: { teeBoxes: true, tags: true },
     });
-    const result = courseList.filter((course) => course.sgtId !== "");
+    const result = [];
+    for (const course of courseList) {
+      if (course.sgtId !== "") {
+        result.push(course);
+      } else {
+        logger.debug(`Skipping course ${course.name} as it has no sgtId`);
+      }
+    }
     return result;
   })
 
