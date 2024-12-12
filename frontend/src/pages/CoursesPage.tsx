@@ -70,6 +70,7 @@ const CoursesPage: React.FC = () => {
       course.designer.toLowerCase().includes(filterText.toLowerCase());
 
     if (!course.teeBoxes || course.teeBoxes.length === 0) {
+      console.log("Course filtered due to missing teeBoxes:", course.name);
       return false;
     }
 
@@ -86,8 +87,41 @@ const CoursesPage: React.FC = () => {
       (advancedFilters.isPar3 === undefined ||
         course.isPar3 === advancedFilters.isPar3);
 
+    if (!advancedFilter) {
+      console.log("Course filtered by advanced filters:", course.name, {
+        teeboxLength: course.teeBoxes[0].length,
+        altitude: course.altitude,
+        grade: course.grade,
+        par: course.par,
+        holes: course.holes,
+        isPar3: course.isPar3,
+      });
+    }
+
     return textFilter && advancedFilter;
   });
+
+  if (courses && filteredCourses) {
+    const missingCourses = courses.filter(
+      (course) => !filteredCourses.some((fc) => fc.name === course.name)
+    );
+
+    if (missingCourses.length > 0) {
+      console.log("Courses filtered out:", missingCourses.length);
+      console.table(
+        missingCourses.map((course) => ({
+          name: course.name,
+          hasTeeBoxes: course.teeBoxes?.length > 0,
+          firstTeeLength: course.teeBoxes?.[0]?.length,
+          altitude: course.altitude,
+          grade: course.grade,
+          par: course.par,
+          holes: course.holes,
+          isPar3: course.isPar3,
+        }))
+      );
+    }
+  }
 
   const sortedCourses = sortCourses(
     filteredCourses || [],
