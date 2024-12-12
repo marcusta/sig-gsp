@@ -44,6 +44,8 @@ const CoursesPage: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  console.log("full courses", courses);
+
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value);
   };
@@ -93,7 +95,7 @@ const CoursesPage: React.FC = () => {
     sortOrder
   );
 
-  // console.log("filteredCourses", filteredCourses);
+  console.log("sortedCourses", sortedCourses);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading courses</div>;
