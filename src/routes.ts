@@ -26,6 +26,7 @@ const routes = new Elysia()
       with: { teeBoxes: true, tags: true },
     });
     const result = [];
+    console.log("getting courseList", courseList.length);
     for (const course of courseList) {
       if (course.sgtId !== "") {
         result.push(course);
@@ -33,6 +34,7 @@ const routes = new Elysia()
         logger.debug(`Skipping course ${course.name} as it has no sgtId`);
       }
     }
+    console.log("returning courseList", result.length);
     return result;
   })
 
