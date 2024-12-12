@@ -63,6 +63,7 @@ const routes = new Elysia()
       if (!courseFromDb) {
         console.log("course not found, creating new course");
         courseFromDb = await createCourseFromCourseData(
+          courseChangeRequest.courseName,
           courseChangeRequest.gkdFileContents
         );
       }

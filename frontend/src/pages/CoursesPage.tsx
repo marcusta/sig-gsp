@@ -93,7 +93,7 @@ const CoursesPage: React.FC = () => {
     sortOrder
   );
 
-  console.log("filteredCourses", filteredCourses);
+  // console.log("filteredCourses", filteredCourses);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading courses</div>;

@@ -60,10 +60,11 @@ export async function insertCourse(course: NewCourse): Promise<Course> {
 }
 
 export async function createCourseFromCourseData(
+  courseName: string,
   courseData: CourseData
 ): Promise<Course> {
   const newCourse: NewCourse = {
-    name: courseData.CourseName,
+    name: courseName,
     location: courseData.Location || "-",
     holes: courseData.Holes.filter((hole) => hole.Enabled).length,
     designer: courseData.Designer || "-",
