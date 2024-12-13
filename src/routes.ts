@@ -13,7 +13,11 @@ import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { readFile } from "fs/promises";
 import logger from "logger";
-import { updateTeeBoxesFromCourseData } from "teebox-data";
+import {
+  teeBoxesFromCourseData,
+  teeBoxTotalDistanceFromCourseData,
+  updateTeeBoxesFromCourseData,
+} from "teebox-data";
 
 const routes = new Elysia()
   // Home route
@@ -158,6 +162,61 @@ const routes = new Elysia()
       set.status = 404;
       return { error: "Asset not found" };
     }
+  })
+
+  .get("/api/courses/:id/gkd-info", async ({ params: { id } }) => {
+    const course = await db.query.courses.findFirst({
+      where: eq(courses.id, Number(id)),
+      with: { gkData: true, teeBoxes: true },
+    });
+    // extract tee boxes and and total tee box lengths from gkd file
+    const gkData = course?.gkData?.gkData;
+    if (!gkData) {
+      return { error: "Course gkdata not found" };
+    }
+    const teeBoxes = gkData.TeeTypeTotalDistance;
+    const teeBoxes2 = teeBoxesFromCourseData(gkData);
+    if (course.gkData) {
+      course.gkData.gkData = null;
+    }
+
+    const teeboxDistances: { teeBoxName: string; teeBoxDistance: number }[] =
+      [];
+    for (const teeBox of teeBoxes) {
+      const teeboxDistance = teeBoxTotalDistanceFromCourseData(
+        gkData,
+        teeBox.TeeType
+      );
+      teeboxDistances.push({
+        teeBoxName: teeBox.TeeType,
+        teeBoxDistance: teeboxDistance,
+      });
+    }
+    return {
+      teeBoxes,
+      teeBoxes2,
+      teeboxDistances,
+      // course,
+    };
+  })
+
+  .get("/api/courses/:id/update-teebox", async ({ params: { id } }) => {
+    const course = await db.query.courses.findFirst({
+      where: eq(courses.id, Number(id)),
+      with: { gkData: true },
+    });
+    if (!course) {
+      return { error: "Course not found" };
+    }
+    if (!course.gkData) {
+      return { error: "Course gkdata not found" };
+    }
+    const gkData = course.gkData.gkData;
+    if (!gkData) {
+      return { error: "Course gkdata not found" };
+    }
+    await updateTeeBoxesFromCourseData(course.id, gkData);
+    return { success: "Tee boxes updated" };
   })
 
   // Catch-all route to serve index.html

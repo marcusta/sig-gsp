@@ -41,6 +41,7 @@ async function updateTeeBoxFromCourseData(
   tee: Tee,
   courseData: CourseData
 ) {
+  console.log("updateTeeBoxFromCourseData", teeBox);
   const { rating, slope } = teeBoxRatingFromCourseData(courseData, teeBox.name);
   teeBox.rating = rating;
   teeBox.slope = slope;
@@ -64,12 +65,15 @@ async function createTeeBoxFromCourseData(
   tee: Tee,
   courseData: CourseData
 ): Promise<TeeBox> {
+  console.log("createTeeBoxFromCourseData", tee);
   let totalDistance = teeBoxTotalDistanceFromCourseData(
     courseData,
     tee.TeeType
   );
-
+  console.log("totalDistance", totalDistance);
   const { rating, slope } = teeBoxRatingFromCourseData(courseData, tee.TeeType);
+  console.log("rating", rating);
+  console.log("slope", slope);
 
   const newTeeBox: NewTeeBox = {
     courseId,
@@ -82,7 +86,7 @@ async function createTeeBoxFromCourseData(
   return (await db.insert(teeBoxes).values(newTeeBox).returning())[0];
 }
 
-function teeBoxesFromCourseData(courseData: CourseData): Tee[] {
+export function teeBoxesFromCourseData(courseData: CourseData): Tee[] {
   const teeBoxes = courseData.Holes.filter((hole) => hole.Enabled)[0].Tees;
 
   return teeBoxes.filter(
@@ -94,7 +98,7 @@ function teeBoxesFromCourseData(courseData: CourseData): Tee[] {
   );
 }
 
-function teeBoxTotalDistanceFromCourseData(
+export function teeBoxTotalDistanceFromCourseData(
   courseData: CourseData,
   teeType: string
 ): number {
@@ -134,11 +138,58 @@ function teeBoxRatingFromCourseData(
     ratingString = courseData.PAR3SR;
   }
   if (ratingString && ratingString.indexOf("/") > 0) {
-    // format of rating string is "73.8/138" where slope is first part and rating is second part
-    const ratingParts = ratingString.split("/");
-    const slope = parseFloat(ratingParts[0]);
-    const rating = parseFloat(ratingParts[1]);
-    return { rating, slope };
+    try {
+      // format of rating string is "73.8/138" where rating is first part and slope is second part
+      const ratingParts = ratingString.split("/");
+      const rating = parseFloat(ratingParts[0]);
+      const slope = parseFloat(ratingParts[1]);
+      if (isNaN(rating) || isNaN(slope)) {
+        throw new Error("Invalid rating string format");
+      }
+      return { rating, slope };
+    } catch (e) {
+      // Try to find another valid teebox rating to use as fallback
+      const teeTypes = [
+        "Black",
+        "Blue",
+        "White",
+        "Green",
+        "Yellow",
+        "Red",
+        "Junior",
+        "Par3",
+      ];
+      const currentTeeIndex = teeTypes.indexOf(teeType);
+      if (currentTeeIndex >= 0) {
+        // Look at nearby tees first, then expand search
+        for (let offset = 1; offset < teeTypes.length; offset++) {
+          // Look forward
+          if (currentTeeIndex + offset < teeTypes.length) {
+            const nextTee = teeTypes[currentTeeIndex + offset];
+            const nextRating = courseData[`${nextTee}SR` as keyof CourseData];
+            if (typeof nextRating === "string" && nextRating.includes("/")) {
+              const [r, s] = nextRating.split("/").map(parseFloat);
+              if (!isNaN(r) && !isNaN(s)) {
+                return { rating: r, slope: s };
+              }
+            }
+          }
+          // Look backward
+          if (currentTeeIndex - offset >= 0) {
+            const prevTee = teeTypes[currentTeeIndex - offset];
+            const prevRating = courseData[`${prevTee}SR` as keyof CourseData];
+            if (typeof prevRating === "string" && prevRating.includes("/")) {
+              const [r, s] = prevRating.split("/").map(parseFloat);
+              if (!isNaN(r) && !isNaN(s)) {
+                return { rating: r, slope: s };
+              }
+            }
+          }
+        }
+      }
+      // Default fallback for a medium difficulty course
+      return { rating: 71.5, slope: 125 };
+    }
   }
   return { rating: 0, slope: 0 };
 }
