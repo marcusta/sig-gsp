@@ -45,8 +45,8 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
 
   const handleClearAll = () => {
     const clearedFilters: AdvancedFilters = {
-      teeboxLength: [0, 8000],
-      altitude: [0, 10000],
+      teeboxLength: [0, 9000],
+      altitude: [0, 15000],
       difficulty: [0, 20],
       par: [MIN_PAR, MAX_PAR],
       onlyEighteenHoles: false,
@@ -84,7 +84,7 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
             <RangeSlider
               className="col-span-3"
               min={0}
-              max={10000}
+              max={15000}
               step={100}
               value={localFilters.altitude}
               onValueChange={(value) => handleSliderChange("altitude", value)}

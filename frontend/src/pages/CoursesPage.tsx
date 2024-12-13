@@ -11,17 +11,21 @@ import { FilterIcon } from "lucide-react";
 import { AdvancedFilters, type Course, type TeeBox } from "@/types";
 import { gradeTeeBox } from "@/components/course-data";
 
+const DEFAULT_ADVANCED_FILTERS: AdvancedFilters = {
+  teeboxLength: [0, 8000],
+  altitude: [0, 10000],
+  difficulty: [0, 20],
+  par: [MIN_PAR, MAX_PAR],
+  onlyEighteenHoles: false,
+  isPar3: undefined,
+};
+
 const CoursesPage: React.FC = () => {
   const [filterText, setFilterText] = useState("");
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
-  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({
-    teeboxLength: [0, 8000],
-    altitude: [0, 10000],
-    difficulty: [0, 20],
-    par: [MIN_PAR, MAX_PAR],
-    onlyEighteenHoles: false,
-    isPar3: undefined,
-  });
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(
+    DEFAULT_ADVANCED_FILTERS
+  );
 
   const [sortOption, setSortOption] = useState<
     | "alphabetical"
@@ -75,14 +79,26 @@ const CoursesPage: React.FC = () => {
     }
 
     const advancedFilter =
-      course.teeBoxes[0].length >= advancedFilters.teeboxLength[0] &&
-      course.teeBoxes[0].length <= advancedFilters.teeboxLength[1] &&
-      course.altitude >= advancedFilters.altitude[0] &&
-      course.altitude <= advancedFilters.altitude[1] &&
-      course.grade >= advancedFilters.difficulty[0] &&
-      course.grade <= advancedFilters.difficulty[1] &&
-      course.par >= advancedFilters.par[0] &&
-      course.par <= advancedFilters.par[1] &&
+      ((advancedFilters.teeboxLength[0] ===
+        DEFAULT_ADVANCED_FILTERS.teeboxLength[0] &&
+        advancedFilters.teeboxLength[1] ===
+          DEFAULT_ADVANCED_FILTERS.teeboxLength[1]) ||
+        (course.teeBoxes[0].length >= advancedFilters.teeboxLength[0] &&
+          course.teeBoxes[0].length <= advancedFilters.teeboxLength[1])) &&
+      ((advancedFilters.altitude[0] === DEFAULT_ADVANCED_FILTERS.altitude[0] &&
+        advancedFilters.altitude[1] === DEFAULT_ADVANCED_FILTERS.altitude[1]) ||
+        (course.altitude >= advancedFilters.altitude[0] &&
+          course.altitude <= advancedFilters.altitude[1])) &&
+      ((advancedFilters.difficulty[0] ===
+        DEFAULT_ADVANCED_FILTERS.difficulty[0] &&
+        advancedFilters.difficulty[1] ===
+          DEFAULT_ADVANCED_FILTERS.difficulty[1]) ||
+        (course.grade >= advancedFilters.difficulty[0] &&
+          course.grade <= advancedFilters.difficulty[1])) &&
+      ((advancedFilters.par[0] === DEFAULT_ADVANCED_FILTERS.par[0] &&
+        advancedFilters.par[1] === DEFAULT_ADVANCED_FILTERS.par[1]) ||
+        (course.par >= advancedFilters.par[0] &&
+          course.par <= advancedFilters.par[1])) &&
       (!advancedFilters.onlyEighteenHoles || course.holes === 18) &&
       (advancedFilters.isPar3 === undefined ||
         course.isPar3 === advancedFilters.isPar3);
