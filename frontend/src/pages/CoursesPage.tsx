@@ -73,18 +73,16 @@ const CoursesPage: React.FC = () => {
       course.holes.toString().includes(filterText) ||
       course.designer.toLowerCase().includes(filterText.toLowerCase());
 
-    if (!course.teeBoxes || course.teeBoxes.length === 0) {
-      console.log("Course filtered due to missing teeBoxes:", course.name);
-      return false;
-    }
+    const firstTeeLength =
+      course.teeBoxes?.find((tee) => tee?.length > 0)?.length || 0;
 
     const advancedFilter =
       ((advancedFilters.teeboxLength[0] ===
         DEFAULT_ADVANCED_FILTERS.teeboxLength[0] &&
         advancedFilters.teeboxLength[1] ===
           DEFAULT_ADVANCED_FILTERS.teeboxLength[1]) ||
-        (course.teeBoxes[0].length >= advancedFilters.teeboxLength[0] &&
-          course.teeBoxes[0].length <= advancedFilters.teeboxLength[1])) &&
+        (firstTeeLength >= advancedFilters.teeboxLength[0] &&
+          firstTeeLength <= advancedFilters.teeboxLength[1])) &&
       ((advancedFilters.altitude[0] === DEFAULT_ADVANCED_FILTERS.altitude[0] &&
         advancedFilters.altitude[1] === DEFAULT_ADVANCED_FILTERS.altitude[1]) ||
         (course.altitude >= advancedFilters.altitude[0] &&
@@ -105,7 +103,7 @@ const CoursesPage: React.FC = () => {
 
     if (!advancedFilter) {
       console.log("Course filtered by advanced filters:", course.name, {
-        teeboxLength: course.teeBoxes[0].length,
+        teeboxLength: firstTeeLength,
         altitude: course.altitude,
         grade: course.grade,
         par: course.par,
