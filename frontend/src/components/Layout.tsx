@@ -1,6 +1,5 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
-import { Button } from "./ui/button";
+import { Outlet } from "react-router-dom";
 import { Switch } from "./ui/switch";
 import { useUnits } from "@/contexts/UnitContext";
 
@@ -24,15 +23,6 @@ const Layout: React.FC = () => {
                     setUnitSystem(checked ? "imperial" : "metric")
                   }
                 />
-              </li>
-              <li>
-                <Button
-                  asChild
-                  variant={"outline"}
-                  className="bg-white/5 text-white border-white/20 hover:bg-white/10 hover:border-white/30 transition-all"
-                >
-                  <Link to="/courses">View courses</Link>
-                </Button>
               </li>
             </ul>
           </nav>

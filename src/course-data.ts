@@ -129,6 +129,7 @@ export async function updateCourseFromCourseData(
   course.totalInnerOOB = calculateTotalInnerOOB(courseData);
   course.totalWaterHazards =
     course.totalHazards - course.islandGreens - course.totalInnerOOB;
+  course.rangeEnabled = courseData.HasRange || false;
   await updateCourse({
     ...course,
     ...courseAttribs,

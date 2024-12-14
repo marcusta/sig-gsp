@@ -112,6 +112,7 @@ export interface Course extends BaseCourse {
   totalInnerOOB: number;
   islandGreens: number;
   totalHazards: number;
+  rangeEnabled: boolean;
 }
 
 export interface NewCourse {
@@ -165,6 +166,7 @@ export interface AdvancedFilters {
   par: [number, number];
   onlyEighteenHoles: boolean;
   isPar3: boolean | undefined;
+  rangeEnabled: boolean | undefined;
 }
 
 export interface TeeBoxHole {

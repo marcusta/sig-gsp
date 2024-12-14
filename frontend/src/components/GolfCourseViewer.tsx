@@ -88,6 +88,9 @@ const GolfCourseViewer: React.FC<{ course: CourseWithData }> = ({ course }) => {
                 {getAltitudeUnit(unitSystem)} (
                 {((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)
               </p>
+              <p className="text-sm">
+                Driving Range: {course.rangeEnabled ? "Yes" : "No"}
+              </p>
             </div>
             <div className="text-slate-200">
               <p className="text-sm">

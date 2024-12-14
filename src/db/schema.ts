@@ -39,6 +39,7 @@ export const courses = sqliteTable("courses", {
   islandGreens: integer("island_greens").default(0),
   totalWaterHazards: integer("total_water_hazards").default(0),
   totalInnerOOB: integer("total_inner_oob").default(0),
+  rangeEnabled: integer("range_enabled", { mode: "boolean" }).default(false),
   enabled: integer("enabled", { mode: "boolean" }).default(true),
 });
 

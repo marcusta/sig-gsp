@@ -50,6 +50,7 @@ export interface CourseData {
   CourseInfo: string;
   Holes: Hole[];
   Hazards: Hazard[];
+  HasRange?: boolean;
   TeeTypeTotalDistance: Tee[];
 }
 

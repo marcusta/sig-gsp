@@ -34,6 +34,10 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
     setLocalFilters((prev) => ({ ...prev, isPar3: checked }));
   };
 
+  const handleRangeEnabledChange = (checked: boolean) => {
+    setLocalFilters((prev) => ({ ...prev, rangeEnabled: checked }));
+  };
+
   const handleApply = () => {
     onFilterChange(localFilters);
   };
@@ -51,6 +55,7 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
       par: [MIN_PAR, MAX_PAR],
       onlyEighteenHoles: false,
       isPar3: undefined,
+      rangeEnabled: undefined,
     };
     setLocalFilters(clearedFilters);
     onFilterChange(clearedFilters);
@@ -122,6 +127,14 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
               onCheckedChange={handlePar3SwitchChange}
             />
             <Label htmlFor="is-par3">Only Par 3 courses</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="range-enabled"
+              checked={localFilters.rangeEnabled}
+              onCheckedChange={handleRangeEnabledChange}
+            />
+            <Label htmlFor="range-enabled">Has Driving Range</Label>
           </div>
         </div>
         <div className="flex justify-between">

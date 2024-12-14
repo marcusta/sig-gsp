@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Course, CourseWithData, ScoreCardData } from "@/types";
 import {
@@ -81,10 +81,7 @@ const transformToScoreCardData = (
   };
 };
 
-const CourseCard: React.FC<{ course: Course; onClick: () => void }> = ({
-  course,
-  onClick,
-}) => {
+const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
   const { unitSystem } = useUnits();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showScoreCard, setShowScoreCard] = useState(false);
@@ -108,11 +105,13 @@ const CourseCard: React.FC<{ course: Course; onClick: () => void }> = ({
   };
 
   const handleScoreCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setShowScoreCard(true);
   };
 
   const handleYouTubeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setShowYouTube(true);
   };
@@ -132,7 +131,6 @@ const CourseCard: React.FC<{ course: Course; onClick: () => void }> = ({
   return (
     <>
       <Card
-        onClick={onClick}
         className="cursor-pointer shadow-lg relative"
         style={{ minHeight: "400px" }}
       >
@@ -218,38 +216,41 @@ const CourseCard: React.FC<{ course: Course; onClick: () => void }> = ({
       </Card>
 
       {showScoreCard && scoreCardData && (
-        <ScoreCard
-          data={scoreCardData}
-          onClose={() => setShowScoreCard(false)}
-        />
+        <div onClick={(e) => e.preventDefault()}>
+          <ScoreCard
+            data={scoreCardData}
+            onClose={() => setShowScoreCard(false)}
+          />
+        </div>
       )}
 
       {showYouTube && course.sgtYoutubeUrl && (
-        <YouTubeEmbed
-          url={course.sgtYoutubeUrl}
-          onClose={() => setShowYouTube(false)}
-        />
+        <div onClick={(e) => e.preventDefault()}>
+          <YouTubeEmbed
+            url={course.sgtYoutubeUrl}
+            onClose={() => setShowYouTube(false)}
+          />
+        </div>
       )}
     </>
   );
 };
 
 const CourseCardView: React.FC<CardViewProps> = ({ courses }) => {
-  const navigate = useNavigate();
-
-  const handleCardClick = (id: number) => {
-    navigate(`/course/${id}`);
-  };
+  const location = useLocation();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {courses.map((course) => (
-        <LazyLoad key={course.id}>
-          <CourseCard
-            course={course}
-            onClick={() => handleCardClick(course.id)}
-          />
-        </LazyLoad>
+        <Link
+          key={course.id}
+          to={`/course/${course.id}`}
+          state={{ search: location.search }}
+        >
+          <LazyLoad>
+            <CourseCard course={course} />
+          </LazyLoad>
+        </Link>
       ))}
     </div>
   );

@@ -1,0 +1,1 @@
+ALTER TABLE `courses` ADD `range_enabled` integer DEFAULT false;

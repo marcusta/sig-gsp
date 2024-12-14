@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCourses } from "@/api/useApi";
 import CourseCardView from "@/components/CourseCardView";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { FilterIcon } from "lucide-react";
 import { AdvancedFilters, type Course, type TeeBox } from "@/types";
 import { gradeTeeBox } from "@/components/course-data";
+import { useSearchParams } from "react-router-dom";
 
 const DEFAULT_ADVANCED_FILTERS: AdvancedFilters = {
   teeboxLength: [0, 8000],
@@ -18,15 +19,16 @@ const DEFAULT_ADVANCED_FILTERS: AdvancedFilters = {
   par: [MIN_PAR, MAX_PAR],
   onlyEighteenHoles: false,
   isPar3: undefined,
+  rangeEnabled: undefined,
 };
 
 const CoursesPage: React.FC = () => {
-  const [filterText, setFilterText] = useState("");
-  const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
-  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(
-    DEFAULT_ADVANCED_FILTERS
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  const [filterText, setFilterText] = useState(
+    searchParams.get("search") || ""
+  );
+  const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
   const [sortOption, setSortOption] = useState<
     | "alphabetical"
     | "updatedDate"
@@ -41,8 +43,40 @@ const CoursesPage: React.FC = () => {
     | "waterHazards"
     | "innerOOB"
     | "islandGreens"
-  >("alphabetical");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  >((searchParams.get("sort") as any) || "alphabetical");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
+    (searchParams.get("order") as "asc" | "desc") || "asc"
+  );
+
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(
+    () => {
+      try {
+        const savedFilters = searchParams.get("advanced");
+        return savedFilters
+          ? JSON.parse(decodeURIComponent(savedFilters))
+          : DEFAULT_ADVANCED_FILTERS;
+      } catch {
+        return DEFAULT_ADVANCED_FILTERS;
+      }
+    }
+  );
+
+  useEffect(() => {
+    const params: Record<string, string> = {};
+
+    if (filterText) params.search = filterText;
+    if (sortOption !== "alphabetical") params.sort = sortOption;
+    if (sortOrder !== "asc") params.order = sortOrder;
+
+    if (
+      JSON.stringify(advancedFilters) !==
+      JSON.stringify(DEFAULT_ADVANCED_FILTERS)
+    ) {
+      params.advanced = encodeURIComponent(JSON.stringify(advancedFilters));
+    }
+
+    setSearchParams(params);
+  }, [filterText, sortOption, sortOrder, advancedFilters, setSearchParams]);
 
   const {
     data: courses,
@@ -103,7 +137,9 @@ const CoursesPage: React.FC = () => {
           course.par <= advancedFilters.par[1])) &&
       (!advancedFilters.onlyEighteenHoles || course.holes === 18) &&
       (advancedFilters.isPar3 === undefined ||
-        course.isPar3 === advancedFilters.isPar3);
+        course.isPar3 === advancedFilters.isPar3) &&
+      (advancedFilters.rangeEnabled === undefined ||
+        course.rangeEnabled === advancedFilters.rangeEnabled);
 
     return textFilter && advancedFilter;
   });
