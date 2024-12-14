@@ -106,6 +106,12 @@ export interface Course extends BaseCourse {
   id: number;
   attributes: CourseAttribute[];
   teeBoxes: TeeBox[];
+  largestElevationDrop: number;
+  averageElevationDifference: number;
+  totalWaterHazards: number;
+  totalInnerOOB: number;
+  islandGreens: number;
+  totalHazards: number;
 }
 
 export interface NewCourse {

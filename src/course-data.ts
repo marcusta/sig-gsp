@@ -1,4 +1,4 @@
-import type { CourseData } from "course-data-types";
+import type { CourseData, Hole } from "course-data-types";
 import { db } from "db/db";
 import {
   courses,
@@ -121,11 +121,91 @@ export async function updateCourseFromCourseData(
     altitude: courseData.altitudeV2 || courseData.altitude || 0,
   };
   course.par = par;
+  course.averageElevationDifference =
+    calculateAverageElevationDifference(courseData);
+  course.largestElevationDrop = calculateLargestElevationDrop(courseData);
+  course.totalHazards = calculateTotalHazards(courseData);
+  course.islandGreens = calculateIslandGreens(courseData);
+  course.totalInnerOOB = calculateTotalInnerOOB(courseData);
+  course.totalWaterHazards =
+    course.totalHazards - course.islandGreens - course.totalInnerOOB;
   await updateCourse({
     ...course,
     ...courseAttribs,
   });
   await saveCourseData(courseId, courseData);
+}
+
+function calculateTotalHazards(courseData: CourseData) {
+  return courseData.Hazards.length;
+}
+
+function calculateIslandGreens(courseData: CourseData) {
+  return courseData.Hazards.filter((hazard) => hazard.islandGreen === true)
+    .length;
+}
+
+function calculateTotalInnerOOB(courseData: CourseData) {
+  return courseData.Hazards.filter((hazard) => hazard.innerOOB === true).length;
+}
+
+function calculateAverageElevationDifference(courseData: CourseData) {
+  let totalElevationDifference = 0;
+  let totalHoles = 0;
+  for (const hole of courseData.Holes) {
+    totalElevationDifference += Math.abs(
+      calculateTeeToGreenElevationDifference(hole)
+    );
+    totalHoles++;
+  }
+  return Math.round(totalElevationDifference / totalHoles);
+}
+
+function calculateLargestElevationDrop(courseData: CourseData) {
+  let largestElevationDrop = 0;
+  for (const hole of courseData.Holes) {
+    const elevationDrop = calculateTeeToGreenElevationDifference(hole);
+    if (elevationDrop > largestElevationDrop) {
+      largestElevationDrop = elevationDrop;
+    }
+  }
+  return Math.round(largestElevationDrop);
+}
+
+function calculateTeeToGreenElevationDifference(hole: Hole) {
+  const greenPointY = getGreenY(hole);
+  let maxElevationDifference = 0;
+  for (const tee of hole.Tees) {
+    if (
+      tee.TeeType === "GreenCenterPoint" ||
+      tee.TeeType.startsWith("AimPoint")
+    ) {
+      continue;
+    }
+    const teeY = tee.Position?.y;
+    if (!teeY) {
+      continue;
+    }
+    const yDistance = teeY - greenPointY;
+    if (yDistance > maxElevationDifference) {
+      maxElevationDifference = yDistance;
+    }
+  }
+  return maxElevationDifference;
+}
+
+function getGreenY(hole: Hole) {
+  for (const pin of hole.Pins) {
+    if (pin.Position && pin.Position.y) {
+      return pin.Position.y;
+    }
+  }
+  for (const tee of hole.Tees) {
+    if (tee.TeeType === "GreenCenterPoint" && tee.Position?.y) {
+      return tee.Position.y;
+    }
+  }
+  return 0;
 }
 
 export async function saveCourseData(courseId: number, courseData: CourseData) {

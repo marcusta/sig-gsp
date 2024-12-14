@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   createCourseFromCourseData,
   getCourseByName,
@@ -28,18 +29,9 @@ const routes = new Elysia()
   .get("/api/courses", async () => {
     const courseList = await db.query.courses.findMany({
       with: { teeBoxes: true, tags: true },
+      where: eq(courses.enabled, true),
     });
-    const result = [];
-    console.log("getting courseList", courseList.length);
-    for (const course of courseList) {
-      if (course.sgtId !== "") {
-        result.push(course);
-      } else {
-        logger.debug(`Skipping course ${course.name} as it has no sgtId`);
-      }
-    }
-    console.log("returning courseList", result.length);
-    return result;
+    return courseList;
   })
 
   .get("/api/courses/:id", async ({ params: { id } }) => {
@@ -200,6 +192,27 @@ const routes = new Elysia()
     };
   })
 
+  .get("/api/courses/update-course-data", async () => {
+    const courseList = await getCourses();
+    for (const course of courseList) {
+      const courseFromDb = await db.query.courses.findFirst({
+        where: eq(courses.id, course.id),
+        with: { gkData: true, teeBoxes: true, tags: true },
+      });
+      if (!courseFromDb) {
+        logger.error(`Course not found ${course.name}`);
+        continue;
+      }
+      const gkData = courseFromDb.gkData?.gkData;
+      if (!gkData) {
+        logger.error(`Course gkdata not found ${course.name}`);
+        continue;
+      }
+      await updateCourseFromCourseData(course.id, gkData);
+    }
+    return { success: "Course data updated" };
+  })
+
   .get("/api/courses/:id/update-teebox", async ({ params: { id } }) => {
     const course = await db.query.courses.findFirst({
       where: eq(courses.id, Number(id)),
@@ -217,6 +230,52 @@ const routes = new Elysia()
     }
     await updateTeeBoxesFromCourseData(course.id, gkData);
     return { success: "Tee boxes updated" };
+  })
+
+  .post("/api/courses/sync-with-sgt", async () => {
+    const courseList = await getCourses();
+    const sgtCourseIds = await getCoursesFromSgt();
+    for (const course of courseList) {
+      const courseSgtId = parseInt(course.sgtId || "-1");
+      let enabled = false;
+      if (sgtCourseIds.includes(courseSgtId)) {
+        enabled = true;
+      }
+      await db
+        .update(courses)
+        .set({ enabled })
+        .where(eq(courses.id, course.id));
+    }
+    return { success: "Courses synced with sgt" };
+  })
+
+  .get("/api/courses/sync-with-sgt", async () => {
+    const courseList = await getCourses();
+    const sgtCourseIds = await getCoursesFromSgt();
+    // console.log("sgtCourseIds", sgtCourseIds);
+    // return and print courses in DB that are not in sgtCourseIds
+    const sgtCourseIdMap = new Map(sgtCourseIds.map((id) => [id, true]));
+    const dbCourseSgtIdMap = new Map(
+      courseList.map((course) => [parseInt(course.sgtId || "-1"), course.name])
+    );
+    const coursesNotInSgt = [];
+    for (const course of courseList) {
+      const courseSgtId = parseInt(course.sgtId || "-1");
+      if (!sgtCourseIdMap.has(courseSgtId)) {
+        coursesNotInSgt.push(course.name);
+      }
+    }
+    // courses in SGT not in DB
+    const coursesNotInDb = [];
+    for (const sgtCourseId of sgtCourseIds) {
+      if (!dbCourseSgtIdMap.has(sgtCourseId)) {
+        coursesNotInDb.push(sgtCourseId);
+      }
+    }
+    return {
+      coursesNotInSgt: coursesNotInSgt,
+      coursesNotInDb: coursesNotInDb,
+    };
   })
 
   // Catch-all route to serve index.html
@@ -249,3 +308,15 @@ type UpdateFromFilesystemBody = {
     opcdVersion: string;
   };
 };
+
+async function getCoursesFromSgt() {
+  // download https://simulatorgolftour.com/course_manifest.json
+  // parse the json
+  // return the courses
+  const response = await axios.get(
+    "https://simulatorgolftour.com/course_manifest.json"
+  );
+  const courses = response.data as { courseId: number }[];
+  // only return this list of IDs
+  return courses.map((course) => course.courseId) as number[];
+}

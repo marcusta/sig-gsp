@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@elysiajs/static": "^1.1.1",
+    "axios": "^1.7.9",
     "better-sqlite3": "^11.4.0",
     "drizzle-orm": "^0.35.2",
     "elysia": "^1.1.22",

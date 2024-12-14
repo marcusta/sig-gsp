@@ -1,0 +1,1 @@
+ALTER TABLE `courses` ADD `enabled` integer DEFAULT true;

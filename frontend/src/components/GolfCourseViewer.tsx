@@ -73,7 +73,7 @@ const GolfCourseViewer: React.FC<{ course: CourseWithData }> = ({ course }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between items-center">
+          <div className="grid grid-cols-3 gap-4">
             <div className="text-slate-200">
               <p className="text-sm">
                 {course.location}, by <b>{course.designer}</b>
@@ -89,7 +89,30 @@ const GolfCourseViewer: React.FC<{ course: CourseWithData }> = ({ course }) => {
                 {((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)
               </p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="text-slate-200">
+              <p className="text-sm">
+                Avg. Elevation Diff:{" "}
+                {convertAltitude(
+                  course.averageElevationDifference,
+                  unitSystem
+                ).toFixed(1)}
+                {getAltitudeUnit(unitSystem)}
+              </p>
+              <p className="text-sm">
+                Largest Drop:{" "}
+                {convertAltitude(
+                  course.largestElevationDrop,
+                  unitSystem
+                ).toFixed(1)}
+                {getAltitudeUnit(unitSystem)}
+              </p>
+              <p className="text-sm">
+                Water Hazards: {course.totalWaterHazards} | Inner OOB:{" "}
+                {course.totalInnerOOB}
+              </p>
+              <p className="text-sm">Island Greens: {course.islandGreens}</p>
+            </div>
+            <div className="flex items-center justify-end space-x-4">
               <div className="flex space-x-2">
                 <Select
                   onValueChange={setSelectedTeeType}

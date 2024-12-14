@@ -31,6 +31,15 @@ export const courses = sqliteTable("courses", {
   sgtYoutubeUrl: text("sgt_youtube_url").default(""),
   par: integer("par").default(72),
   isPar3: integer("is_par_3", { mode: "boolean" }).default(false),
+  largestElevationDrop: integer("largest_elevation_drop").default(0),
+  averageElevationDifference: integer("average_elevation_difference").default(
+    0
+  ),
+  totalHazards: integer("total_hazards").default(0),
+  islandGreens: integer("island_greens").default(0),
+  totalWaterHazards: integer("total_water_hazards").default(0),
+  totalInnerOOB: integer("total_inner_oob").default(0),
+  enabled: integer("enabled", { mode: "boolean" }).default(true),
 });
 
 export type NewCourse = typeof courses.$inferInsert;

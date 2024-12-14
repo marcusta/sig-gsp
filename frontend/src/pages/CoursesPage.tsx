@@ -35,6 +35,12 @@ const CoursesPage: React.FC = () => {
     | "altitude"
     | "difficulty"
     | "rating"
+    | "par"
+    | "largestElevationDrop"
+    | "elevationDifference"
+    | "waterHazards"
+    | "innerOOB"
+    | "islandGreens"
   >("alphabetical");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -47,8 +53,6 @@ const CoursesPage: React.FC = () => {
     queryFn: fetchCourses,
     staleTime: 5 * 60 * 1000,
   });
-
-  console.log("full courses", courses);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value);
@@ -101,49 +105,14 @@ const CoursesPage: React.FC = () => {
       (advancedFilters.isPar3 === undefined ||
         course.isPar3 === advancedFilters.isPar3);
 
-    if (!advancedFilter) {
-      console.log("Course filtered by advanced filters:", course.name, {
-        teeboxLength: firstTeeLength,
-        altitude: course.altitude,
-        grade: course.grade,
-        par: course.par,
-        holes: course.holes,
-        isPar3: course.isPar3,
-      });
-    }
-
     return textFilter && advancedFilter;
   });
-
-  if (courses && filteredCourses) {
-    const missingCourses = courses.filter(
-      (course) => !filteredCourses.some((fc) => fc.name === course.name)
-    );
-
-    if (missingCourses.length > 0) {
-      console.log("Courses filtered out:", missingCourses.length);
-      console.table(
-        missingCourses.map((course) => ({
-          name: course.name,
-          hasTeeBoxes: course.teeBoxes?.length > 0,
-          firstTeeLength: course.teeBoxes?.[0]?.length,
-          altitude: course.altitude,
-          grade: course.grade,
-          par: course.par,
-          holes: course.holes,
-          isPar3: course.isPar3,
-        }))
-      );
-    }
-  }
 
   const sortedCourses = sortCourses(
     filteredCourses || [],
     sortOption,
     sortOrder
   );
-
-  console.log("sortedCourses", sortedCourses);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading courses</div>;
@@ -187,6 +156,13 @@ const CoursesPage: React.FC = () => {
           <option value="par3Tee">Par 3 Tee Length</option>
           <option value="altitude">Altitude</option>
           <option value="rating">Course Rating</option>
+          <option value="largestElevationDrop">Largest Elevation Drop</option>
+          <option value="elevationDifference">
+            Average Elevation Difference
+          </option>
+          <option value="waterHazards">Water Hazards</option>
+          <option value="innerOOB">Inner OOB</option>
+          <option value="islandGreens">Island Greens</option>
         </select>
         <Button onClick={handleSortOrderChange}>
           {sortOrder === "asc" ? "Asc" : "Desc"}
@@ -257,6 +233,21 @@ function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
     },
     alphabetical: (a: Course, b: Course) => {
       return a.name.localeCompare(b.name);
+    },
+    largestElevationDrop: (a: Course, b: Course) => {
+      return a.largestElevationDrop - b.largestElevationDrop;
+    },
+    elevationDifference: (a: Course, b: Course) => {
+      return a.averageElevationDifference - b.averageElevationDifference;
+    },
+    waterHazards: (a: Course, b: Course) => {
+      return a.totalWaterHazards - b.totalWaterHazards;
+    },
+    innerOOB: (a: Course, b: Course) => {
+      return a.totalInnerOOB - b.totalInnerOOB;
+    },
+    islandGreens: (a: Course, b: Course) => {
+      return a.islandGreens - b.islandGreens;
     },
   };
 
