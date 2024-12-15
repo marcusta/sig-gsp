@@ -5,6 +5,7 @@ import {
   getCourses,
   updateCourse,
   updateCourseFromCourseData,
+  updateCourseTags,
   updateParOnCourses,
 } from "course-data";
 import type { CourseData } from "course-data-types";
@@ -201,6 +202,10 @@ const routes = new Elysia()
 
   .get("/api/courses/update-course-data", async () => {
     const courseList = await getCourses();
+    let updateCourseAggregatedTime = 0;
+    let updateCourseAggregatedCount = 0;
+    let updateTagsAggregatedTime = 0;
+    let updateTagsAggregatedCount = 0;
     for (const course of courseList) {
       const courseFromDb = await db.query.courses.findFirst({
         where: eq(courses.id, course.id),
@@ -215,9 +220,27 @@ const routes = new Elysia()
         logger.error(`Course gkdata not found ${course.name}`);
         continue;
       }
+      const start = performance.now();
       await updateCourseFromCourseData(course.id, gkData);
+      const end = performance.now();
+      updateCourseAggregatedTime += end - start;
+      updateCourseAggregatedCount++;
+      console.log(`updateCourseFromCourseData ${course.name} ${end - start}`);
+      const start2 = performance.now();
+      await updateCourseTags(course.id, gkData);
+      const end2 = performance.now();
+      updateTagsAggregatedTime += end2 - start2;
+      updateTagsAggregatedCount++;
+      console.log(`updateCourseTags ${course.name} ${end2 - start2}`);
     }
-    return { success: "Course data updated" };
+
+    return {
+      success: "Course data updated",
+      updateCourseAggregatedTime,
+      updateCourseAggregatedCount,
+      updateTagsAggregatedTime,
+      updateTagsAggregatedCount,
+    };
   })
 
   .get("/api/courses/:id/update-teebox", async ({ params: { id } }) => {

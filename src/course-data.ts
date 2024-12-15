@@ -109,7 +109,10 @@ export function calculatePar(courseData: CourseData) {
   );
 }
 
-async function updateCourseTags(courseId: number, courseData: CourseData) {
+export async function updateCourseTags(
+  courseId: number,
+  courseData: CourseData
+) {
   // Define the keyword mapping
   const keywordFlags = {
     BeginnerFriendly: courseData.KeywordBeginnerFriendly,
@@ -211,7 +214,6 @@ export async function updateCourseFromCourseData(
   });
 
   await saveCourseData(courseId, courseData);
-  await updateCourseTags(courseId, courseData);
 }
 
 function calculateTotalHazards(courseData: CourseData) {
