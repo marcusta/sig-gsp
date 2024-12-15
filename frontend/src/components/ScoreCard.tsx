@@ -56,54 +56,52 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-card text-card-foreground rounded-lg p-6 max-w-[90vw] max-h-[90vh] overflow-auto relative shadow-lg">
+      <div className="bg-card text-card-foreground rounded-lg p-4 max-w-[95vw] max-h-[95vh] overflow-auto relative shadow-lg">
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-2"
+          className="absolute right-1 top-1"
           onClick={onClose}
         >
           <X className="h-4 w-4" />
         </Button>
 
-        <h2 className="text-xl font-bold mb-2">{data.courseName}</h2>
-        <p className="text-sm text-muted-foreground mb-4">{data.location}</p>
+        <h2 className="text-lg font-bold mb-1">{data.courseName}</h2>
+        <p className="text-xs text-muted-foreground mb-3">{data.location}</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span className="text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div className="space-y-2">
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <User className="h-3 w-3" />
+                <span className="text-xs">
                   Designer: {courseDetails.designer}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4" />
-                <div className="text-sm">
-                  <div>
-                    Updated:{" "}
-                    {new Date(courseDetails.updatedDate).toLocaleDateString()}
-                  </div>
+              <div className="flex items-center gap-1">
+                <CalendarDays className="h-3 w-3" />
+                <div className="text-xs">
+                  Updated:{" "}
+                  {new Date(courseDetails.updatedDate).toLocaleDateString()}
                 </div>
               </div>
               {courseDetails.attributes.length > 0 && (
-                <div className="space-y-1">
-                  <div className="flex flex-wrap gap-2">
-                    {courseDetails.attributes.map((attr) => (
-                      <Badge key={attr.id}>{attr.name}</Badge>
-                    ))}
-                  </div>
+                <div className="flex flex-wrap gap-1">
+                  {courseDetails.attributes.map((attr) => (
+                    <Badge key={attr.id} className="text-xs py-0 px-2">
+                      {attr.name}
+                    </Badge>
+                  ))}
                 </div>
               )}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Mountain className="h-4 w-4" />
-                <span className="text-sm">
+          <div className="space-y-2">
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <Mountain className="h-3 w-3" />
+                <span className="text-xs">
                   Altitude:{" "}
                   {convertAltitude(
                     courseDetails.altitude / 3.28084,
@@ -112,7 +110,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                   {getDistanceUnit(unitSystem)}
                 </span>
               </div>
-              <div className="text-sm">
+              <div className="text-xs">
                 Largest Drop:{" "}
                 {convertDistance(
                   courseDetails.largestElevationDrop,
@@ -120,7 +118,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                 ).toFixed(0)}
                 {getDistanceUnit(unitSystem)}
               </div>
-              <div className="text-sm">
+              <div className="text-xs">
                 Practice Range:{" "}
                 {courseDetails.rangeEnabled ? "Available" : "Not Available"}
               </div>
@@ -132,72 +130,60 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
               <img
                 src={`https://simulatorgolftour.com${data.sgtSplashUrl}`}
                 alt={data.courseName}
-                className="rounded-md object-cover h-32 w-full"
+                className="rounded-md object-cover h-24 w-full"
               />
             </div>
           )}
         </div>
 
-        {courseDetails.description && (
-          <>
-            <Separator className="my-4" />
-            <div className="mb-6">
-              <h3 className="text-sm font-medium mb-2">Description</h3>
-              <p className="text-sm text-muted-foreground">
-                {courseDetails.description}
-              </p>
-            </div>
-          </>
-        )}
-
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse bg-card">
+          <table className="min-w-full border-collapse bg-card text-sm">
             <thead>
               <tr>
-                <th className="border border-border px-3 py-2 bg-muted text-muted-foreground">
+                <th className="border border-border px-2 py-1 bg-muted text-muted-foreground text-xs">
                   Hole
                 </th>
-                <th className="border border-border px-3 py-2 bg-muted text-muted-foreground">
+                <th className="border border-border px-2 py-1 bg-muted text-muted-foreground text-xs">
                   Par
                 </th>
-                <th className="border border-border px-3 py-2 bg-muted text-muted-foreground">
+                <th className="border border-border px-2 py-1 bg-muted text-muted-foreground text-xs">
                   Index
                 </th>
                 {data.teeBoxes.map((tee) => (
                   <th
                     key={tee.name}
-                    className={`border border-border px-3 py-2 ${getTeeColor(
+                    className={`border border-border px-2 py-1 ${getTeeColor(
                       tee.name
-                    )} ${getTextColor(tee.name)}`}
+                    )} ${getTextColor(tee.name)} text-xs`}
                   >
                     {tee.name}
-                    <div className="text-xs font-normal">
+                    <div className="text-[10px] font-normal">
                       {tee.rating} / {tee.slope}
                     </div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-xs">
               {Array.from({ length: numberOfHoles }, (_, i) => i + 1).map(
                 (holeNumber) => (
                   <tr
                     key={holeNumber}
                     className={holeNumber % 2 === 0 ? "bg-muted/50" : ""}
                   >
-                    <td className="border border-border px-3 py-2 text-center font-medium">
+                    <td className="border border-border px-2 py-1 text-center font-medium">
                       {holeNumber}
                     </td>
-                    <td className="border border-border px-3 py-2 text-center">
+                    <td className="border border-border px-2 py-1 text-center">
                       {data.teeBoxes[0].holes[holeNumber - 1].par}
                     </td>
-                    <td className="border border-border px-3 py-2 text-center">
+                    <td className="border border-border px-2 py-1 text-center">
                       {data.teeBoxes[0].holes[holeNumber - 1].index}
                     </td>
                     {data.teeBoxes.map((tee) => (
                       <td
                         key={tee.name}
-                        className={`border border-border px-3 py-2 text-center ${getTeeColor(
+                        className={`border border-border px-2 py-1 text-center ${getTeeColor(
                           tee.name
                         )} ${getTextColor(tee.name)}`}
                       >
@@ -210,20 +196,20 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                   </tr>
                 )
               )}
-              <tr className="font-bold">
-                <td className="border border-border px-3 py-2 text-center bg-muted">
+              <tr className="font-bold text-xs">
+                <td className="border border-border px-2 py-1 text-center bg-muted">
                   Total
                 </td>
-                <td className="border border-border px-3 py-2 text-center bg-muted">
+                <td className="border border-border px-2 py-1 text-center bg-muted">
                   {data.teeBoxes[0].totalPar}
                 </td>
-                <td className="border border-border px-3 py-2 text-center bg-muted">
+                <td className="border border-border px-2 py-1 text-center bg-muted">
                   -
                 </td>
                 {data.teeBoxes.map((tee) => (
                   <td
                     key={tee.name}
-                    className={`border border-border px-3 py-2 text-center ${getTeeColor(
+                    className={`border border-border px-2 py-1 text-center ${getTeeColor(
                       tee.name
                     )} ${getTextColor(tee.name)}`}
                   >
@@ -235,6 +221,17 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
             </tbody>
           </table>
         </div>
+        {courseDetails.description && (
+          <>
+            <Separator className="my-2" />
+            <div className="mb-4">
+              <h3 className="text-xs font-medium mb-1">Description</h3>
+              <p className="text-xs text-muted-foreground">
+                {courseDetails.description}
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
