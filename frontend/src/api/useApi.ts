@@ -1,5 +1,6 @@
 import type {
   Course,
+  CourseAttributeOption,
   CourseData,
   CourseWithData,
   UploadResponse,
@@ -28,3 +29,8 @@ export const fetchCourses = () =>
 // New function to fetch a course by ID
 export const fetchCourseById = (id: number) =>
   api.get<CourseWithData>(`/courses/${id}`).then((res) => res.data);
+
+export const fetchCourseAttributes = () =>
+  api
+    .get<CourseAttributeOption[]>("/course-attributes")
+    .then((res) => res.data);

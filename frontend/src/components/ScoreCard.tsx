@@ -1,12 +1,15 @@
 import React from "react";
-import { X } from "lucide-react";
+import { X, CalendarDays, Mountain, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { ScoreCardData } from "@/types";
 import {
   useUnits,
   convertDistance,
   getDistanceUnit,
+  convertAltitude,
 } from "@/contexts/UnitContext";
+import { Badge } from "./ui/badge";
+import { Separator } from "./ui/separator";
 
 interface ScoreCardProps {
   data: ScoreCardData;
@@ -34,6 +37,7 @@ const getTextColor = (teeName: string): string => {
 
 export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
   const { unitSystem } = useUnits();
+  const courseDetails = data.courseDetails;
 
   if (!data.teeBoxes.length) {
     return (
@@ -47,6 +51,8 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
   }
 
   const numberOfHoles = data.teeBoxes[0].holes.length;
+
+  console.log("attributes", courseDetails.attributes);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -62,6 +68,87 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
 
         <h2 className="text-xl font-bold mb-2">{data.courseName}</h2>
         <p className="text-sm text-muted-foreground mb-4">{data.location}</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span className="text-sm">
+                  Designer: {courseDetails.designer}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4" />
+                <div className="text-sm">
+                  <div>
+                    Updated:{" "}
+                    {new Date(courseDetails.updatedDate).toLocaleDateString()}
+                  </div>
+                </div>
+              </div>
+              {courseDetails.attributes.length > 0 && (
+                <div className="space-y-1">
+                  <div className="flex flex-wrap gap-2">
+                    {courseDetails.attributes.map((attr) => (
+                      <Badge key={attr.id}>{attr.name}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Mountain className="h-4 w-4" />
+                <span className="text-sm">
+                  Altitude:{" "}
+                  {convertAltitude(
+                    courseDetails.altitude / 3.28084,
+                    unitSystem
+                  ).toFixed(0)}
+                  {getDistanceUnit(unitSystem)}
+                </span>
+              </div>
+              <div className="text-sm">
+                Largest Drop:{" "}
+                {convertDistance(
+                  courseDetails.largestElevationDrop,
+                  unitSystem
+                ).toFixed(0)}
+                {getDistanceUnit(unitSystem)}
+              </div>
+              <div className="text-sm">
+                Practice Range:{" "}
+                {courseDetails.rangeEnabled ? "Available" : "Not Available"}
+              </div>
+            </div>
+          </div>
+
+          {data.sgtSplashUrl && (
+            <div className="flex justify-center">
+              <img
+                src={`https://simulatorgolftour.com${data.sgtSplashUrl}`}
+                alt={data.courseName}
+                className="rounded-md object-cover h-32 w-full"
+              />
+            </div>
+          )}
+        </div>
+
+        {courseDetails.description && (
+          <>
+            <Separator className="my-4" />
+            <div className="mb-6">
+              <h3 className="text-sm font-medium mb-2">Description</h3>
+              <p className="text-sm text-muted-foreground">
+                {courseDetails.description}
+              </p>
+            </div>
+          </>
+        )}
 
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse bg-card">

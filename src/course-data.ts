@@ -2,12 +2,14 @@ import type { CourseData, Hole } from "course-data-types";
 import { db } from "db/db";
 import {
   courses,
+  courseToTags,
   gkData,
+  tags,
   type Course,
   type CourseWithGkData,
   type NewCourse,
 } from "db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { createTeeBoxesFromCourseData } from "teebox-data";
 
 export async function getCourseByName(name: string): Promise<Course> {
@@ -107,6 +109,78 @@ export function calculatePar(courseData: CourseData) {
   );
 }
 
+async function updateCourseTags(courseId: number, courseData: CourseData) {
+  // Define the keyword mapping
+  const keywordFlags = {
+    BeginnerFriendly: courseData.KeywordBeginnerFriendly,
+    Coastal: courseData.KeywordCoastal,
+    Desert: courseData.KeywordDesert,
+    Fantasy: courseData.KeywordFantasy,
+    Heathland: courseData.KeywordHeathland,
+    Historic: courseData.KeywordHistoric,
+    Links: courseData.KeywordLinks,
+    LowPoly: courseData.KeywordLowPoly,
+    MajorVenue: courseData.KeywordMajorVenue,
+    Mountain: courseData.KeywordMountain,
+    Parkland: courseData.KeywordParkland,
+    TourStop: courseData.KeywordTourStop,
+    Training: courseData.KeywordTraining,
+    Tropical: courseData.KeywordTropical,
+  };
+
+  // Get tag names from flags that are true
+  const tagNames = Object.entries(keywordFlags)
+    .filter(([_, value]) => value === true)
+    .map(([key]) => key);
+
+  // Add any additional tags from KeywordsString
+  if (courseData.KeywordsString) {
+    const additionalTags = courseData.KeywordsString.split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0 && !tagNames.includes(tag));
+    tagNames.push(...additionalTags);
+  }
+
+  if (tagNames.length === 0) return;
+
+  // Get existing tags
+  const existingTags = await db.query.tags.findMany({
+    where: inArray(tags.name, tagNames),
+  });
+
+  // Create map of existing tag names to ids
+  const tagNameToId = new Map(existingTags.map((tag) => [tag.name, tag.id]));
+
+  // Create any missing tags
+  const missingTagNames = tagNames.filter((name) => !tagNameToId.has(name));
+  if (missingTagNames.length > 0) {
+    const newTags = await db
+      .insert(tags)
+      .values(missingTagNames.map((name) => ({ name })))
+      .returning();
+
+    newTags.forEach((tag) => tagNameToId.set(tag.name, tag.id));
+  }
+
+  // Get existing course-tag relations
+  const existingRelations = await db.query.courseToTags.findMany({
+    where: eq(courseToTags.courseId, courseId),
+  });
+  const existingTagIds = new Set(existingRelations.map((rel) => rel.tagId));
+
+  // Create new relations for tags that aren't already related
+  const newRelations = Array.from(tagNameToId.values())
+    .filter((tagId) => !existingTagIds.has(tagId))
+    .map((tagId) => ({
+      courseId,
+      tagId,
+    }));
+
+  if (newRelations.length > 0) {
+    await db.insert(courseToTags).values(newRelations);
+  }
+}
+
 export async function updateCourseFromCourseData(
   courseId: number,
   courseData: CourseData
@@ -130,11 +204,14 @@ export async function updateCourseFromCourseData(
   course.totalWaterHazards =
     course.totalHazards - course.islandGreens - course.totalInnerOOB;
   course.rangeEnabled = courseData.HasRange || false;
+
   await updateCourse({
     ...course,
     ...courseAttribs,
   });
+
   await saveCourseData(courseId, courseData);
+  await updateCourseTags(courseId, courseData);
 }
 
 function calculateTotalHazards(courseData: CourseData) {

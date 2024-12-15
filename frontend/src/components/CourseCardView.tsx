@@ -76,8 +76,19 @@ const transformToScoreCardData = (
   return {
     courseName: courseData.name,
     location: courseData.location,
-    altitude: courseData.altitude,
     teeBoxes: teeBoxes.sort((a, b) => b.totalLength - a.totalLength),
+    sgtSplashUrl: courseData.sgtSplashUrl || "",
+
+    courseDetails: {
+      designer: courseData.designer,
+      altitude: courseData.altitude,
+      rangeEnabled: courseData.rangeEnabled,
+      largestElevationDrop: courseData.largestElevationDrop,
+      description: courseData.description,
+      addedDate: courseData.addedDate,
+      updatedDate: courseData.updatedDate,
+      attributes: courseData.attributes || [],
+    },
   };
 };
 

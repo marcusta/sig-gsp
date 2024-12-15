@@ -5,6 +5,17 @@ import { RangeSlider } from "./ui/rangeslider";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { AdvancedFilters } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCourseAttributes } from "@/api/useApi";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Badge } from "./ui/badge";
+import { X } from "lucide-react";
 
 export const MIN_PAR = 0;
 export const MAX_PAR = 80;
@@ -20,7 +31,15 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
   onFilterChange,
   onClose,
 }) => {
-  const [localFilters, setLocalFilters] = useState<AdvancedFilters>(filters);
+  const [localFilters, setLocalFilters] = useState<AdvancedFilters>({
+    ...filters,
+    selectedAttributes: filters.selectedAttributes || [],
+  });
+
+  const { data: attributes = [] } = useQuery({
+    queryKey: ["courseAttributes"],
+    queryFn: fetchCourseAttributes,
+  });
 
   const handleSliderChange = (key: keyof AdvancedFilters, value: number[]) => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
@@ -36,6 +55,23 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
 
   const handleRangeEnabledChange = (checked: boolean) => {
     setLocalFilters((prev) => ({ ...prev, rangeEnabled: checked }));
+  };
+
+  const handleAttributeSelect = (attributeId: string) => {
+    const id = parseInt(attributeId);
+    setLocalFilters((prev) => ({
+      ...prev,
+      selectedAttributes: [...prev.selectedAttributes, id],
+    }));
+  };
+
+  const handleRemoveAttribute = (attributeId: number) => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      selectedAttributes: prev.selectedAttributes.filter(
+        (id) => id !== attributeId
+      ),
+    }));
   };
 
   const handleApply = () => {
@@ -56,6 +92,7 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
       onlyEighteenHoles: false,
       isPar3: undefined,
       rangeEnabled: undefined,
+      selectedAttributes: [],
     };
     setLocalFilters(clearedFilters);
     onFilterChange(clearedFilters);
@@ -135,6 +172,42 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
               onCheckedChange={handleRangeEnabledChange}
             />
             <Label htmlFor="range-enabled">Has Driving Range</Label>
+          </div>
+          <div className="space-y-2">
+            <Label>Course Attributes</Label>
+            <Select onValueChange={handleAttributeSelect}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select attributes..." />
+              </SelectTrigger>
+              <SelectContent>
+                {attributes
+                  .filter(
+                    (attr) => !localFilters.selectedAttributes.includes(attr.id)
+                  )
+                  .map((attr) => (
+                    <SelectItem key={attr.id} value={attr.id.toString()}>
+                      {attr.name} ({attr.count})
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {localFilters.selectedAttributes.map((attrId) => {
+                const attr = attributes.find((a) => a.id === attrId);
+                if (!attr) return null;
+                return (
+                  <Badge key={attrId} variant="secondary">
+                    {attr.name}
+                    <button
+                      onClick={() => handleRemoveAttribute(attrId)}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                );
+              })}
+            </div>
           </div>
         </div>
         <div className="flex justify-between">

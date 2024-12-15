@@ -9,7 +9,7 @@ import {
 } from "course-data";
 import type { CourseData } from "course-data-types";
 import { db } from "db/db";
-import { courses } from "db/schema";
+import { courses, type Course } from "db/schema";
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { readFile } from "fs/promises";
@@ -31,7 +31,8 @@ const routes = new Elysia()
       with: { teeBoxes: true, tags: true },
       where: eq(courses.enabled, true),
     });
-    return courseList;
+    const courseListWithTags = await addTagsToCourses(courseList as any);
+    return courseListWithTags;
   })
 
   .get("/api/courses/:id", async ({ params: { id } }) => {
@@ -44,10 +45,16 @@ const routes = new Elysia()
       return { error: "Course not found" };
     }
     logger.info(`Getting course ${course.name}`);
+    const courseWithTags = await addTagsToCourses([course as any]);
     return {
-      ...course,
+      ...courseWithTags[0],
       gkData: course.gkData?.gkData,
     };
+  })
+
+  .get("/api/course-attributes", async () => {
+    const tagList = await db.query.tags.findMany();
+    return tagList;
   })
 
   .post("/api/add-par-to-all-courses", async () => {
@@ -319,4 +326,33 @@ async function getCoursesFromSgt() {
   const courses = response.data as { courseId: number }[];
   // only return this list of IDs
   return courses.map((course) => course.courseId) as number[];
+}
+
+async function addTagsToCourses(
+  courseList: {
+    Course: Course;
+    tags: { tagId: number }[];
+  }[]
+) {
+  const tagList = await db.query.tags.findMany();
+  // convert tagList to a map of tagId to tagName
+  const tagIdMap = new Map(tagList.map((tag) => [tag.id, tag.name]));
+  // loop through course and add tags to course
+  const courseListWithTags = [];
+  for (const course of courseList) {
+    if (!course.tags) {
+      continue;
+    }
+    const courseWithTags = {
+      ...course,
+      attributes: course.tags.map((tag) => {
+        return {
+          id: tag.tagId,
+          name: tagIdMap.get(tag.tagId),
+        };
+      }),
+    };
+    courseListWithTags.push(courseWithTags);
+  }
+  return courseListWithTags;
 }

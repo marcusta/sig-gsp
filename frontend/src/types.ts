@@ -157,6 +157,12 @@ export interface CourseAttribute {
   name: string;
 }
 
+export interface CourseAttributeOption {
+  id: number;
+  name: string;
+  count: number;
+}
+
 export interface UploadResponse extends CourseWithData {}
 
 export interface AdvancedFilters {
@@ -167,6 +173,7 @@ export interface AdvancedFilters {
   onlyEighteenHoles: boolean;
   isPar3: boolean | undefined;
   rangeEnabled: boolean | undefined;
+  selectedAttributes: number[];
 }
 
 export interface TeeBoxHole {
@@ -188,6 +195,18 @@ export interface TeeBoxData {
 export interface ScoreCardData {
   courseName: string;
   location: string;
-  altitude: number;
   teeBoxes: TeeBoxData[];
+  sgtSplashUrl: string;
+  courseDetails: CourseDetails;
+}
+
+export interface CourseDetails {
+  designer: string;
+  altitude: number;
+  rangeEnabled: boolean;
+  largestElevationDrop: number;
+  description: string;
+  addedDate: string;
+  updatedDate: string;
+  attributes: CourseAttribute[];
 }

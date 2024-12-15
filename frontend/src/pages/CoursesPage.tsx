@@ -20,6 +20,7 @@ const DEFAULT_ADVANCED_FILTERS: AdvancedFilters = {
   onlyEighteenHoles: false,
   isPar3: undefined,
   rangeEnabled: undefined,
+  selectedAttributes: [],
 };
 
 const CoursesPage: React.FC = () => {
@@ -139,7 +140,12 @@ const CoursesPage: React.FC = () => {
       (advancedFilters.isPar3 === undefined ||
         course.isPar3 === advancedFilters.isPar3) &&
       (advancedFilters.rangeEnabled === undefined ||
-        course.rangeEnabled === advancedFilters.rangeEnabled);
+        course.rangeEnabled === advancedFilters.rangeEnabled) &&
+      (!advancedFilters.selectedAttributes ||
+        advancedFilters.selectedAttributes.length === 0 ||
+        advancedFilters.selectedAttributes.every((attrId) =>
+          course.attributes.some((attr) => attr.id === attrId)
+        ));
 
     return textFilter && advancedFilter;
   });
