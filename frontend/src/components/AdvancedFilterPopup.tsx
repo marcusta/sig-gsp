@@ -186,7 +186,7 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
                   )
                   .map((attr) => (
                     <SelectItem key={attr.id} value={attr.id.toString()}>
-                      {attr.name} ({attr.count})
+                      {attr.name}
                     </SelectItem>
                   ))}
               </SelectContent>
