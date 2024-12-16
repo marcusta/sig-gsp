@@ -2,6 +2,8 @@ import type {
   Course,
   CourseAttributeOption,
   CourseData,
+  CourseRecords,
+  CourseRecordType,
   CourseWithData,
   UploadResponse,
 } from "@/types";
@@ -33,4 +35,12 @@ export const fetchCourseById = (id: number) =>
 export const fetchCourseAttributes = () =>
   api
     .get<CourseAttributeOption[]>("/course-attributes")
+    .then((res) => res.data);
+
+export const fetchCourseRecords = (
+  sgtId: string,
+  recordType: CourseRecordType
+) =>
+  api
+    .get<CourseRecords>(`/course-records/${sgtId}/${recordType}`)
     .then((res) => res.data);

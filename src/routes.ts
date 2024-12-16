@@ -20,6 +20,7 @@ import {
   teeBoxTotalDistanceFromCourseData,
   updateTeeBoxesFromCourseData,
 } from "teebox-data";
+import { scrapeLeaderboard } from "./sgt-scraper";
 
 const routes = new Elysia()
   // Home route
@@ -57,6 +58,30 @@ const routes = new Elysia()
     const tagList = await db.query.tags.findMany();
     return tagList;
   })
+
+  .get(
+    "/api/course-records/:sgtId/:teeType",
+    async ({ params: { sgtId, teeType }, set }) => {
+      try {
+        console.log("sgtId", sgtId);
+        // Validate teeType
+        if (teeType !== "CR" && teeType !== "CRTips") {
+          set.status = 400;
+          return { error: "Invalid tee type. Must be 'CR' or 'CRTips'" };
+        }
+
+        const leaderboardData = await scrapeLeaderboard(sgtId, teeType);
+        return leaderboardData;
+      } catch (error) {
+        logger.error(`Error fetching leaderboard for course ${sgtId}`, error);
+        set.status = 500;
+        return {
+          error: "Failed to fetch leaderboard data",
+          details: error instanceof Error ? error.message : "Unknown error",
+        };
+      }
+    }
+  )
 
   .post("/api/add-par-to-all-courses", async () => {
     const courseList = await db.query.courses.findMany();

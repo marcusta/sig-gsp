@@ -198,6 +198,7 @@ export interface ScoreCardData {
   teeBoxes: TeeBoxData[];
   sgtSplashUrl: string;
   courseDetails: CourseDetails;
+  sgtId: string;
 }
 
 export interface CourseDetails {
@@ -210,3 +211,20 @@ export interface CourseDetails {
   updatedDate: string;
   attributes: CourseAttribute[];
 }
+
+export interface CourseRecordEntry {
+  playerName: string;
+  attempts: number;
+  lowScore: string;
+  avatarUrl: string | null;
+  countryCode: string;
+  profileUrl: string;
+}
+
+export interface CourseRecords {
+  courseName: string;
+  teeType: string;
+  entries: CourseRecordEntry[];
+}
+
+export type CourseRecordType = "CR" | "CRTips";

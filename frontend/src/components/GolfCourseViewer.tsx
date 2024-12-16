@@ -27,8 +27,14 @@ import {
   getDistanceUnit,
   getAltitudeUnit,
 } from "@/contexts/UnitContext";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 
-const GolfCourseViewer: React.FC<{ course: CourseWithData }> = ({ course }) => {
+const GolfCourseViewer: React.FC<{
+  course: CourseWithData;
+  onShowScoreCard: () => void;
+}> = ({ course, onShowScoreCard }) => {
   const { unitSystem } = useUnits();
   const longestTee = course.teeBoxes.sort((a, b) => b.length - a.length)[0];
   const courseData = course.gkData;
@@ -73,125 +79,156 @@ const GolfCourseViewer: React.FC<{ course: CourseWithData }> = ({ course }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-slate-200">
-              <p className="text-sm">
-                {course.location}, by <b>{course.designer}</b>
-              </p>
-              <p className="text-sm">
-                {course.holes} holes par {totalPar}, Rating/Slope{" "}
-                {teeTypeRating}
-              </p>
-              <p className="text-sm">
-                Altitude:{" "}
-                {convertAltitude(courseAltitude, unitSystem).toFixed(0)}
-                {getAltitudeUnit(unitSystem)} (
-                {((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)
-              </p>
-              <p className="text-sm">
-                Driving Range: {course.rangeEnabled ? "Yes" : "No"}
-              </p>
-            </div>
-            <div className="text-slate-200">
-              <p className="text-sm">
-                Avg. Elevation Diff:{" "}
-                {convertAltitude(
-                  course.averageElevationDifference,
-                  unitSystem
-                ).toFixed(1)}
-                {getAltitudeUnit(unitSystem)}
-              </p>
-              <p className="text-sm">
-                Largest Drop:{" "}
-                {convertAltitude(
-                  course.largestElevationDrop,
-                  unitSystem
-                ).toFixed(1)}
-                {getAltitudeUnit(unitSystem)}
-              </p>
-              <p className="text-sm">
-                Water Hazards: {course.totalWaterHazards} | Inner OOB:{" "}
-                {course.totalInnerOOB}
-              </p>
-              <p className="text-sm">Island Greens: {course.islandGreens}</p>
-            </div>
-            <div className="flex items-center justify-end space-x-4">
-              <div className="flex space-x-2">
-                <Select
-                  onValueChange={setSelectedTeeType}
-                  value={selectedTeeType}
-                >
-                  <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
-                    <SelectValue placeholder="Select tee" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
-                    {course.teeBoxes
-                      .sort((a, b) => b.length - a.length)
-                      .filter(
-                        (tee, index, self) =>
-                          index === self.findIndex((t) => t.name === tee.name)
-                      )
-                      .map((tee) => (
-                        <SelectItem
-                          key={tee.name}
-                          value={tee.name}
-                          className="text-slate-200"
-                        >
-                          {tee.name} -{" "}
-                          {convertDistance(tee.length, unitSystem).toFixed(0)}
-                          {getDistanceUnit(unitSystem)}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-                <Select
-                  onValueChange={setSelectedPinDay}
-                  value={selectedPinDay}
-                >
-                  <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
-                    <SelectValue placeholder="Select pin day" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
-                    {courseData.Holes[0].Pins.map((pin) => (
-                      <SelectItem
-                        key={pin.Day}
-                        value={pin.Day}
-                        className="text-slate-200"
-                      >
-                        {pin.Day}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="text-slate-200">
+                <p className="text-sm">
+                  {course.location}, by <b>{course.designer}</b>
+                </p>
+                <p className="text-sm">
+                  {course.holes} holes par {totalPar}, Rating/Slope{" "}
+                  {teeTypeRating}
+                </p>
+                <p className="text-sm">
+                  Altitude:{" "}
+                  {convertAltitude(courseAltitude, unitSystem).toFixed(0)}
+                  {getAltitudeUnit(unitSystem)} (
+                  {((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)
+                </p>
+                <p className="text-sm">
+                  Driving Range: {course.rangeEnabled ? "Yes" : "No"}
+                </p>
+              </div>
+              <div className="text-slate-200">
+                <p className="text-sm">
+                  Avg. Elevation Diff:{" "}
+                  {convertAltitude(
+                    course.averageElevationDifference,
+                    unitSystem
+                  ).toFixed(1)}
+                  {getAltitudeUnit(unitSystem)}
+                </p>
+                <p className="text-sm">
+                  Largest Drop:{" "}
+                  {convertAltitude(
+                    course.largestElevationDrop,
+                    unitSystem
+                  ).toFixed(1)}
+                  {getAltitudeUnit(unitSystem)}
+                </p>
+                <p className="text-sm">
+                  Water Hazards: {course.totalWaterHazards} | Inner OOB:{" "}
+                  {course.totalInnerOOB}
+                </p>
+                <p className="text-sm">Island Greens: {course.islandGreens}</p>
+              </div>
+              <div className="flex items-center justify-start lg:justify-end">
+                <div className="w-full lg:w-auto space-y-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Select
+                      onValueChange={setSelectedTeeType}
+                      value={selectedTeeType}
+                    >
+                      <SelectTrigger className="w-full sm:w-[140px] bg-slate-700/50 border-slate-600 text-white">
+                        <SelectValue placeholder="Select tee" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-slate-700">
+                        {course.teeBoxes
+                          .sort((a, b) => b.length - a.length)
+                          .filter(
+                            (tee, index, self) =>
+                              index ===
+                              self.findIndex((t) => t.name === tee.name)
+                          )
+                          .map((tee) => (
+                            <SelectItem
+                              key={tee.name}
+                              value={tee.name}
+                              className="text-slate-200"
+                            >
+                              {tee.name} -{" "}
+                              {convertDistance(tee.length, unitSystem).toFixed(
+                                0
+                              )}
+                              {getDistanceUnit(unitSystem)}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      onValueChange={setSelectedPinDay}
+                      value={selectedPinDay}
+                    >
+                      <SelectTrigger className="w-full sm:w-[140px] bg-slate-700/50 border-slate-600 text-white">
+                        <SelectValue placeholder="Select pin day" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-slate-700">
+                        {courseData.Holes[0].Pins.map((pin) => (
+                          <SelectItem
+                            key={pin.Day}
+                            value={pin.Day}
+                            className="text-slate-200"
+                          >
+                            {pin.Day}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button
+                    variant="secondary"
+                    onClick={onShowScoreCard}
+                    className="w-full sm:w-auto bg-slate-700/50 border-slate-600 text-white hover:bg-slate-700"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Scorecard
+                  </Button>
+                </div>
               </div>
             </div>
+
+            {course?.attributes && course.attributes.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {course.attributes.map((attr) => (
+                  <Badge
+                    key={attr.id}
+                    variant="secondary"
+                    className="bg-slate-700/50 hover:bg-slate-700 text-xs py-0.5 px-2"
+                  >
+                    {attr.name}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-1 space-y-2">
-          {courseData.Holes.filter((hole) => hole.Enabled).map((hole) => (
-            <div
-              key={hole.HoleNumber}
-              className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
-                currentHoleNumber === hole.HoleNumber
-                  ? "bg-purple-600 text-white"
-                  : "bg-slate-800/50 text-slate-200 hover:bg-slate-700/50 border border-slate-700"
-              }`}
-              onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
-            >
-              {hole.HoleNumber} | Par {hole.Par} |{" "}
-              {convertDistance(
-                hole.Tees.find((t) => t.TeeType === selectedTeeType)
-                  ?.Distance || 0,
-                unitSystem
-              ).toFixed(0)}
-              {getDistanceUnit(unitSystem)}
-            </div>
-          ))}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="lg:col-span-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
+            {courseData.Holes.filter((hole) => hole.Enabled).map((hole) => (
+              <div
+                key={hole.HoleNumber}
+                className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
+                  currentHoleNumber === hole.HoleNumber
+                    ? "bg-purple-600 text-white"
+                    : "bg-slate-800/50 text-slate-200 hover:bg-slate-700/50 border border-slate-700"
+                }`}
+                onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
+              >
+                {hole.HoleNumber} | Par {hole.Par} |{" "}
+                {convertDistance(
+                  hole.Tees.find((t) => t.TeeType === selectedTeeType)
+                    ?.Distance || 0,
+                  unitSystem
+                ).toFixed(0)}
+                {getDistanceUnit(unitSystem)}
+              </div>
+            ))}
+          </div>
         </div>
-        <Card className="md:col-span-3 bg-slate-800/50 border-slate-700">
+        <Card className="lg:col-span-3 bg-slate-800/50 border-slate-700">
           <CardHeader>
             <CardTitle className="text-white">
               Hole {currentHoleNumber}

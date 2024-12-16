@@ -78,7 +78,7 @@ const transformToScoreCardData = (
     location: courseData.location,
     teeBoxes: teeBoxes.sort((a, b) => b.totalLength - a.totalLength),
     sgtSplashUrl: courseData.sgtSplashUrl || "",
-
+    sgtId: courseData.sgtId,
     courseDetails: {
       designer: courseData.designer,
       altitude: courseData.altitude,
