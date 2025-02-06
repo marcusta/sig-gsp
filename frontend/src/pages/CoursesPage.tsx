@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCourses } from "@/api/useApi";
 import CourseCardView from "@/components/CourseCardView";
@@ -156,41 +156,6 @@ const CoursesPage: React.FC = () => {
     sortOrder
   );
 
-  // Configurable batch size for lazy loading (you can change the value here)
-  const BATCH_SIZE = 10;
-  // State to control the number of courses rendered at any given time
-  const [visibleCoursesCount, setVisibleCoursesCount] = useState(BATCH_SIZE);
-  // Ref for the loader element at the end of the list
-  const loaderRef = useRef<HTMLDivElement>(null);
-
-  // New effect: Uses IntersectionObserver to load the next batch of courses when the loader element is visible.
-  useEffect(() => {
-    const loader = loaderRef.current;
-    if (!loader) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Load the next batch of courses (but do not exceed the available courses)
-            setVisibleCoursesCount((prev) =>
-              Math.min(prev + BATCH_SIZE, sortedCourses.length)
-            );
-          }
-        });
-      },
-      {
-        rootMargin: "100px",
-        threshold: 0.1,
-      }
-    );
-
-    observer.observe(loader);
-    return () => {
-      observer.disconnect();
-    };
-  }, [sortedCourses]);
-
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading courses</div>;
 
@@ -213,44 +178,40 @@ const CoursesPage: React.FC = () => {
         </Button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex gap-4">
         <input
           type="text"
           placeholder="Filter courses"
           value={filterText}
           onChange={handleFilterChange}
-          className="p-2 border border-gray-300 rounded bg-background text-foreground w-full"
+          className="flex-grow p-2 border border-gray-300 rounded bg-background text-foreground"
         />
-        <div className="flex gap-2 w-full sm:w-auto">
-          <select
-            id="sortOption"
-            value={sortOption}
-            onChange={handleSortChange}
-            className="p-2 border rounded bg-background text-foreground flex-1 sm:flex-none min-w-[200px]"
-          >
-            <option value="alphabetical">Alphabetical</option>
-            <option value="updatedDate">Last Update Time</option>
-            <option value="longestTee">Longest Tee Length</option>
-            <option value="par3Tee">Par 3 Tee Length</option>
-            <option value="altitude">Altitude</option>
-            <option value="rating">Course Rating</option>
-            <option value="largestElevationDrop">Largest Elevation Drop</option>
-            <option value="elevationDifference">
-              Average Elevation Difference
-            </option>
-            <option value="waterHazards">Water Hazards</option>
-            <option value="innerOOB">Inner OOB</option>
-            <option value="islandGreens">Island Greens</option>
-          </select>
-          <Button onClick={handleSortOrderChange} className="whitespace-nowrap">
-            {sortOrder === "asc" ? "Asc" : "Desc"}
-          </Button>
-        </div>
+        <select
+          id="sortOption"
+          value={sortOption}
+          onChange={handleSortChange}
+          className="p-2 border rounded bg-background text-foreground"
+        >
+          <option value="alphabetical">Alphabetical</option>
+          <option value="updatedDate">Last Update Time</option>
+          <option value="longestTee">Longest Tee Length</option>
+          <option value="par3Tee">Par 3 Tee Length</option>
+          <option value="altitude">Altitude</option>
+          <option value="rating">Course Rating</option>
+          <option value="largestElevationDrop">Largest Elevation Drop</option>
+          <option value="elevationDifference">
+            Average Elevation Difference
+          </option>
+          <option value="waterHazards">Water Hazards</option>
+          <option value="innerOOB">Inner OOB</option>
+          <option value="islandGreens">Island Greens</option>
+        </select>
+        <Button onClick={handleSortOrderChange}>
+          {sortOrder === "asc" ? "Asc" : "Desc"}
+        </Button>
       </div>
 
-      {/* Pass only the first "visibleCoursesCount" courses to the CourseCardView */}
-      <CourseCardView courses={sortedCourses.slice(0, visibleCoursesCount)} />
-
+      <CourseCardView courses={sortedCourses || []} />
       {showAdvancedFilter && (
         <AdvancedFilterPopup
           filters={advancedFilters}
@@ -258,9 +219,6 @@ const CoursesPage: React.FC = () => {
           onClose={() => setShowAdvancedFilter(false)}
         />
       )}
-
-      {/* Loader element for triggering the Intersection Observer */}
-      <div ref={loaderRef} className="h-4" />
     </div>
   );
 };

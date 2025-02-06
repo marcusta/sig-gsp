@@ -202,8 +202,8 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
           />
         </div>
 
-        <CardContent className="grid grid-cols-1 gap-4">
-          <div className="space-y-2">
+        <CardContent className="grid grid-cols-1 gap-4 pt-4">
+          <div className="flex flex-wrap gap-2">
             {course.teeBoxes &&
               course.teeBoxes
                 .sort((a, b) => b.length - a.length)
@@ -214,7 +214,7 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
                 .map((tee, index) => (
                   <div
                     key={index}
-                    className={`text-sm px-2 py-1 rounded-md inline-block ${getTeeColor(
+                    className={`text-sm px-2 py-1 rounded-md ${getTeeColor(
                       tee.name
                     )} ${getTextColor(tee.name)}`}
                   >
