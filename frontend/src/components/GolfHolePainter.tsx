@@ -85,15 +85,18 @@ const GolfHolePainter: React.FC<GolfCourseProps> = ({
 
   return (
     <div
-      style={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        top: "-50px",
-      }}
-      className="bg-slate-800/50 rounded-lg p-4"
+      className={`
+        bg-slate-800/50 
+        rounded-lg 
+        p-4 
+        overflow-hidden 
+        w-full 
+        h-[400px] 
+        lg:h-[600px] 
+        relative
+      `}
     >
-      <svg ref={svgRef} className="text-slate-200" />
+      <svg ref={svgRef} className="text-slate-200 w-full h-full" />
     </div>
   );
 };

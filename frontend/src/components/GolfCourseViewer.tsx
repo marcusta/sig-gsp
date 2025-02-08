@@ -236,13 +236,7 @@ const GolfCourseViewer: React.FC<{
           </CardHeader>
           <CardContent className="p-0">
             <div className="relative w-full h-full">
-              <GolfHolePainter
-                courseData={courseData}
-                selectedHoleNumber={currentHoleNumber}
-                selectedTeeType={selectedTeeType}
-                selectedPinDay={selectedPinDay}
-              />
-              <div className="absolute top-2 left-2 z-10">
+              <div className="lg:absolute lg:top-2 lg:left-2 z-10 p-4 lg:p-0">
                 <div className="min-w-[300px] grid grid-cols-2 gap-1 text-sm p-4 rounded-lg border border-slate-600 bg-slate-900/95 text-slate-200 shadow-lg">
                   <span className="font-semibold">Par:</span>
                   <span>{holePar}</span>
@@ -281,6 +275,12 @@ const GolfCourseViewer: React.FC<{
                   </span>
                 </div>
               </div>
+              <GolfHolePainter
+                courseData={courseData}
+                selectedHoleNumber={currentHoleNumber}
+                selectedTeeType={selectedTeeType}
+                selectedPinDay={selectedPinDay}
+              />
             </div>
           </CardContent>
         </Card>
