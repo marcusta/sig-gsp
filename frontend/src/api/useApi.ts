@@ -3,8 +3,11 @@ import type {
   CourseAttributeOption,
   CourseData,
   CourseRecords,
+  CourseRecordsResponse,
   CourseRecordType,
   CourseWithData,
+  LeaderboardResponse,
+  PlayerProfileResponse,
   UploadResponse,
 } from "@/types";
 import axios from "axios";
@@ -44,3 +47,30 @@ export const fetchCourseRecords = (
   api
     .get<CourseRecords>(`/course-records/${sgtId}/${recordType}`)
     .then((res) => res.data);
+
+// Course Records from local DB
+export const fetchStoredCourseRecords = (courseId: number) =>
+  api
+    .get<CourseRecordsResponse>(`/courses/${courseId}/records`)
+    .then((res) => res.data);
+
+// Get available years for filtering
+export const fetchRecordYears = () =>
+  api.get<{ years: string[] }>("/records/years").then((res) => res.data);
+
+// Leaderboard
+export const fetchLeaderboard = (
+  teeType: string = "all",
+  year: string = "all",
+  limit: number = 50,
+  offset: number = 0
+) =>
+  api
+    .get<LeaderboardResponse>("/records/leaderboard", {
+      params: { teeType, year, limit, offset },
+    })
+    .then((res) => res.data);
+
+// Player Profile
+export const fetchPlayerProfile = (playerId: number) =>
+  api.get<PlayerProfileResponse>(`/players/${playerId}`).then((res) => res.data);

@@ -9,20 +9,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Layout from "./components/Layout";
 import FormView from "./components/FormView";
-import CoursePage from "./pages/CoursePage"; // Import CoursePage
+import CoursePage from "./pages/CoursePage";
 import CoursesPage from "./pages/CoursesPage";
+import RecordsPage from "./pages/RecordsPage";
+import PlayerProfilePage from "./pages/PlayerProfilePage";
 import { UnitProvider } from "@/contexts/UnitContext";
 
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   const basePath = import.meta.env.PROD ? "/gsp/" : "/";
-  console.log(
-    "app: basePath: ",
-    basePath,
-    " import.meta.env.PROD: ",
-    import.meta.env.PROD
-  );
   return (
     <UnitProvider>
       <QueryClientProvider client={queryClient}>
@@ -32,6 +28,8 @@ const App: React.FC = () => {
               <Route index element={<Navigate to="/courses" replace />} />
               <Route path="courses" element={<CoursesPage />} />
               <Route path="course/:courseId" element={<CoursePage />} />
+              <Route path="records" element={<RecordsPage />} />
+              <Route path="records/player/:playerId" element={<PlayerProfilePage />} />
               <Route path="form" element={<FormView />} />
             </Route>
           </Routes>

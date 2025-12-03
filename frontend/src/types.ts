@@ -228,3 +228,81 @@ export interface CourseRecords {
 }
 
 export type CourseRecordType = "CR" | "CRTips";
+
+// New Course Records types (from local DB)
+export interface Player {
+  id: number;
+  username: string;
+  displayName: string;
+  countryCode: string | null;
+  avatarUrl: string | null;
+}
+
+export interface StoredCourseRecord {
+  score: string;
+  scoreNumeric: number;
+  recordDate: string | null;
+  player: Player | null;
+}
+
+export interface CourseRecordsResponse {
+  courseId: number;
+  courseName: string;
+  tipsRecord: StoredCourseRecord | null;
+  sgtRecord: StoredCourseRecord | null;
+  lastScrapedAt: string | null;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  player: Player;
+  tipsRecords: number;
+  sgtRecords: number;
+  totalRecords: number;
+  tipsAvgScore: number | null;
+  sgtAvgScore: number | null;
+  totalAvgScore: number | null;
+  tipsTotalScore: number;
+  sgtTotalScore: number;
+  totalScore: number;
+}
+
+export interface LeaderboardResponse {
+  entries: LeaderboardEntry[];
+  total: number;
+  filters: {
+    teeType: string;
+    year: string;
+  };
+}
+
+export interface PlayerRecord {
+  course: {
+    id: number;
+    name: string;
+    location: string;
+    sgtId: string | null;
+  };
+  recordType: string;
+  score: string;
+  scoreNumeric: number;
+  recordDate: string | null;
+}
+
+export interface PlayerRecordSummary {
+  tipsRecords: number;
+  sgtRecords: number;
+  totalRecords: number;
+  tipsAvgScore: number | null;
+  sgtAvgScore: number | null;
+  totalAvgScore: number | null;
+  tipsTotalScore: number;
+  sgtTotalScore: number;
+  totalScore: number;
+}
+
+export interface PlayerProfileResponse {
+  player: Player;
+  records: PlayerRecord[];
+  summary: PlayerRecordSummary;
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSPro Courses - Login</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+        background: linear-gradient(to right, #2d1b4e, #1a103c);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        padding: 1rem 2rem;
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+
+      .login-card {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 2rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 0.25rem;
+        background: #4285f4;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        margin: 0.5rem 0;
+      }
+
+      .btn:hover {
+        background: #357abd;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <h1>GSPro Courses</h1>
+    </header>
+
+    <main class="container">
+      <div class="login-card">
+        <h2>Sign In</h2>
+        <button id="googleSignIn" class="btn">
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            width="18"
+            height="18"
+          />
+          Sign in with Google
+        </button>
+      </div>
+    </main>
+
+    <script>
+      // Initialize Firebase
+      const firebaseConfig = {
+        // Your Firebase config here
+      };
+
+      firebase.initializeApp(firebaseConfig);
+
+      document
+        .getElementById("googleSignIn")
+        .addEventListener("click", async () => {
+          try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            const result = await firebase.auth().signInWithPopup(provider);
+
+            // Get ID token
+            const idToken = await result.user.getIdToken();
+
+            // Send token to backend
+            const response = await fetch("/api/session", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ token: idToken }),
+            });
+
+            if (response.ok) {
+              window.location.href = "/"; // Redirect to main app
+            }
+          } catch (error) {
+            console.error("Login failed:", error);
+          }
+        });
+    </script>
+  </body>
+</html>
