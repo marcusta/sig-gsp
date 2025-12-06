@@ -8,12 +8,14 @@ import type {
   CourseWithData,
   LeaderboardResponse,
   LeaderboardWithChangesResponse,
+  LeaderboardWithPeriodResponse,
   PlayerProfileResponse,
   PlayerRankHistoryResponse,
   PlayerRecordChangesResponse,
   CourseRecordHistoryResponse,
   RecordActivityResponse,
   RecordMoversResponse,
+  RivalriesResponse,
   UploadResponse,
 } from "@/types";
 import axios from "axios";
@@ -100,6 +102,20 @@ export const fetchLeaderboardWithChanges = (
     })
     .then((res) => res.data);
 
+// Leaderboard with custom time period comparison
+export const fetchLeaderboardWithPeriod = (
+  teeType: string = "all",
+  year: string = "all",
+  period: string = "week",
+  limit: number = 50,
+  offset: number = 0
+) =>
+  api
+    .get<LeaderboardWithPeriodResponse>("/records/leaderboard-with-period", {
+      params: { teeType, year, period, limit, offset },
+    })
+    .then((res) => res.data);
+
 // Recent record changes (activity feed)
 export const fetchRecordActivity = (
   limit: number = 50,
@@ -147,5 +163,16 @@ export const fetchRecordMovers = (daysBack: number = 7, limit: number = 10) =>
   api
     .get<RecordMoversResponse>("/records/movers", {
       params: { daysBack, limit },
+    })
+    .then((res) => res.data);
+
+// Player rivalries (who took records from this player)
+export const fetchPlayerRivalries = (
+  playerId: number,
+  daysBack?: number
+) =>
+  api
+    .get<RivalriesResponse>(`/players/${playerId}/rivalries`, {
+      params: daysBack ? { daysBack } : {},
     })
     .then((res) => res.data);

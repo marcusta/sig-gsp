@@ -326,6 +326,22 @@ export interface LeaderboardWithChangesResponse {
   };
 }
 
+export interface LeaderboardEntryWithPeriod extends LeaderboardEntryWithChanges {
+  previousRank: number | null;
+  comparisonPeriod: string; // 'day', 'week', 'month'
+  comparisonDays: number;
+}
+
+export interface LeaderboardWithPeriodResponse {
+  entries: LeaderboardEntryWithPeriod[];
+  total: number;
+  filters: {
+    teeType: string;
+    year: string;
+    period: string;
+  };
+}
+
 export interface RecordChangeEvent {
   id: number;
   courseId: number;
@@ -411,4 +427,32 @@ export interface RecordMoversResponse {
   period: {
     daysBack: number;
   };
+}
+
+export interface RivalryCourse {
+  courseId: number;
+  courseName: string;
+  recordType: string;
+  detectedAt: string;
+}
+
+export interface Rivalry {
+  player: {
+    id: number;
+    username: string;
+    displayName: string;
+    countryCode: string | null;
+    avatarUrl: string | null;
+  };
+  recordsTakenFromMe: number; // How many records this rival took from me
+  recordsTakenByMe: number; // How many records I took from this rival
+  balance: number; // recordsTakenByMe - recordsTakenFromMe (positive = winning)
+  coursesLost: RivalryCourse[];
+  coursesWon: RivalryCourse[];
+}
+
+export interface RivalriesResponse {
+  playerId: number;
+  rivalries: Rivalry[];
+  daysBack?: number;
 }

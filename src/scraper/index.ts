@@ -7,21 +7,17 @@ import { db } from "../db/db";
 import { scrapeRuns } from "../db/schema";
 import logger from "../logger";
 import { scrapeSinglesRecords } from "./singles-scraper";
-import {
-  generatePlayerRankSnapshot,
-  type SnapshotResult,
-} from "./snapshot-service";
 
 export interface ScrapeRunResult {
   runId: number;
   success: boolean;
   summary: string;
-  snapshotResult?: SnapshotResult;
 }
 
 /**
- * Run the full records scrape and generate player rank snapshot
+ * Run the full records scrape
  * Currently only scrapes singles (Tips + SGT)
+ * Note: Snapshot generation is decoupled and should be run separately on a schedule
  */
 export async function runRecordsScrape(): Promise<ScrapeRunResult> {
   const now = new Date().toISOString();
@@ -64,23 +60,12 @@ export async function runRecordsScrape(): Promise<ScrapeRunResult> {
       })
       .where(eq(scrapeRuns.id, runId));
 
-    // Generate player rank snapshot after successful scrape
-    let snapshotResult: SnapshotResult | undefined;
-    if (result.success) {
-      logger.info("Generating player rank snapshot...");
-      snapshotResult = await generatePlayerRankSnapshot();
-      logger.info(
-        `Snapshot: ${snapshotResult.playersProcessed} players, ` +
-          `${snapshotResult.newEntries} new, ${snapshotResult.updatedEntries} updated`
-      );
-    }
-
     const summary =
       `Run #${runId}: ${result.recordsCreated} created, ` +
       `${result.recordsUpdated} updated, ${result.playersCreated} new players`;
     logger.info(summary);
 
-    return { runId, success: result.success, summary, snapshotResult };
+    return { runId, success: result.success, summary };
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
 
@@ -104,6 +89,7 @@ export {
   getPlayerRecordChanges,
   getPlayersWithGainedRecords,
   getPlayersWithLostRecords,
+  getPlayersWhoTookRecordsFrom,
   getRecentRecordChanges,
   getRecordChangeStats,
 } from "./history-service";

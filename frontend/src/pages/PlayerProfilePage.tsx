@@ -5,10 +5,18 @@ import {
   fetchPlayerProfile,
   fetchPlayerRankHistory,
   fetchPlayerRecordChanges,
+  fetchPlayerRivalries,
 } from "@/api/useApi";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   ArrowLeft,
   Trophy,
@@ -21,13 +29,16 @@ import {
   History,
   Zap,
   Clock,
+  Swords,
+  Target,
 } from "lucide-react";
-import type { RecordChangeEvent, PlayerRankSnapshot } from "@/types";
+import type { RecordChangeEvent, PlayerRankSnapshot, Rivalry } from "@/types";
 
 export default function PlayerProfilePage() {
   const { playerId } = useParams<{ playerId: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("records");
+  const [rivalryPeriod, setRivalryPeriod] = useState<number | undefined>(30);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["player", playerId],
@@ -44,6 +55,12 @@ export default function PlayerProfilePage() {
   const { data: recordChangesData } = useQuery({
     queryKey: ["playerRecordChanges", playerId],
     queryFn: () => fetchPlayerRecordChanges(Number(playerId), 50),
+    enabled: !!playerId,
+  });
+
+  const { data: rivalriesData } = useQuery({
+    queryKey: ["playerRivalries", playerId, rivalryPeriod],
+    queryFn: () => fetchPlayerRivalries(Number(playerId), rivalryPeriod),
     enabled: !!playerId,
   });
 
@@ -354,6 +371,13 @@ export default function PlayerProfilePage() {
               Course Records ({records.length})
             </TabsTrigger>
             <TabsTrigger
+              value="rivalries"
+              className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+            >
+              <Swords className="h-4 w-4 mr-2" />
+              Rivalries ({rivalriesData?.rivalries.length || 0})
+            </TabsTrigger>
+            <TabsTrigger
               value="activity"
               className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
             >
@@ -423,6 +447,217 @@ export default function PlayerProfilePage() {
               {records.length === 0 && (
                 <div className="px-6 py-12 text-center text-slate-400">
                   No course records found
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Rivalries Tab */}
+          <TabsContent value="rivalries">
+            <div className="mb-4">
+              <Select
+                value={rivalryPeriod?.toString() || "all"}
+                onValueChange={(v) =>
+                  setRivalryPeriod(v === "all" ? undefined : Number(v))
+                }
+              >
+                <SelectTrigger className="w-56 bg-slate-800 border-slate-700 text-white">
+                  <Clock className="h-4 w-4 mr-2 text-slate-400" />
+                  <SelectValue placeholder="Time period" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectItem value="7" className="text-white hover:bg-slate-700">
+                    Last 7 days
+                  </SelectItem>
+                  <SelectItem
+                    value="30"
+                    className="text-white hover:bg-slate-700"
+                  >
+                    Last 30 days
+                  </SelectItem>
+                  <SelectItem
+                    value="90"
+                    className="text-white hover:bg-slate-700"
+                  >
+                    Last 90 days
+                  </SelectItem>
+                  <SelectItem
+                    value="all"
+                    className="text-white hover:bg-slate-700"
+                  >
+                    All Time
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
+              {rivalriesData?.rivalries && rivalriesData.rivalries.length > 0 ? (
+                <div className="divide-y divide-slate-700/50">
+                  {rivalriesData.rivalries.map((rivalry: Rivalry) => (
+                    <div
+                      key={rivalry.player.id}
+                      className="px-6 py-4 hover:bg-slate-700/30 transition-colors"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          {rivalry.player.avatarUrl ? (
+                            <img
+                              src={rivalry.player.avatarUrl}
+                              alt=""
+                              className={`w-12 h-12 rounded-full object-cover ring-2 ${rivalry.balance > 0 ? "ring-emerald-500/50" : rivalry.balance < 0 ? "ring-red-500/50" : "ring-slate-500/50"}`}
+                            />
+                          ) : (
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white ring-2 ${rivalry.balance > 0 ? "bg-emerald-500/20 ring-emerald-500/50" : rivalry.balance < 0 ? "bg-red-500/20 ring-red-500/50" : "bg-slate-500/20 ring-slate-500/50"}`}>
+                              {rivalry.player.displayName.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              {getCountryFlag(rivalry.player.countryCode)}
+                              <button
+                                onClick={() =>
+                                  navigate(`/records/player/${rivalry.player.id}`)
+                                }
+                                className="font-semibold text-white hover:text-emerald-400 transition-colors"
+                              >
+                                {rivalry.player.displayName}
+                              </button>
+                            </div>
+                            <span className="text-xs text-slate-500">
+                              @{rivalry.player.username}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          {/* Balance Badge */}
+                          <div className={`flex items-center justify-end gap-2 mb-2 px-3 py-1 rounded-full ${rivalry.balance > 0 ? "bg-emerald-500/20" : rivalry.balance < 0 ? "bg-red-500/20" : "bg-slate-500/20"}`}>
+                            {rivalry.balance > 0 ? (
+                              <>
+                                <TrendingUp className="h-4 w-4 text-emerald-400" />
+                                <span className="text-xl font-black text-emerald-400">
+                                  +{rivalry.balance}
+                                </span>
+                              </>
+                            ) : rivalry.balance < 0 ? (
+                              <>
+                                <TrendingDown className="h-4 w-4 text-red-400" />
+                                <span className="text-xl font-black text-red-400">
+                                  {rivalry.balance}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <Minus className="h-4 w-4 text-slate-400" />
+                                <span className="text-xl font-black text-slate-400">
+                                  0
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          {/* Win/Loss Stats */}
+                          <div className="flex items-center gap-3 text-sm">
+                            <div className="text-center">
+                              <div className="text-emerald-400 font-bold text-lg">
+                                {rivalry.recordsTakenByMe}
+                              </div>
+                              <div className="text-[10px] text-slate-500 uppercase">
+                                Won
+                              </div>
+                            </div>
+                            <div className="text-slate-600">-</div>
+                            <div className="text-center">
+                              <div className="text-red-400 font-bold text-lg">
+                                {rivalry.recordsTakenFromMe}
+                              </div>
+                              <div className="text-[10px] text-slate-500 uppercase">
+                                Lost
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* List of courses */}
+                      <div className="mt-3 space-y-2">
+                        {rivalry.coursesWon.length > 0 && (
+                          <div>
+                            <div className="text-xs text-emerald-400 font-semibold mb-1 px-1 flex items-center gap-1">
+                              <Trophy className="h-3 w-3" />
+                              Records Won ({rivalry.coursesWon.length})
+                            </div>
+                            <div className="space-y-1">
+                              {rivalry.coursesWon.map((course, idx) => (
+                                <div
+                                  key={`won-${course.courseId}-${idx}`}
+                                  className="flex items-center justify-between text-sm bg-emerald-500/10 rounded px-3 py-2 border-l-2 border-emerald-500/50"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Link
+                                      to={`/courses/${course.courseId}`}
+                                      className="text-slate-300 hover:text-emerald-400 transition-colors"
+                                    >
+                                      {course.courseName}
+                                    </Link>
+                                    <Badge
+                                      className={`text-[10px] px-1.5 py-0 ${course.recordType === "tips" ? "bg-slate-200/20 text-slate-200" : "bg-blue-500/20 text-blue-400"}`}
+                                    >
+                                      {course.recordType.toUpperCase()}
+                                    </Badge>
+                                  </div>
+                                  <div className="text-xs text-slate-500">
+                                    {formatTimeAgo(course.detectedAt)}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {rivalry.coursesLost.length > 0 && (
+                          <div>
+                            <div className="text-xs text-red-400 font-semibold mb-1 px-1 flex items-center gap-1">
+                              <Target className="h-3 w-3" />
+                              Records Lost ({rivalry.coursesLost.length})
+                            </div>
+                            <div className="space-y-1">
+                              {rivalry.coursesLost.map((course, idx) => (
+                                <div
+                                  key={`lost-${course.courseId}-${idx}`}
+                                  className="flex items-center justify-between text-sm bg-red-500/10 rounded px-3 py-2 border-l-2 border-red-500/50"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Link
+                                      to={`/courses/${course.courseId}`}
+                                      className="text-slate-300 hover:text-emerald-400 transition-colors"
+                                    >
+                                      {course.courseName}
+                                    </Link>
+                                    <Badge
+                                      className={`text-[10px] px-1.5 py-0 ${course.recordType === "tips" ? "bg-slate-200/20 text-slate-200" : "bg-blue-500/20 text-blue-400"}`}
+                                    >
+                                      {course.recordType.toUpperCase()}
+                                    </Badge>
+                                  </div>
+                                  <div className="text-xs text-slate-500">
+                                    {formatTimeAgo(course.detectedAt)}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="px-6 py-12 text-center text-slate-400">
+                  <Swords className="h-12 w-12 mx-auto mb-4 text-slate-600" />
+                  <p className="text-lg font-semibold mb-2">No Rivalries Found</p>
+                  <p className="text-sm text-slate-500">
+                    No one has taken any records from {player.displayName} in this
+                    time period
+                  </p>
                 </div>
               )}
             </div>

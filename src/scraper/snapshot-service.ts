@@ -281,4 +281,118 @@ export async function getLatestPlayerRankChange(
   };
 }
 
+/**
+ * Get snapshot for a player near a specific date (returns closest snapshot on or before the date)
+ */
+export async function getSnapshotNearDate(
+  playerId: number,
+  targetDate: string
+): Promise<{
+  date: string;
+  overallRank: number;
+  totalRecords: number;
+  tipsRecords: number;
+  sgtRecords: number;
+} | null> {
+  const results = await db.all(sql`
+    SELECT
+      snapshot_date,
+      overall_rank,
+      total_records,
+      tips_records,
+      sgt_records
+    FROM player_rank_snapshots
+    WHERE player_id = ${playerId} AND snapshot_date <= ${targetDate}
+    ORDER BY snapshot_date DESC
+    LIMIT 1
+  `);
+
+  if (results.length === 0) {
+    return null;
+  }
+
+  const row = results[0] as any;
+  return {
+    date: row.snapshot_date,
+    overallRank: row.overall_rank,
+    totalRecords: row.total_records,
+    tipsRecords: row.tips_records,
+    sgtRecords: row.sgt_records,
+  };
+}
+
+/**
+ * Calculate the date X days ago from today
+ */
+export function getDateDaysAgo(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString().split("T")[0]; // 'YYYY-MM-DD'
+}
+
+/**
+ * Get the date for the start of last week (Monday)
+ */
+export function getLastWeekStart(): string {
+  const date = new Date();
+  const day = date.getDay();
+  const diff = day === 0 ? 6 : day - 1; // If Sunday (0), go back 6 days, else go back to Monday
+  date.setDate(date.getDate() - diff - 7); // Go back to last Monday
+  return date.toISOString().split("T")[0];
+}
+
+/**
+ * Get rank change for a player over a specific time period
+ */
+export async function getPlayerRankChangeOverPeriod(
+  playerId: number,
+  daysAgo: number
+): Promise<{
+  currentRank: number | null;
+  previousRank: number | null;
+  rankChange: number;
+  currentRecords: number;
+  previousRecords: number;
+  recordsChange: number;
+} | null> {
+  const compareDate = getDateDaysAgo(daysAgo);
+
+  // Get most recent snapshot (current)
+  const currentResults = await db.all(sql`
+    SELECT overall_rank, total_records
+    FROM player_rank_snapshots
+    WHERE player_id = ${playerId}
+    ORDER BY snapshot_date DESC
+    LIMIT 1
+  `);
+
+  if (currentResults.length === 0) {
+    return null;
+  }
+
+  const current = currentResults[0] as any;
+  const previousSnapshot = await getSnapshotNearDate(playerId, compareDate);
+
+  if (!previousSnapshot) {
+    // Player has no snapshot from that far back, treat as new
+    return {
+      currentRank: current.overall_rank,
+      previousRank: null,
+      rankChange: 0,
+      currentRecords: current.total_records,
+      previousRecords: 0,
+      recordsChange: current.total_records,
+    };
+  }
+
+  return {
+    currentRank: current.overall_rank,
+    previousRank: previousSnapshot.overallRank,
+    rankChange: previousSnapshot.overallRank - current.overall_rank, // positive = moved up
+    currentRecords: current.total_records,
+    previousRecords: previousSnapshot.totalRecords,
+    recordsChange: current.total_records - previousSnapshot.totalRecords,
+  };
+}
+
 

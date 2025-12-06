@@ -655,7 +655,29 @@ const routes = new Elysia()
     }
   )
 
-  // Enhanced leaderboard with rank changes
+  // Get players who took records from a specific player (rivalry tracker)
+  .get(
+    "/api/players/:id/rivalries",
+    async ({ params: { id }, query, set }) => {
+      try {
+        const { getPlayersWhoTookRecordsFrom } = await import("./scraper");
+
+        const daysBack = query.daysBack ? Number(query.daysBack) : undefined;
+        const rivalries = await getPlayersWhoTookRecordsFrom(
+          Number(id),
+          daysBack
+        );
+
+        return { playerId: Number(id), rivalries, daysBack };
+      } catch (error) {
+        logger.error(`Error fetching rivalries for player ${id}:`, error);
+        set.status = 500;
+        return { error: "Failed to fetch rivalries" };
+      }
+    }
+  )
+
+  // Enhanced leaderboard with rank changes (uses latest snapshot comparison)
   .get("/api/records/leaderboard-with-changes", async ({ query, set }) => {
     try {
       const teeType = (query.teeType as string) || "all";
@@ -695,6 +717,66 @@ const routes = new Elysia()
       };
     } catch (error) {
       logger.error("Error fetching leaderboard with changes:", error);
+      set.status = 500;
+      return { error: "Failed to fetch leaderboard" };
+    }
+  })
+
+  // Leaderboard with custom time period comparison
+  .get("/api/records/leaderboard-with-period", async ({ query, set }) => {
+    try {
+      const teeType = (query.teeType as string) || "all";
+      const year = (query.year as string) || "all";
+      const limit = Math.min(Number(query.limit) || 50, 200);
+      const offset = Number(query.offset) || 0;
+      const period = (query.period as string) || "week"; // 'day', 'week', 'month'
+
+      // Map period to days
+      const periodToDays: Record<string, number> = {
+        day: 1,
+        week: 7,
+        month: 30,
+      };
+      const daysAgo = periodToDays[period] || 7;
+
+      // Get base leaderboard
+      const leaderboard = await getPlayerLeaderboard(
+        teeType,
+        year,
+        limit,
+        offset
+      );
+      const total = await getPlayerLeaderboardCount(teeType, year);
+
+      // Enhance with rank changes over the specified period
+      const { getPlayerRankChangeOverPeriod } = await import(
+        "./scraper/snapshot-service"
+      );
+
+      const entriesWithChanges = await Promise.all(
+        leaderboard.map(async (entry: any) => {
+          const change = await getPlayerRankChangeOverPeriod(
+            entry.player.id,
+            daysAgo
+          );
+          return {
+            ...entry,
+            rankChange: change?.rankChange ?? 0,
+            recordsChange: change?.recordsChange ?? 0,
+            previousRank: change?.previousRank,
+            comparisonPeriod: period,
+            comparisonDays: daysAgo,
+          };
+        })
+      );
+
+      return {
+        entries: entriesWithChanges,
+        total,
+        filters: { teeType, year, period },
+      };
+    } catch (error) {
+      logger.error("Error fetching leaderboard with period:", error);
       set.status = 500;
       return { error: "Failed to fetch leaderboard" };
     }

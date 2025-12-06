@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  fetchLeaderboardWithChanges,
+  fetchLeaderboardWithPeriod,
   fetchRecordYears,
   fetchRecordMovers,
 } from "@/api/useApi";
@@ -36,6 +36,7 @@ export default function RecordsPage() {
   const navigate = useNavigate();
   const [teeType, setTeeType] = useState("all");
   const [year, setYear] = useState("all");
+  const [period, setPeriod] = useState("week");
   const [page, setPage] = useState(0);
 
   // Fetch available years
@@ -45,13 +46,14 @@ export default function RecordsPage() {
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
   });
 
-  // Enhanced leaderboard with rank changes
+  // Enhanced leaderboard with period-based rank changes
   const { data, isLoading, error } = useQuery({
-    queryKey: ["leaderboard-with-changes", teeType, year, page],
+    queryKey: ["leaderboard-with-period", teeType, year, period, page],
     queryFn: () =>
-      fetchLeaderboardWithChanges(
+      fetchLeaderboardWithPeriod(
         teeType,
         year,
+        period,
         ITEMS_PER_PAGE,
         page * ITEMS_PER_PAGE
       ),
@@ -123,6 +125,7 @@ export default function RecordsPage() {
             <p className="text-slate-400">
               Players ranked by total course records{" "}
               {year !== "all" ? `set in ${year}` : "held"}
+              {" · "}Movement over last {period === "day" ? "day" : period === "week" ? "week" : "month"}
             </p>
           </div>
           <Link to="/records/activity">
@@ -200,6 +203,39 @@ export default function RecordsPage() {
                       {y}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={period}
+                onValueChange={(v) => {
+                  setPeriod(v);
+                  setPage(0);
+                }}
+              >
+                <SelectTrigger className="w-48 bg-slate-800 border-slate-700 text-white">
+                  <TrendingUp className="h-4 w-4 mr-2 text-slate-400" />
+                  <SelectValue placeholder="Movement period" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectItem
+                    value="day"
+                    className="text-white hover:bg-slate-700"
+                  >
+                    Last Day
+                  </SelectItem>
+                  <SelectItem
+                    value="week"
+                    className="text-white hover:bg-slate-700"
+                  >
+                    Last Week
+                  </SelectItem>
+                  <SelectItem
+                    value="month"
+                    className="text-white hover:bg-slate-700"
+                  >
+                    Last Month
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
