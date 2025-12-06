@@ -6,7 +6,12 @@
 import axios from "axios";
 import { and, eq } from "drizzle-orm";
 import { db } from "../db/db";
-import { courseRecords, courses, recordModes } from "../db/schema";
+import {
+  courseRecordHistory,
+  courseRecords,
+  courses,
+  recordModes,
+} from "../db/schema";
 import logger from "../logger";
 import { parseSinglesResponse } from "./html-parser";
 import { upsertPlayer } from "./player-service";
@@ -163,7 +168,7 @@ async function findCourseBySgtId(
 }
 
 /**
- * Upsert a course record
+ * Upsert a course record and save history for changes
  */
 async function upsertCourseRecord(
   courseId: number,
@@ -187,6 +192,38 @@ async function upsertCourseRecord(
     const scoreChanged = existing.score !== record.score;
 
     if (playerChanged || scoreChanged) {
+      // Determine change type
+      const changeType = playerChanged ? "BROKEN" : "IMPROVED";
+      const scoreImprovement =
+        existing.scoreNumeric !== null
+          ? existing.scoreNumeric - record.scoreNumeric
+          : null;
+
+      // Save to history before overwriting
+      await db.insert(courseRecordHistory).values({
+        courseId,
+        recordModeId,
+        scrapeRunId: null, // Can be linked if we track scrape runs
+        previousPlayerId: existing.playerId,
+        previousScore: existing.score,
+        previousScoreNumeric: existing.scoreNumeric,
+        previousRecordDate: existing.recordDate,
+        newPlayerId: playerId,
+        newScore: record.score,
+        newScoreNumeric: record.scoreNumeric,
+        newRecordDate: record.recordDate,
+        changeType,
+        scoreImprovement,
+        detectedAt: now,
+        createdAt: now,
+      });
+
+      logger.info(
+        `Record ${changeType}: Course ${courseId}, Mode ${recordModeId}, ` +
+          `${existing.score} → ${record.score} (improvement: ${scoreImprovement})`
+      );
+
+      // Update the current record
       await db
         .update(courseRecords)
         .set({
@@ -198,6 +235,7 @@ async function upsertCourseRecord(
           updatedAt: now,
         })
         .where(eq(courseRecords.id, existing.id));
+
       return { created: false, updated: true };
     }
 
@@ -221,6 +259,25 @@ async function upsertCourseRecord(
     scrapedAt: now,
     createdAt: now,
     updatedAt: now,
+  });
+
+  // Save initial record to history
+  await db.insert(courseRecordHistory).values({
+    courseId,
+    recordModeId,
+    scrapeRunId: null,
+    previousPlayerId: null,
+    previousScore: null,
+    previousScoreNumeric: null,
+    previousRecordDate: null,
+    newPlayerId: playerId,
+    newScore: record.score,
+    newScoreNumeric: record.scoreNumeric,
+    newRecordDate: record.recordDate,
+    changeType: "INITIAL",
+    scoreImprovement: null,
+    detectedAt: now,
+    createdAt: now,
   });
 
   return { created: true, updated: false };

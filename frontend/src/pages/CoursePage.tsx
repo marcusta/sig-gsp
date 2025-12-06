@@ -39,6 +39,7 @@ const transformToScoreCardData = (
   });
 
   return {
+    courseId: courseData.id,
     courseName: courseData.name,
     location: courseData.location,
     teeBoxes: teeBoxes.sort((a, b) => b.totalLength - a.totalLength),

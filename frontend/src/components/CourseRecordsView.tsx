@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "./ui/button";
-import { CourseRecords } from "@/types";
+import { CourseRecords, RecordChangeEvent } from "@/types";
 import { Badge } from "./ui/badge";
+import { fetchCourseRecordHistory } from "@/api/useApi";
+import {
+  ChevronDown,
+  ChevronUp,
+  History,
+  Zap,
+  TrendingUp,
+  Trophy,
+} from "lucide-react";
 
 interface CourseRecordsViewProps {
   data: CourseRecords | undefined;
@@ -10,6 +20,7 @@ interface CourseRecordsViewProps {
   recordType: "CR" | "CRTips";
   onRecordTypeChange: (type: "CR" | "CRTips") => void;
   sgtId: string;
+  courseId?: number;
 }
 
 export const CourseRecordsView: React.FC<CourseRecordsViewProps> = ({
@@ -19,7 +30,21 @@ export const CourseRecordsView: React.FC<CourseRecordsViewProps> = ({
   recordType,
   onRecordTypeChange,
   sgtId,
+  courseId,
 }) => {
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Fetch record history if courseId is available
+  const { data: historyData, isLoading: historyLoading } = useQuery({
+    queryKey: ["courseRecordHistory", courseId, recordType],
+    queryFn: () =>
+      fetchCourseRecordHistory(
+        courseId!,
+        recordType === "CR" ? "sgt" : "tips"
+      ),
+    enabled: !!courseId && showHistory,
+  });
+
   const HeaderSection = () => (
     <div className="flex justify-between items-center border-b pb-4">
       <div className="flex items-center gap-4">
@@ -57,6 +82,64 @@ export const CourseRecordsView: React.FC<CourseRecordsViewProps> = ({
         >
           Tips
         </Button>
+      </div>
+    </div>
+  );
+
+  const getChangeIcon = (changeType: string) => {
+    switch (changeType) {
+      case "BROKEN":
+        return <Zap className="h-3 w-3 text-yellow-500" />;
+      case "IMPROVED":
+        return <TrendingUp className="h-3 w-3 text-emerald-400" />;
+      case "INITIAL":
+        return <Trophy className="h-3 w-3 text-blue-400" />;
+      default:
+        return null;
+    }
+  };
+
+  const formatTimeAgo = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+    return date.toLocaleDateString();
+  };
+
+  const renderHistoryItem = (change: RecordChangeEvent) => (
+    <div
+      key={change.id}
+      className="flex items-center justify-between py-2 px-3 bg-muted/30 rounded-lg"
+    >
+      <div className="flex items-center gap-2">
+        {getChangeIcon(change.changeType)}
+        <div>
+          <div className="text-sm font-medium">{change.newPlayer.displayName}</div>
+          <div className="text-xs text-muted-foreground">
+            {formatTimeAgo(change.detectedAt)}
+            {change.changeType === "BROKEN" && change.previousPlayer && (
+              <span className="ml-1">
+                (from {change.previousPlayer.displayName})
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="text-right">
+        <Badge variant="secondary" className="text-xs">
+          {change.newScore}
+        </Badge>
+        {change.previousScore && change.changeType !== "INITIAL" && (
+          <div className="text-[10px] text-muted-foreground">
+            was {change.previousScore}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -144,6 +227,43 @@ export const CourseRecordsView: React.FC<CourseRecordsViewProps> = ({
             </div>
           )}
         </>
+      )}
+
+      {/* Record History Section */}
+      {courseId && (
+        <div className="border-t pt-4 mt-6">
+          <Button
+            variant="ghost"
+            className="w-full flex items-center justify-between py-2"
+            onClick={() => setShowHistory(!showHistory)}
+          >
+            <span className="flex items-center gap-2 text-sm font-medium">
+              <History className="h-4 w-4" />
+              Record History
+            </span>
+            {showHistory ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
+
+          {showHistory && (
+            <div className="mt-4 space-y-2">
+              {historyLoading ? (
+                <div className="text-center text-sm text-muted-foreground py-4">
+                  Loading history...
+                </div>
+              ) : historyData?.history && historyData.history.length > 0 ? (
+                historyData.history.map(renderHistoryItem)
+              ) : (
+                <div className="text-center text-sm text-muted-foreground py-4">
+                  No record history available yet
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

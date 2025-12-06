@@ -7,7 +7,13 @@ import type {
   CourseRecordType,
   CourseWithData,
   LeaderboardResponse,
+  LeaderboardWithChangesResponse,
   PlayerProfileResponse,
+  PlayerRankHistoryResponse,
+  PlayerRecordChangesResponse,
+  CourseRecordHistoryResponse,
+  RecordActivityResponse,
+  RecordMoversResponse,
   UploadResponse,
 } from "@/types";
 import axios from "axios";
@@ -73,4 +79,73 @@ export const fetchLeaderboard = (
 
 // Player Profile
 export const fetchPlayerProfile = (playerId: number) =>
-  api.get<PlayerProfileResponse>(`/players/${playerId}`).then((res) => res.data);
+  api
+    .get<PlayerProfileResponse>(`/players/${playerId}`)
+    .then((res) => res.data);
+
+// ============================================================================
+// Ranking History & Tracking API
+// ============================================================================
+
+// Enhanced leaderboard with rank changes
+export const fetchLeaderboardWithChanges = (
+  teeType: string = "all",
+  year: string = "all",
+  limit: number = 50,
+  offset: number = 0
+) =>
+  api
+    .get<LeaderboardWithChangesResponse>("/records/leaderboard-with-changes", {
+      params: { teeType, year, limit, offset },
+    })
+    .then((res) => res.data);
+
+// Recent record changes (activity feed)
+export const fetchRecordActivity = (
+  limit: number = 50,
+  offset: number = 0,
+  daysBack: number = 30
+) =>
+  api
+    .get<RecordActivityResponse>("/records/activity", {
+      params: { limit, offset, daysBack },
+    })
+    .then((res) => res.data);
+
+// Player rank history over time
+export const fetchPlayerRankHistory = (playerId: number, limit: number = 30) =>
+  api
+    .get<PlayerRankHistoryResponse>(`/players/${playerId}/rank-history`, {
+      params: { limit },
+    })
+    .then((res) => res.data);
+
+// Player's record change activity
+export const fetchPlayerRecordChanges = (
+  playerId: number,
+  limit: number = 50
+) =>
+  api
+    .get<PlayerRecordChangesResponse>(`/players/${playerId}/record-changes`, {
+      params: { limit },
+    })
+    .then((res) => res.data);
+
+// Course record history
+export const fetchCourseRecordHistory = (
+  courseId: number,
+  recordType?: "tips" | "sgt"
+) =>
+  api
+    .get<CourseRecordHistoryResponse>(`/courses/${courseId}/record-history`, {
+      params: recordType ? { recordType } : {},
+    })
+    .then((res) => res.data);
+
+// Top gainers and losers
+export const fetchRecordMovers = (daysBack: number = 7, limit: number = 10) =>
+  api
+    .get<RecordMoversResponse>("/records/movers", {
+      params: { daysBack, limit },
+    })
+    .then((res) => res.data);

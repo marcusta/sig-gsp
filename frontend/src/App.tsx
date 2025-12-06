@@ -12,6 +12,7 @@ import FormView from "./components/FormView";
 import CoursePage from "./pages/CoursePage";
 import CoursesPage from "./pages/CoursesPage";
 import RecordsPage from "./pages/RecordsPage";
+import ActivityPage from "./pages/ActivityPage";
 import PlayerProfilePage from "./pages/PlayerProfilePage";
 import { UnitProvider } from "@/contexts/UnitContext";
 
@@ -29,7 +30,11 @@ const App: React.FC = () => {
               <Route path="courses" element={<CoursesPage />} />
               <Route path="course/:courseId" element={<CoursePage />} />
               <Route path="records" element={<RecordsPage />} />
-              <Route path="records/player/:playerId" element={<PlayerProfilePage />} />
+              <Route path="records/activity" element={<ActivityPage />} />
+              <Route
+                path="records/player/:playerId"
+                element={<PlayerProfilePage />}
+              />
               <Route path="form" element={<FormView />} />
             </Route>
           </Routes>

@@ -193,6 +193,7 @@ export interface TeeBoxData {
 }
 
 export interface ScoreCardData {
+  courseId: number;
   courseName: string;
   location: string;
   teeBoxes: TeeBoxData[];
@@ -305,4 +306,109 @@ export interface PlayerProfileResponse {
   player: Player;
   records: PlayerRecord[];
   summary: PlayerRecordSummary;
+}
+
+// ============================================================================
+// Ranking History & Tracking Types
+// ============================================================================
+
+export interface LeaderboardEntryWithChanges extends LeaderboardEntry {
+  rankChange: number; // positive = moved up, negative = moved down
+  recordsChange: number; // records gained - records lost
+}
+
+export interface LeaderboardWithChangesResponse {
+  entries: LeaderboardEntryWithChanges[];
+  total: number;
+  filters: {
+    teeType: string;
+    year: string;
+  };
+}
+
+export interface RecordChangeEvent {
+  id: number;
+  courseId: number;
+  courseName: string;
+  courseLocation: string;
+  recordType: "tips" | "sgt";
+  changeType: "INITIAL" | "BROKEN" | "IMPROVED";
+  previousPlayer: {
+    id: number;
+    username: string;
+    displayName: string;
+    countryCode: string | null;
+  } | null;
+  previousScore: string | null;
+  newPlayer: {
+    id: number;
+    username: string;
+    displayName: string;
+    countryCode: string | null;
+  };
+  newScore: string;
+  scoreImprovement: number | null;
+  detectedAt: string;
+}
+
+export interface RecordChangeStats {
+  totalChanges: number;
+  brokenRecords: number;
+  improvedRecords: number;
+  initialRecords: number;
+}
+
+export interface RecordActivityResponse {
+  changes: RecordChangeEvent[];
+  stats: RecordChangeStats;
+  pagination: {
+    limit: number;
+    offset: number;
+  };
+}
+
+export interface PlayerRankSnapshot {
+  date: string;
+  overallRank: number;
+  tipsRank: number | null;
+  sgtRank: number | null;
+  totalRecords: number;
+  tipsRecords: number;
+  sgtRecords: number;
+  rankChange: number;
+  recordsGained: number;
+  recordsLost: number;
+}
+
+export interface PlayerRankHistoryResponse {
+  playerId: number;
+  history: PlayerRankSnapshot[];
+}
+
+export interface PlayerRecordChangesResponse {
+  playerId: number;
+  changes: RecordChangeEvent[];
+}
+
+export interface CourseRecordHistoryResponse {
+  courseId: number;
+  history: RecordChangeEvent[];
+}
+
+export interface RecordMover {
+  player: {
+    id: number;
+    username: string;
+    displayName: string;
+  };
+  recordsGained?: number;
+  recordsLost?: number;
+}
+
+export interface RecordMoversResponse {
+  gainers: RecordMover[];
+  losers: RecordMover[];
+  period: {
+    daysBack: number;
+  };
 }

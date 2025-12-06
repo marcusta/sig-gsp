@@ -564,6 +564,181 @@ const routes = new Elysia()
     };
   })
 
+  // ============================================================================
+  // Record History & Ranking Tracking API
+  // ============================================================================
+
+  // Get recent record changes (activity feed)
+  .get("/api/records/activity", async ({ query, set }) => {
+    try {
+      const { getRecentRecordChanges, getRecordChangeStats } = await import(
+        "./scraper"
+      );
+
+      const limit = Math.min(Number(query.limit) || 50, 100);
+      const offset = Number(query.offset) || 0;
+      const daysBack = Number(query.daysBack) || 30;
+
+      const [changes, stats] = await Promise.all([
+        getRecentRecordChanges(limit, offset),
+        getRecordChangeStats(daysBack),
+      ]);
+
+      return {
+        changes,
+        stats,
+        pagination: { limit, offset },
+      };
+    } catch (error) {
+      logger.error("Error fetching record activity:", error);
+      set.status = 500;
+      return { error: "Failed to fetch record activity" };
+    }
+  })
+
+  // Get record history for a specific course
+  .get(
+    "/api/courses/:id/record-history",
+    async ({ params: { id }, query, set }) => {
+      try {
+        const { getCourseRecordHistory } = await import("./scraper");
+
+        const recordType = query.recordType as "tips" | "sgt" | undefined;
+        const history = await getCourseRecordHistory(Number(id), recordType);
+
+        return { courseId: Number(id), history };
+      } catch (error) {
+        logger.error(`Error fetching course record history for ${id}:`, error);
+        set.status = 500;
+        return { error: "Failed to fetch course record history" };
+      }
+    }
+  )
+
+  // Get player rank history over time
+  .get(
+    "/api/players/:id/rank-history",
+    async ({ params: { id }, query, set }) => {
+      try {
+        const { getPlayerRankHistory } = await import(
+          "./scraper/snapshot-service"
+        );
+
+        const limit = Math.min(Number(query.limit) || 30, 90);
+        const history = await getPlayerRankHistory(Number(id), limit);
+
+        return { playerId: Number(id), history };
+      } catch (error) {
+        logger.error(`Error fetching player rank history for ${id}:`, error);
+        set.status = 500;
+        return { error: "Failed to fetch player rank history" };
+      }
+    }
+  )
+
+  // Get player's record change activity
+  .get(
+    "/api/players/:id/record-changes",
+    async ({ params: { id }, query, set }) => {
+      try {
+        const { getPlayerRecordChanges } = await import("./scraper");
+
+        const limit = Math.min(Number(query.limit) || 50, 100);
+        const changes = await getPlayerRecordChanges(Number(id), limit);
+
+        return { playerId: Number(id), changes };
+      } catch (error) {
+        logger.error(`Error fetching player record changes for ${id}:`, error);
+        set.status = 500;
+        return { error: "Failed to fetch player record changes" };
+      }
+    }
+  )
+
+  // Enhanced leaderboard with rank changes
+  .get("/api/records/leaderboard-with-changes", async ({ query, set }) => {
+    try {
+      const teeType = (query.teeType as string) || "all";
+      const year = (query.year as string) || "all";
+      const limit = Math.min(Number(query.limit) || 50, 200);
+      const offset = Number(query.offset) || 0;
+
+      // Get base leaderboard
+      const leaderboard = await getPlayerLeaderboard(
+        teeType,
+        year,
+        limit,
+        offset
+      );
+      const total = await getPlayerLeaderboardCount(teeType, year);
+
+      // Enhance with rank changes from snapshots
+      const { getLatestPlayerRankChange } = await import(
+        "./scraper/snapshot-service"
+      );
+
+      const entriesWithChanges = await Promise.all(
+        leaderboard.map(async (entry: any) => {
+          const rankChange = await getLatestPlayerRankChange(entry.player.id);
+          return {
+            ...entry,
+            rankChange: rankChange?.rankChange ?? 0,
+            recordsChange: rankChange?.recordsChange ?? 0,
+          };
+        })
+      );
+
+      return {
+        entries: entriesWithChanges,
+        total,
+        filters: { teeType, year },
+      };
+    } catch (error) {
+      logger.error("Error fetching leaderboard with changes:", error);
+      set.status = 500;
+      return { error: "Failed to fetch leaderboard" };
+    }
+  })
+
+  // Get players who gained/lost most records recently
+  .get("/api/records/movers", async ({ query, set }) => {
+    try {
+      const { getPlayersWithGainedRecords, getPlayersWithLostRecords } =
+        await import("./scraper");
+
+      const daysBack = Math.min(Number(query.daysBack) || 7, 30);
+      const limit = Math.min(Number(query.limit) || 10, 50);
+
+      const [gainers, losers] = await Promise.all([
+        getPlayersWithGainedRecords(daysBack, limit),
+        getPlayersWithLostRecords(daysBack, limit),
+      ]);
+
+      return {
+        gainers,
+        losers,
+        period: { daysBack },
+      };
+    } catch (error) {
+      logger.error("Error fetching record movers:", error);
+      set.status = 500;
+      return { error: "Failed to fetch record movers" };
+    }
+  })
+
+  // Admin: Generate player rank snapshot manually
+  .post("/api/admin/generate-snapshot", async ({ set }) => {
+    try {
+      const { generatePlayerRankSnapshot } = await import("./scraper");
+      const result = await generatePlayerRankSnapshot();
+      return result;
+    } catch (error) {
+      logger.error("Snapshot generation error:", error);
+      set.status = 500;
+      return { error: "Snapshot generation failed", details: String(error) };
+    }
+  })
+
   // Catch-all route to serve index.html
   .all("*", async ({ set }) => {
     try {

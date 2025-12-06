@@ -1,0 +1,40 @@
+CREATE TABLE `course_record_history` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`course_id` integer NOT NULL,
+	`record_mode_id` integer NOT NULL,
+	`scrape_run_id` integer,
+	`previous_player_id` integer,
+	`previous_score` text,
+	`previous_score_numeric` integer,
+	`previous_record_date` text,
+	`new_player_id` integer NOT NULL,
+	`new_score` text NOT NULL,
+	`new_score_numeric` integer NOT NULL,
+	`new_record_date` text,
+	`change_type` text NOT NULL,
+	`score_improvement` integer,
+	`detected_at` text NOT NULL,
+	`created_at` text,
+	FOREIGN KEY (`course_id`) REFERENCES `courses`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`record_mode_id`) REFERENCES `record_modes`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`scrape_run_id`) REFERENCES `scrape_runs`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`previous_player_id`) REFERENCES `players`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`new_player_id`) REFERENCES `players`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `player_rank_snapshots` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`snapshot_date` text NOT NULL,
+	`player_id` integer NOT NULL,
+	`overall_rank` integer NOT NULL,
+	`tips_rank` integer,
+	`sgt_rank` integer,
+	`total_records` integer NOT NULL,
+	`tips_records` integer DEFAULT 0,
+	`sgt_records` integer DEFAULT 0,
+	`rank_change` integer DEFAULT 0,
+	`records_gained` integer DEFAULT 0,
+	`records_lost` integer DEFAULT 0,
+	`created_at` text,
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON UPDATE no action ON DELETE no action
+);

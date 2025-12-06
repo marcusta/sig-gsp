@@ -283,3 +283,114 @@ export const courseRecordsRelations = relations(courseRecords, ({ one }) => ({
     references: [teams.id],
   }),
 }));
+
+// ============================================================================
+// Ranking History & Tracking Tables
+// ============================================================================
+
+// Course Record History - tracks every record change over time
+export const courseRecordHistory = sqliteTable("course_record_history", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  courseId: integer("course_id")
+    .notNull()
+    .references(() => courses.id),
+  recordModeId: integer("record_mode_id")
+    .notNull()
+    .references(() => recordModes.id),
+  scrapeRunId: integer("scrape_run_id").references(() => scrapeRuns.id),
+
+  // Previous record holder (null if this is first record for course)
+  previousPlayerId: integer("previous_player_id").references(() => players.id),
+  previousScore: text("previous_score"),
+  previousScoreNumeric: integer("previous_score_numeric"),
+  previousRecordDate: text("previous_record_date"),
+
+  // New record holder
+  newPlayerId: integer("new_player_id")
+    .notNull()
+    .references(() => players.id),
+  newScore: text("new_score").notNull(),
+  newScoreNumeric: integer("new_score_numeric").notNull(),
+  newRecordDate: text("new_record_date"),
+
+  // Change metadata
+  changeType: text("change_type").notNull(), // 'INITIAL', 'BROKEN', 'IMPROVED'
+  scoreImprovement: integer("score_improvement"), // How much better (positive = improvement)
+  detectedAt: text("detected_at").notNull(),
+
+  createdAt: text("created_at"),
+});
+
+export type CourseRecordHistory = typeof courseRecordHistory.$inferSelect;
+export type NewCourseRecordHistory = typeof courseRecordHistory.$inferInsert;
+
+// Player Rank Snapshots - tracks player leaderboard positions over time
+export const playerRankSnapshots = sqliteTable("player_rank_snapshots", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  snapshotDate: text("snapshot_date").notNull(),
+  playerId: integer("player_id")
+    .notNull()
+    .references(() => players.id),
+
+  // Rankings
+  overallRank: integer("overall_rank").notNull(),
+  tipsRank: integer("tips_rank"),
+  sgtRank: integer("sgt_rank"),
+
+  // Stats at this point in time
+  totalRecords: integer("total_records").notNull(),
+  tipsRecords: integer("tips_records").default(0),
+  sgtRecords: integer("sgt_records").default(0),
+
+  // Computed changes from previous snapshot
+  rankChange: integer("rank_change").default(0), // +2 = moved up 2, -1 = dropped 1
+  recordsGained: integer("records_gained").default(0),
+  recordsLost: integer("records_lost").default(0),
+
+  createdAt: text("created_at"),
+});
+
+export type PlayerRankSnapshot = typeof playerRankSnapshots.$inferSelect;
+export type NewPlayerRankSnapshot = typeof playerRankSnapshots.$inferInsert;
+
+// ============================================================================
+// Ranking History Relations
+// ============================================================================
+
+export const courseRecordHistoryRelations = relations(
+  courseRecordHistory,
+  ({ one }) => ({
+    course: one(courses, {
+      fields: [courseRecordHistory.courseId],
+      references: [courses.id],
+    }),
+    recordMode: one(recordModes, {
+      fields: [courseRecordHistory.recordModeId],
+      references: [recordModes.id],
+    }),
+    scrapeRun: one(scrapeRuns, {
+      fields: [courseRecordHistory.scrapeRunId],
+      references: [scrapeRuns.id],
+    }),
+    previousPlayer: one(players, {
+      fields: [courseRecordHistory.previousPlayerId],
+      references: [players.id],
+      relationName: "previousPlayer",
+    }),
+    newPlayer: one(players, {
+      fields: [courseRecordHistory.newPlayerId],
+      references: [players.id],
+      relationName: "newPlayer",
+    }),
+  })
+);
+
+export const playerRankSnapshotsRelations = relations(
+  playerRankSnapshots,
+  ({ one }) => ({
+    player: one(players, {
+      fields: [playerRankSnapshots.playerId],
+      references: [players.id],
+    }),
+  })
+);

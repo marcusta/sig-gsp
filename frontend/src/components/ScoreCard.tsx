@@ -298,6 +298,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
             recordType={recordType}
             onRecordTypeChange={setRecordType}
             sgtId={data.sgtId}
+            courseId={data.courseId}
           />
         )}
       </div>

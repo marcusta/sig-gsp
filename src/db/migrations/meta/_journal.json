@@ -50,6 +50,13 @@
       "when": 1764778700282,
       "tag": "0006_orange_arachne",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1764971524455,
+      "tag": "0007_fantastic_vargas",
+      "breakpoints": true
     }
   ]
 }
