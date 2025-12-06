@@ -83,7 +83,7 @@ export default function RecordsPage() {
   const getRankChangeIndicator = (change: number) => {
     if (change > 0) {
       return (
-        <span className="flex items-center text-emerald-400 text-xs font-medium">
+        <span className="flex items-center text-[#40916C] text-xs font-medium">
           <TrendingUp className="h-3 w-3 mr-0.5" />
           {change}
         </span>
@@ -91,7 +91,7 @@ export default function RecordsPage() {
     }
     if (change < 0) {
       return (
-        <span className="flex items-center text-red-400 text-xs font-medium">
+        <span className="flex items-center text-[#C1666B] text-xs font-medium">
           <TrendingDown className="h-3 w-3 mr-0.5" />
           {Math.abs(change)}
         </span>
@@ -115,7 +115,7 @@ export default function RecordsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900">
+    <div className="min-h-screen bg-[#1A1D29]">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -133,7 +133,7 @@ export default function RecordsPage() {
             <Link to="/records/rivalries">
               <Button
                 variant="outline"
-                className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
+                className="bg-[#1F2937] border-[#374151] text-white hover:bg-[#374151]"
               >
                 <Swords className="h-4 w-4 mr-2" />
                 Top Rivalries
@@ -142,7 +142,7 @@ export default function RecordsPage() {
             <Link to="/records/activity">
               <Button
                 variant="outline"
-                className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
+                className="bg-[#1F2937] border-[#374151] text-white hover:bg-[#374151]"
               >
                 <Activity className="h-4 w-4 mr-2" />
                 View Activity Feed
@@ -163,25 +163,25 @@ export default function RecordsPage() {
                   setPage(0);
                 }}
               >
-                <SelectTrigger className="w-48 bg-slate-800 border-slate-700 text-white">
+                <SelectTrigger className="w-48 bg-[#1F2937] border-[#374151] text-white">
                   <SelectValue placeholder="Filter by tee type" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent className="bg-[#1F2937] border-[#374151]">
                   <SelectItem
                     value="all"
-                    className="text-white hover:bg-slate-700"
+                    className="text-white hover:bg-[#374151]"
                   >
                     All Records
                   </SelectItem>
                   <SelectItem
                     value="tips"
-                    className="text-white hover:bg-slate-700"
+                    className="text-white hover:bg-[#374151]"
                   >
                     Tips Only
                   </SelectItem>
                   <SelectItem
                     value="sgt"
-                    className="text-white hover:bg-slate-700"
+                    className="text-white hover:bg-[#374151]"
                   >
                     SGT Only
                   </SelectItem>
@@ -195,14 +195,14 @@ export default function RecordsPage() {
                   setPage(0);
                 }}
               >
-                <SelectTrigger className="w-48 bg-slate-800 border-slate-700 text-white">
+                <SelectTrigger className="w-48 bg-[#1F2937] border-[#374151] text-white">
                   <Calendar className="h-4 w-4 mr-2 text-slate-400" />
                   <SelectValue placeholder="Filter by year" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent className="bg-[#1F2937] border-[#374151]">
                   <SelectItem
                     value="all"
-                    className="text-white hover:bg-slate-700"
+                    className="text-white hover:bg-[#374151]"
                   >
                     All Time
                   </SelectItem>
@@ -210,7 +210,7 @@ export default function RecordsPage() {
                     <SelectItem
                       key={y}
                       value={y}
-                      className="text-white hover:bg-slate-700"
+                      className="text-white hover:bg-[#374151]"
                     >
                       {y}
                     </SelectItem>
@@ -225,26 +225,26 @@ export default function RecordsPage() {
                   setPage(0);
                 }}
               >
-                <SelectTrigger className="w-48 bg-slate-800 border-slate-700 text-white">
+                <SelectTrigger className="w-48 bg-[#1F2937] border-[#374151] text-white">
                   <TrendingUp className="h-4 w-4 mr-2 text-slate-400" />
                   <SelectValue placeholder="Movement period" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent className="bg-[#1F2937] border-[#374151]">
                   <SelectItem
                     value="day"
-                    className="text-white hover:bg-slate-700"
+                    className="text-white hover:bg-[#374151]"
                   >
                     Last Day
                   </SelectItem>
                   <SelectItem
                     value="week"
-                    className="text-white hover:bg-slate-700"
+                    className="text-white hover:bg-[#374151]"
                   >
                     Last Week
                   </SelectItem>
                   <SelectItem
                     value="month"
-                    className="text-white hover:bg-slate-700"
+                    className="text-white hover:bg-[#374151]"
                   >
                     Last Month
                   </SelectItem>
@@ -253,7 +253,7 @@ export default function RecordsPage() {
             </div>
 
             {/* Leaderboard Table */}
-            <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
+            <div className="bg-[#1F2937] rounded-xl border border-[#374151] overflow-hidden">
               {isLoading ? (
                 <div className="p-8 text-center text-slate-400">Loading...</div>
               ) : error ? (
@@ -265,7 +265,7 @@ export default function RecordsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-slate-900/70 border-b border-slate-600">
+                        <tr className="bg-[#1A1D29] border-b border-[#374151]">
                           <th className="px-4 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider w-20">
                             Rank
                           </th>
@@ -273,27 +273,27 @@ export default function RecordsPage() {
                             Player
                           </th>
                           <th className="px-4 py-4 text-center w-24">
-                            <span className="text-slate-900 bg-gradient-to-r from-slate-200 to-slate-300 px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">
+                            <span className="text-slate-900 bg-slate-300 px-3 py-1 rounded text-[10px] font-bold">
                               TIPS
                             </span>
                           </th>
                           <th className="px-4 py-4 text-center w-24">
-                            <span className="text-white bg-gradient-to-r from-blue-500 to-blue-600 px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">
+                            <span className="text-white bg-[#4A90A4] px-3 py-1 rounded text-[10px] font-bold">
                               SGT
                             </span>
                           </th>
                           <th className="px-4 py-4 text-center w-28">
-                            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
+                            <span className="text-[11px] font-bold text-[#52B788] uppercase tracking-wider">
                               Total
                             </span>
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-700/30">
+                      <tbody className="divide-y divide-[#374151]">
                         {data?.entries.map((entry) => (
                           <tr
                             key={entry.player.id}
-                            className={`hover:bg-emerald-900/20 cursor-pointer transition-all duration-150 ${entry.rank <= 3 ? "bg-slate-800/30" : ""}`}
+                            className={`hover:bg-[#2D6A4F]/20 cursor-pointer transition-all duration-150 ${entry.rank <= 3 ? "bg-[#1A1D29]/50" : ""}`}
                             onClick={() =>
                               navigate(`/records/player/${entry.player.id}`)
                             }
@@ -340,12 +340,12 @@ export default function RecordsPage() {
                                       {entry.player.displayName}
                                     </span>
                                     {entry.recordsChange > 0 && (
-                                      <Badge className="ml-1 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px] px-1.5 py-0">
+                                      <Badge className="ml-1 bg-[#40916C]/20 text-[#52B788] border-[#40916C]/30 text-[10px] px-1.5 py-0">
                                         +{entry.recordsChange}
                                       </Badge>
                                     )}
                                     {entry.recordsChange < 0 && (
-                                      <Badge className="ml-1 bg-red-500/20 text-red-400 border-red-500/30 text-[10px] px-1.5 py-0">
+                                      <Badge className="ml-1 bg-[#C1666B]/20 text-[#C1666B] border-[#C1666B]/30 text-[10px] px-1.5 py-0">
                                         {entry.recordsChange}
                                       </Badge>
                                     )}
@@ -363,7 +363,7 @@ export default function RecordsPage() {
                                     {entry.tipsRecords}
                                   </span>
                                   <span
-                                    className={`text-xs tabular-nums ${entry.tipsTotalScore < 0 ? "text-emerald-500/70" : entry.tipsTotalScore > 0 ? "text-red-400/70" : "text-slate-500"}`}
+                                    className={`text-xs tabular-nums ${entry.tipsTotalScore < 0 ? "text-[#52B788]/70" : entry.tipsTotalScore > 0 ? "text-[#C1666B]/70" : "text-slate-500"}`}
                                   >
                                     {entry.tipsTotalScore > 0 ? "+" : ""}
                                     {entry.tipsTotalScore}
@@ -376,11 +376,11 @@ export default function RecordsPage() {
                             <td className="px-4 py-3 text-center">
                               {entry.sgtRecords > 0 ? (
                                 <div className="flex flex-col items-center gap-0.5">
-                                  <span className="font-bold text-blue-400 text-lg tabular-nums">
+                                  <span className="font-bold text-[#4A90A4] text-lg tabular-nums">
                                     {entry.sgtRecords}
                                   </span>
                                   <span
-                                    className={`text-xs tabular-nums ${entry.sgtTotalScore < 0 ? "text-emerald-500/70" : entry.sgtTotalScore > 0 ? "text-red-400/70" : "text-slate-500"}`}
+                                    className={`text-xs tabular-nums ${entry.sgtTotalScore < 0 ? "text-[#52B788]/70" : entry.sgtTotalScore > 0 ? "text-[#C1666B]/70" : "text-slate-500"}`}
                                   >
                                     {entry.sgtTotalScore > 0 ? "+" : ""}
                                     {entry.sgtTotalScore}
@@ -392,11 +392,11 @@ export default function RecordsPage() {
                             </td>
                             <td className="px-4 py-3 text-center">
                               <div className="flex flex-col items-center">
-                                <span className="font-black text-emerald-400 text-2xl tabular-nums">
+                                <span className="font-black text-[#52B788] text-2xl tabular-nums">
                                   {entry.totalRecords}
                                 </span>
                                 <span
-                                  className={`text-xs tabular-nums ${entry.totalScore < 0 ? "text-emerald-500/70" : entry.totalScore > 0 ? "text-red-400/70" : "text-slate-500"}`}
+                                  className={`text-xs tabular-nums ${entry.totalScore < 0 ? "text-[#52B788]/70" : entry.totalScore > 0 ? "text-[#C1666B]/70" : "text-slate-500"}`}
                                 >
                                   {entry.totalScore > 0 ? "+" : ""}
                                   {entry.totalScore}
@@ -410,7 +410,7 @@ export default function RecordsPage() {
                   </div>
 
                   {/* Pagination */}
-                  <div className="flex items-center justify-between px-4 py-3 border-t border-slate-700 bg-slate-900/30">
+                  <div className="flex items-center justify-between px-4 py-3 border-t border-[#374151] bg-[#1A1D29]">
                     <div className="text-sm text-slate-400">
                       Showing {page * ITEMS_PER_PAGE + 1} -{" "}
                       {page * ITEMS_PER_PAGE + (data?.entries.length || 0)}
@@ -421,7 +421,7 @@ export default function RecordsPage() {
                         size="sm"
                         onClick={() => setPage((p) => Math.max(0, p - 1))}
                         disabled={page === 0}
-                        className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+                        className="bg-[#1F2937] border-[#374151] text-white hover:bg-[#374151]"
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
@@ -430,7 +430,7 @@ export default function RecordsPage() {
                         size="sm"
                         onClick={() => setPage((p) => p + 1)}
                         disabled={(data?.entries.length || 0) < ITEMS_PER_PAGE}
-                        className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+                        className="bg-[#1F2937] border-[#374151] text-white hover:bg-[#374151]"
                       >
                         <ChevronRight className="h-4 w-4" />
                       </Button>
@@ -444,38 +444,38 @@ export default function RecordsPage() {
           {/* Sidebar - Top Movers */}
           <div className="lg:col-span-1 space-y-6">
             {/* Hot - Recent Gainers */}
-            <div className="bg-gradient-to-br from-orange-950/30 to-slate-800/50 rounded-xl border border-orange-900/30 overflow-hidden">
-              <div className="px-4 py-3 border-b border-orange-900/30 bg-gradient-to-r from-orange-900/20 to-transparent">
-                <h3 className="text-sm font-bold text-orange-100 flex items-center gap-2">
-                  <Flame className="h-4 w-4 text-orange-500" />
+            <div className="bg-[#1F2937] rounded-xl border border-[#52B788]/30 overflow-hidden">
+              <div className="px-4 py-3 border-b border-[#52B788]/20 bg-[#2D6A4F]/20">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Flame className="h-4 w-4 text-[#F4A261]" />
                   Hot This Week
                 </h3>
-                <p className="text-xs text-orange-200/50">Most records gained</p>
+                <p className="text-xs text-slate-400">Most records gained</p>
               </div>
-              <div className="divide-y divide-orange-900/20">
+              <div className="divide-y divide-[#374151]">
                 {moversData?.gainers.slice(0, 5).map((mover, idx) => (
                   <div
                     key={mover.player.id}
-                    className="px-4 py-2.5 hover:bg-orange-900/20 cursor-pointer transition-colors"
+                    className="px-4 py-2.5 hover:bg-[#2D6A4F]/20 cursor-pointer transition-colors"
                     onClick={() => navigate(`/records/player/${mover.player.id}`)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
-                        <span className="text-orange-400/60 text-xs font-bold w-4">
+                        <span className="text-[#52B788]/60 text-xs font-bold w-4">
                           {idx + 1}
                         </span>
                         <span className="text-white text-sm font-medium truncate max-w-[130px]">
                           {mover.player.displayName}
                         </span>
                       </div>
-                      <span className="text-emerald-400 text-sm font-black tabular-nums bg-emerald-500/10 px-2 py-0.5 rounded">
+                      <span className="text-[#52B788] text-sm font-black tabular-nums bg-[#40916C]/10 px-2 py-0.5 rounded">
                         +{mover.recordsGained}
                       </span>
                     </div>
                   </div>
                 ))}
                 {(!moversData?.gainers || moversData.gainers.length === 0) && (
-                  <div className="px-4 py-6 text-center text-orange-200/40 text-sm">
+                  <div className="px-4 py-6 text-center text-slate-500 text-sm">
                     No recent activity
                   </div>
                 )}
@@ -483,40 +483,40 @@ export default function RecordsPage() {
             </div>
 
             {/* Cold - Recent Losers */}
-            <div className="bg-gradient-to-br from-blue-950/30 to-slate-800/50 rounded-xl border border-blue-900/30 overflow-hidden">
-              <div className="px-4 py-3 border-b border-blue-900/30 bg-gradient-to-r from-blue-900/20 to-transparent">
-                <h3 className="text-sm font-bold text-blue-100 flex items-center gap-2">
-                  <Snowflake className="h-4 w-4 text-blue-400" />
+            <div className="bg-[#1F2937] rounded-xl border border-[#DDA15E]/30 overflow-hidden">
+              <div className="px-4 py-3 border-b border-[#DDA15E]/20 bg-[#DDA15E]/10">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Snowflake className="h-4 w-4 text-[#4A90A4]" />
                   Records Lost
                 </h3>
-                <p className="text-xs text-blue-200/50">
+                <p className="text-xs text-slate-400">
                   Most records broken this week
                 </p>
               </div>
-              <div className="divide-y divide-blue-900/20">
+              <div className="divide-y divide-[#374151]">
                 {moversData?.losers.slice(0, 5).map((mover, idx) => (
                   <div
                     key={mover.player.id}
-                    className="px-4 py-2.5 hover:bg-blue-900/20 cursor-pointer transition-colors"
+                    className="px-4 py-2.5 hover:bg-[#DDA15E]/10 cursor-pointer transition-colors"
                     onClick={() => navigate(`/records/player/${mover.player.id}`)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
-                        <span className="text-blue-400/60 text-xs font-bold w-4">
+                        <span className="text-[#DDA15E]/60 text-xs font-bold w-4">
                           {idx + 1}
                         </span>
                         <span className="text-white text-sm font-medium truncate max-w-[130px]">
                           {mover.player.displayName}
                         </span>
                       </div>
-                      <span className="text-red-400 text-sm font-black tabular-nums bg-red-500/10 px-2 py-0.5 rounded">
+                      <span className="text-[#C1666B] text-sm font-black tabular-nums bg-[#C1666B]/10 px-2 py-0.5 rounded">
                         -{mover.recordsLost}
                       </span>
                     </div>
                   </div>
                 ))}
                 {(!moversData?.losers || moversData.losers.length === 0) && (
-                  <div className="px-4 py-6 text-center text-blue-200/40 text-sm">
+                  <div className="px-4 py-6 text-center text-slate-500 text-sm">
                     No recent activity
                   </div>
                 )}

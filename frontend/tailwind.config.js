@@ -56,6 +56,19 @@ module.exports = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			// Golf-inspired extended palette
+  			'golf': {
+  				'forest': '#1B4332',
+  				'fairway': '#2D6A4F',
+  				'augusta': '#52B788',
+  				'birdie': '#40916C',
+  				'sand': '#DDA15E',
+  				'sky': '#4A90A4',
+  				'bogey': '#C1666B',
+  				'trophy': '#F4A261',
+  				'clubhouse': '#1A1D29',
+  				'slate': '#2C3E50',
   			}
   		},
   		borderRadius: {
