@@ -16,6 +16,7 @@ import type {
   RecordActivityResponse,
   RecordMoversResponse,
   RivalriesResponse,
+  TopRivalriesResponse,
   UploadResponse,
 } from "@/types";
 import axios from "axios";
@@ -174,5 +175,13 @@ export const fetchPlayerRivalries = (
   api
     .get<RivalriesResponse>(`/players/${playerId}/rivalries`, {
       params: daysBack ? { daysBack } : {},
+    })
+    .then((res) => res.data);
+
+// Top rivalries (pairs of players with most record exchanges)
+export const fetchTopRivalries = (daysBack?: number, limit?: number) =>
+  api
+    .get<TopRivalriesResponse>("/records/top-rivalries", {
+      params: { daysBack, limit },
     })
     .then((res) => res.data);

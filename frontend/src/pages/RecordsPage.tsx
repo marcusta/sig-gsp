@@ -28,6 +28,7 @@ import {
   Activity,
   Flame,
   Snowflake,
+  Swords,
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 50;
@@ -128,15 +129,26 @@ export default function RecordsPage() {
               {" · "}Movement over last {period === "day" ? "day" : period === "week" ? "week" : "month"}
             </p>
           </div>
-          <Link to="/records/activity">
-            <Button
-              variant="outline"
-              className="mt-4 md:mt-0 bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
-            >
-              <Activity className="h-4 w-4 mr-2" />
-              View Activity Feed
-            </Button>
-          </Link>
+          <div className="flex gap-3 mt-4 md:mt-0">
+            <Link to="/records/rivalries">
+              <Button
+                variant="outline"
+                className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
+              >
+                <Swords className="h-4 w-4 mr-2" />
+                Top Rivalries
+              </Button>
+            </Link>
+            <Link to="/records/activity">
+              <Button
+                variant="outline"
+                className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
+              >
+                <Activity className="h-4 w-4 mr-2" />
+                View Activity Feed
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

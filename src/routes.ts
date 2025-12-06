@@ -677,6 +677,24 @@ const routes = new Elysia()
     }
   )
 
+  // Get top rivalries (pairs of players with most record exchanges)
+  .get("/api/records/top-rivalries", async ({ query, set }) => {
+    try {
+      const { getTopRivalries } = await import("./scraper/history-service");
+
+      const daysBack = query.daysBack ? Number(query.daysBack) : undefined;
+      const limit = Math.min(Number(query.limit) || 20, 50);
+
+      const rivalries = await getTopRivalries(daysBack, limit);
+
+      return { rivalries, daysBack };
+    } catch (error) {
+      logger.error("Error fetching top rivalries:", error);
+      set.status = 500;
+      return { error: "Failed to fetch top rivalries" };
+    }
+  })
+
   // Enhanced leaderboard with rank changes (uses latest snapshot comparison)
   .get("/api/records/leaderboard-with-changes", async ({ query, set }) => {
     try {

@@ -456,3 +456,38 @@ export interface RivalriesResponse {
   rivalries: Rivalry[];
   daysBack?: number;
 }
+
+
+export interface TopRivalryCourse {
+  courseId: number;
+  courseName: string;
+  recordType: string;
+  winner: 1 | 2;
+  detectedAt: string;
+}
+
+export interface TopRivalry {
+  player1: {
+    id: number;
+    username: string;
+    displayName: string;
+    countryCode: string | null;
+    avatarUrl: string | null;
+  };
+  player2: {
+    id: number;
+    username: string;
+    displayName: string;
+    countryCode: string | null;
+    avatarUrl: string | null;
+  };
+  totalExchanges: number;
+  player1Wins: number;
+  player2Wins: number;
+  recentCourses: TopRivalryCourse[];
+}
+
+export interface TopRivalriesResponse {
+  rivalries: TopRivalry[];
+  daysBack?: number;
+}

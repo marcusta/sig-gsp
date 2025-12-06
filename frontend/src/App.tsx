@@ -14,6 +14,7 @@ import CoursesPage from "./pages/CoursesPage";
 import RecordsPage from "./pages/RecordsPage";
 import ActivityPage from "./pages/ActivityPage";
 import PlayerProfilePage from "./pages/PlayerProfilePage";
+import TopRivalriesPage from "./pages/TopRivalriesPage";
 import { UnitProvider } from "@/contexts/UnitContext";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App: React.FC = () => {
               <Route path="course/:courseId" element={<CoursePage />} />
               <Route path="records" element={<RecordsPage />} />
               <Route path="records/activity" element={<ActivityPage />} />
+              <Route path="records/rivalries" element={<TopRivalriesPage />} />
               <Route
                 path="records/player/:playerId"
                 element={<PlayerProfilePage />}
