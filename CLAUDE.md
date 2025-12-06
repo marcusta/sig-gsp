@@ -70,12 +70,12 @@ npm run lint
 - GKD data contains hole-by-hole information, elevations, hazards, tee distances/ratings/slopes
 
 **Scraping System** (`src/scraper/`):
-- `index.ts` - Orchestrates scrape runs, creates scrapeRuns records, calls snapshot generation
+- `index.ts` - Orchestrates scrape runs, creates scrapeRuns records (snapshot generation is decoupled)
 - `singles-scraper.ts` - Main scraper for Tips and SGT single-player putting records
 - `html-parser.ts` - Parses SGT leaderboard HTML pages using Cheerio
 - `player-service.ts` - Creates/updates player records from scraped data
 - `history-service.ts` - Tracks record changes (who gained/lost records, course record history)
-- `snapshot-service.ts` - Generates daily player rank snapshots for leaderboard tracking over time
+- `snapshot-service.ts` - Generates player rank snapshots for leaderboard tracking over time (run independently on schedule)
 - `types.ts` - Shared scraper types
 
 **Other**:
@@ -127,7 +127,13 @@ npm run lint
 3. For each course, fetches HTML from SGT, parses with Cheerio, extracts player/score
 4. `player-service` upserts players, `history-service` tracks record changes
 5. Updates `courseRecords` with current record holders
-6. `generatePlayerRankSnapshot()` captures current leaderboard state for historical tracking
+
+**Snapshot Generation** (triggered independently via `/api/admin/generate-snapshot`):
+- **Decoupled from scraping** to allow scraping multiple times per day while maintaining consistent snapshot intervals
+- Should be run on a fixed schedule (e.g., daily at midnight) for clean time-based comparisons
+- `generatePlayerRankSnapshot()` captures current leaderboard state and stores in `playerRankSnapshots`
+- Enables "movement over last X days" comparisons via `/api/records/leaderboard-with-period` endpoint
+- Supports custom time periods: day, week, month (configurable via query parameter)
 
 **Frontend Data Fetching**:
 1. Page component uses TanStack Query hook from `useApi.ts`
@@ -167,6 +173,17 @@ npm run lint
 - Check `logs/` directory for Winston logs (daily rotation)
 - Frontend dev server has React Query Devtools enabled
 - Use `/api/admin/scrape-status` to check recent scrape runs
+
+## Scheduling Snapshots
+
+Since snapshot generation is decoupled from scraping, you need to set up a scheduled job to run snapshots at consistent intervals.
+
+**Recommended approach:**
+- Use a cron job, systemd timer, or task scheduler to call `/api/admin/generate-snapshot` daily at a fixed time (e.g., midnight UTC)
+- Example cron entry: `0 0 * * * curl -X POST http://localhost:3000/api/admin/generate-snapshot`
+- This ensures consistent time intervals for "last 7 days" or "last 30 days" comparisons
+
+**Scraping can run as often as needed** (multiple times per day) without affecting snapshot consistency.
 
 ## Notes
 
