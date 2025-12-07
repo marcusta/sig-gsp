@@ -16,23 +16,31 @@ export interface LeaderboardData {
   entries: LeaderboardEntry[];
 }
 
+interface SgtApiResponse {
+  title: string;
+  table: string;
+}
+
 export async function scrapeLeaderboard(
   sgtId: string,
   teeType: "CR" | "CRTips"
 ): Promise<LeaderboardData> {
   const url = `https://simulatorgolftour.com/sgt-api/courses/course-record-leaderboard/${sgtId}/${teeType}`;
 
-  const response = await axios.get(url);
-  const html = response.data;
-  const $ = cheerio.load(html);
+  const response = await axios.get<SgtApiResponse>(url);
+  const { title, table } = response.data;
 
-  const courseName = $("h5.text-sgt-white").text().trim();
-  const teeTypeText = $("p.text-sgt-light").text().trim();
+  // Parse the title HTML for course name and tee type
+  const $title = cheerio.load(title);
+  const courseName = $title("h5.text-sgt-white").text().trim();
+  const teeTypeText = $title("p.text-sgt-light").text().trim();
 
+  // Parse the table HTML for leaderboard entries
+  const $table = cheerio.load(table);
   const entries: LeaderboardEntry[] = [];
 
-  $("table.course-records-table tbody tr").each((_, element) => {
-    const $row = $(element);
+  $table("table.course-leader-table tbody tr").each((_, element) => {
+    const $row = $table(element);
 
     const playerName = $row.find("a").text().trim();
     const attempts = parseInt($row.find("td").eq(1).text().trim(), 10);
