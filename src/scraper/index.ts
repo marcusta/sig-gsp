@@ -7,11 +7,22 @@ import { db } from "../db/db";
 import { scrapeRuns } from "../db/schema";
 import logger from "../logger";
 import { scrapeSinglesRecords } from "./singles-scraper";
+import type { ScrapeTimings } from "./types";
 
 export interface ScrapeRunResult {
   runId: number;
   success: boolean;
   summary: string;
+  timings?: ScrapeTimings;
+  stats?: {
+    rowsProcessed: number;
+    tipsRecordsFound: number;
+    sgtRecordsFound: number;
+    playersCreated: number;
+    playersUpdated: number;
+    recordsCreated: number;
+    recordsUpdated: number;
+  };
 }
 
 /**
@@ -65,7 +76,21 @@ export async function runRecordsScrape(): Promise<ScrapeRunResult> {
       `${result.recordsUpdated} updated, ${result.playersCreated} new players`;
     logger.info(summary);
 
-    return { runId, success: result.success, summary };
+    return {
+      runId,
+      success: result.success,
+      summary,
+      timings: result.timings,
+      stats: {
+        rowsProcessed: result.rowsProcessed,
+        tipsRecordsFound: result.tipsRecordsFound,
+        sgtRecordsFound: result.sgtRecordsFound,
+        playersCreated: result.playersCreated,
+        playersUpdated: result.playersUpdated,
+        recordsCreated: result.recordsCreated,
+        recordsUpdated: result.recordsUpdated,
+      },
+    };
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
 

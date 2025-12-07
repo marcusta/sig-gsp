@@ -21,6 +21,20 @@ export interface ScrapedSinglesRow {
   sgtRecord: ScrapedRecord | null;
 }
 
+/** Timing information for scrape phases */
+export interface ScrapeTimings {
+  totalMs: number;
+  fetchMs: number;
+  parseMs: number;
+  cacheLoadMs: number;
+  transactionMs: number;
+  historyBatchInsertMs: number;
+  // Breakdown of cache loading
+  coursesCacheMs: number;
+  playersCacheMs: number;
+  recordsCacheMs: number;
+}
+
 /** Result of a scrape run */
 export interface ScrapeResult {
   success: boolean;
@@ -32,6 +46,7 @@ export interface ScrapeResult {
   recordsCreated: number;
   recordsUpdated: number;
   errors: string[];
+  timings?: ScrapeTimings;
 }
 
 /** Result of upserting a player */
