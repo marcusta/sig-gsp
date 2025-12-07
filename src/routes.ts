@@ -552,8 +552,9 @@ const routes = new Elysia()
     }
   })
 
-  // Admin: Get scrape status
+  // Admin: Get scrape status and scheduler info
   .get("/api/admin/scrape-status", async () => {
+    const { getSchedulerStatus } = await import("./scheduler");
     const recentRuns = await db.query.scrapeRuns.findMany({
       orderBy: (runs, { desc }) => [desc(runs.startedAt)],
       limit: 10,
@@ -561,6 +562,7 @@ const routes = new Elysia()
     return {
       lastRun: recentRuns[0] || null,
       recentRuns,
+      scheduler: getSchedulerStatus(),
     };
   })
 
