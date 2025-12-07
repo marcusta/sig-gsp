@@ -4,18 +4,28 @@
  */
 
 import axios from "axios";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../db/db";
 import {
   courseRecordHistory,
   courseRecords,
   courses,
+  players,
   recordModes,
 } from "../db/schema";
 import logger from "../logger";
 import { parseSinglesResponse } from "./html-parser";
-import { upsertPlayer } from "./player-service";
+import { upsertPlayerWithCache } from "./player-service";
 import type { ScrapedRecord, ScrapeResult, UpsertRecordResult } from "./types";
+
+// Type for cached course data
+type CourseCache = Map<string, { id: number; name: string }>;
+
+// Type for cached player data
+type PlayerCache = Map<string, number>;
+
+// Type for cached course record data
+type CourseRecordCache = Map<string, typeof courseRecords.$inferSelect>;
 
 const SINGLES_API_URL =
   "https://simulatorgolftour.com/sgt-api/courses/course-records";
@@ -62,13 +72,46 @@ export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
       );
     }
 
-    // Process each row
+    // Pre-load all caches for optimized batch processing
+    // This reduces ~1500 SELECT queries down to 3
+    logger.info("Pre-loading caches for batch processing...");
+
+    // Phase 1: Pre-load all courses with SGT IDs
+    const allCourses = await db.query.courses.findMany({
+      columns: { id: true, sgtId: true, name: true },
+    });
+    const courseCache: CourseCache = new Map(
+      allCourses
+        .filter((c) => c.sgtId !== null)
+        .map((c) => [c.sgtId!, { id: c.id, name: c.name }])
+    );
+    logger.info(`Loaded ${courseCache.size} courses into cache`);
+
+    // Phase 2: Pre-load all players
+    const allPlayers = await db.query.players.findMany({
+      columns: { id: true, sgtUsername: true },
+    });
+    const playerCache: PlayerCache = new Map(
+      allPlayers.map((p) => [p.sgtUsername, p.id])
+    );
+    logger.info(`Loaded ${playerCache.size} players into cache`);
+
+    // Phase 3: Pre-load existing course records for Tips and SGT modes
+    const existingRecords = await db.query.courseRecords.findMany({
+      where: inArray(courseRecords.recordModeId, [tipsModeId, sgtModeId]),
+    });
+    const recordCache: CourseRecordCache = new Map(
+      existingRecords.map((r) => [`${r.courseId}-${r.recordModeId}`, r])
+    );
+    logger.info(`Loaded ${recordCache.size} existing records into cache`);
+
+    // Process each row using cached lookups
     for (const row of rows) {
       result.rowsProcessed++;
 
       try {
-        // Find our course by SGT ID
-        const course = await findCourseBySgtId(row.sgtCourseId);
+        // Find our course by SGT ID using cache (Phase 1)
+        const course = courseCache.get(row.sgtCourseId);
         if (!course) {
           // Course not in our DB - skip (expected for courses we don't track)
           continue;
@@ -77,13 +120,27 @@ export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
         // Process Tips record
         if (row.tipsRecord) {
           result.tipsRecordsFound++;
-          await processRecord(course.id, tipsModeId, row.tipsRecord, result);
+          await processRecord(
+            course.id,
+            tipsModeId,
+            row.tipsRecord,
+            result,
+            playerCache,
+            recordCache
+          );
         }
 
         // Process SGT record
         if (row.sgtRecord) {
           result.sgtRecordsFound++;
-          await processRecord(course.id, sgtModeId, row.sgtRecord, result);
+          await processRecord(
+            course.id,
+            sgtModeId,
+            row.sgtRecord,
+            result,
+            playerCache,
+            recordCache
+          );
         }
       } catch (rowError) {
         const msg = `Error processing course ${row.sgtCourseId}: ${rowError}`;
@@ -112,22 +169,25 @@ async function processRecord(
   courseId: number,
   recordModeId: number,
   record: ScrapedRecord,
-  result: ScrapeResult
+  result: ScrapeResult,
+  playerCache: PlayerCache,
+  recordCache: CourseRecordCache
 ): Promise<void> {
-  // Upsert player
-  const playerResult = await upsertPlayer(record);
+  // Upsert player using cache (Phase 2)
+  const playerResult = await upsertPlayerWithCache(record, playerCache);
   if (playerResult.created) {
     result.playersCreated++;
   } else {
     result.playersUpdated++;
   }
 
-  // Upsert course record
-  const recordResult = await upsertCourseRecord(
+  // Upsert course record using cache (Phase 3)
+  const recordResult = await upsertCourseRecordWithCache(
     courseId,
     recordModeId,
     playerResult.playerId,
-    record
+    record,
+    recordCache
   );
   if (recordResult.created) {
     result.recordsCreated++;
@@ -168,23 +228,21 @@ async function findCourseBySgtId(
 }
 
 /**
- * Upsert a course record and save history for changes
+ * Upsert a course record using pre-loaded cache (Phase 3 optimization)
+ * Eliminates the SELECT query by using the cache for existing record lookup
  */
-async function upsertCourseRecord(
+async function upsertCourseRecordWithCache(
   courseId: number,
   recordModeId: number,
   playerId: number,
-  record: ScrapedRecord
+  record: ScrapedRecord,
+  recordCache: CourseRecordCache
 ): Promise<UpsertRecordResult> {
   const now = new Date().toISOString();
+  const cacheKey = `${courseId}-${recordModeId}`;
 
-  // Check if record exists for this course + mode
-  const existing = await db.query.courseRecords.findFirst({
-    where: and(
-      eq(courseRecords.courseId, courseId),
-      eq(courseRecords.recordModeId, recordModeId)
-    ),
-  });
+  // Check cache for existing record (Phase 3 - no DB query needed)
+  const existing = recordCache.get(cacheKey);
 
   if (existing) {
     // Check if anything changed (different player or score)
@@ -236,6 +294,17 @@ async function upsertCourseRecord(
         })
         .where(eq(courseRecords.id, existing.id));
 
+      // Update cache with new values to keep it consistent
+      recordCache.set(cacheKey, {
+        ...existing,
+        playerId,
+        score: record.score,
+        scoreNumeric: record.scoreNumeric,
+        recordDate: record.recordDate,
+        scrapedAt: now,
+        updatedAt: now,
+      });
+
       return { created: false, updated: true };
     }
 
@@ -248,18 +317,24 @@ async function upsertCourseRecord(
   }
 
   // Create new record
-  await db.insert(courseRecords).values({
-    courseId,
-    recordModeId,
-    playerId,
-    teamId: null, // Singles don't have teams
-    score: record.score,
-    scoreNumeric: record.scoreNumeric,
-    recordDate: record.recordDate,
-    scrapedAt: now,
-    createdAt: now,
-    updatedAt: now,
-  });
+  const [newRecord] = await db
+    .insert(courseRecords)
+    .values({
+      courseId,
+      recordModeId,
+      playerId,
+      teamId: null, // Singles don't have teams
+      score: record.score,
+      scoreNumeric: record.scoreNumeric,
+      recordDate: record.recordDate,
+      scrapedAt: now,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .returning();
+
+  // Add to cache so subsequent lookups for this course+mode work correctly
+  recordCache.set(cacheKey, newRecord);
 
   // Save initial record to history
   await db.insert(courseRecordHistory).values({
