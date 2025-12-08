@@ -19,6 +19,38 @@ import { X } from "lucide-react";
 
 export const MIN_PAR = 0;
 export const MAX_PAR = 80;
+export const MIN_TEEBOX_LENGTH = 0;
+export const MAX_TEEBOX_LENGTH = 8000;
+export const MIN_ALTITUDE = 0;
+export const MAX_ALTITUDE = 10000;
+export const MIN_DIFFICULTY = 0;
+export const MAX_DIFFICULTY = 20;
+
+export const DEFAULT_ADVANCED_FILTERS: AdvancedFilters = {
+  teeboxLength: [MIN_TEEBOX_LENGTH, MAX_TEEBOX_LENGTH],
+  altitude: [MIN_ALTITUDE, MAX_ALTITUDE],
+  difficulty: [MIN_DIFFICULTY, MAX_DIFFICULTY],
+  par: [MIN_PAR, MAX_PAR],
+  onlyEighteenHoles: false,
+  isPar3: undefined,
+  rangeEnabled: undefined,
+  selectedAttributes: [],
+};
+
+export function countActiveFilters(filters: AdvancedFilters): number {
+  let count = 0;
+
+  if (filters.teeboxLength[0] !== MIN_TEEBOX_LENGTH || filters.teeboxLength[1] !== MAX_TEEBOX_LENGTH) count++;
+  if (filters.altitude[0] !== MIN_ALTITUDE || filters.altitude[1] !== MAX_ALTITUDE) count++;
+  if (filters.difficulty[0] !== MIN_DIFFICULTY || filters.difficulty[1] !== MAX_DIFFICULTY) count++;
+  if (filters.par[0] !== MIN_PAR || filters.par[1] !== MAX_PAR) count++;
+  if (filters.onlyEighteenHoles) count++;
+  if (filters.isPar3 !== undefined) count++;
+  if (filters.rangeEnabled !== undefined) count++;
+  if (filters.selectedAttributes && filters.selectedAttributes.length > 0) count += filters.selectedAttributes.length;
+
+  return count;
+}
 
 interface AdvancedFilterPopupProps {
   filters: AdvancedFilters;
@@ -84,18 +116,8 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
   };
 
   const handleClearAll = () => {
-    const clearedFilters: AdvancedFilters = {
-      teeboxLength: [0, 9000],
-      altitude: [0, 15000],
-      difficulty: [0, 20],
-      par: [MIN_PAR, MAX_PAR],
-      onlyEighteenHoles: false,
-      isPar3: undefined,
-      rangeEnabled: undefined,
-      selectedAttributes: [],
-    };
-    setLocalFilters(clearedFilters);
-    onFilterChange(clearedFilters);
+    setLocalFilters(DEFAULT_ADVANCED_FILTERS);
+    onFilterChange(DEFAULT_ADVANCED_FILTERS);
   };
 
   return (
@@ -109,8 +131,8 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
             <Label className="col-span-4">Teebox Length</Label>
             <RangeSlider
               className="col-span-3"
-              min={0}
-              max={8000}
+              min={MIN_TEEBOX_LENGTH}
+              max={MAX_TEEBOX_LENGTH}
               step={100}
               value={localFilters.teeboxLength}
               onValueChange={(value) =>
@@ -125,8 +147,8 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
             <Label className="col-span-4">Altitude</Label>
             <RangeSlider
               className="col-span-3"
-              min={0}
-              max={15000}
+              min={MIN_ALTITUDE}
+              max={MAX_ALTITUDE}
               step={100}
               value={localFilters.altitude}
               onValueChange={(value) => handleSliderChange("altitude", value)}

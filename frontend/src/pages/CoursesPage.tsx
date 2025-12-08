@@ -1,27 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCourses } from "@/api/useApi";
+import { fetchCourses, fetchCourseAttributes } from "@/api/useApi";
 import CourseCardView from "@/components/CourseCardView";
 import AdvancedFilterPopup, {
+  DEFAULT_ADVANCED_FILTERS,
+  countActiveFilters,
+  MIN_TEEBOX_LENGTH,
+  MAX_TEEBOX_LENGTH,
+  MIN_ALTITUDE,
+  MAX_ALTITUDE,
+  MIN_DIFFICULTY,
+  MAX_DIFFICULTY,
   MIN_PAR,
   MAX_PAR,
 } from "@/components/AdvancedFilterPopup";
 import { Button } from "@/components/ui/button";
-import { FilterIcon } from "lucide-react";
+import { FilterIcon, Search, ArrowUpNarrowWide, ArrowDownWideNarrow, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { AdvancedFilters, type Course, type TeeBox } from "@/types";
 import { gradeTeeBox } from "@/components/course-data";
 import { useSearchParams } from "react-router-dom";
-
-const DEFAULT_ADVANCED_FILTERS: AdvancedFilters = {
-  teeboxLength: [0, 8000],
-  altitude: [0, 10000],
-  difficulty: [0, 20],
-  par: [MIN_PAR, MAX_PAR],
-  onlyEighteenHoles: false,
-  isPar3: undefined,
-  rangeEnabled: undefined,
-  selectedAttributes: [],
-};
 
 const CoursesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -89,6 +87,11 @@ const CoursesPage: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  const { data: attributes = [] } = useQuery({
+    queryKey: ["courseAttributes"],
+    queryFn: fetchCourseAttributes,
+  });
+
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value);
   };
@@ -103,6 +106,43 @@ const CoursesPage: React.FC = () => {
 
   const handleAdvancedFilterChange = (newFilters: AdvancedFilters) => {
     setAdvancedFilters(newFilters);
+  };
+
+  const clearFilter = (filterKey: string, attributeId?: number) => {
+    setAdvancedFilters((prev) => {
+      const updated = { ...prev };
+      switch (filterKey) {
+        case "teeboxLength":
+          updated.teeboxLength = [MIN_TEEBOX_LENGTH, MAX_TEEBOX_LENGTH];
+          break;
+        case "altitude":
+          updated.altitude = [MIN_ALTITUDE, MAX_ALTITUDE];
+          break;
+        case "difficulty":
+          updated.difficulty = [MIN_DIFFICULTY, MAX_DIFFICULTY];
+          break;
+        case "par":
+          updated.par = [MIN_PAR, MAX_PAR];
+          break;
+        case "onlyEighteenHoles":
+          updated.onlyEighteenHoles = false;
+          break;
+        case "isPar3":
+          updated.isPar3 = undefined;
+          break;
+        case "rangeEnabled":
+          updated.rangeEnabled = undefined;
+          break;
+        case "attribute":
+          if (attributeId !== undefined) {
+            updated.selectedAttributes = prev.selectedAttributes.filter(
+              (id) => id !== attributeId
+            );
+          }
+          break;
+      }
+      return updated;
+    });
   };
 
   const filteredCourses = courses?.filter((course) => {
@@ -191,6 +231,9 @@ const CoursesPage: React.FC = () => {
     };
   }, [sortedCourses]);
 
+  const activeFilterCount = countActiveFilters(advancedFilters);
+  const hasActiveFilters = activeFilterCount > 0;
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading courses</div>;
 
@@ -204,24 +247,33 @@ const CoursesPage: React.FC = () => {
           </p>
         </div>
         <Button
-          variant="outline"
-          className="text-white"
+          variant={hasActiveFilters ? "default" : "outline"}
+          className={hasActiveFilters ? "" : "text-white"}
           onClick={() => setShowAdvancedFilter(true)}
         >
           <FilterIcon className="mr-2 h-4 w-4" />
           Filters
+          {hasActiveFilters && (
+            <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+              {activeFilterCount}
+            </Badge>
+          )}
         </Button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="Filter courses"
-          value={filterText}
-          onChange={handleFilterChange}
-          className="p-2 border border-gray-300 rounded bg-background text-foreground w-full"
-        />
-        <div className="flex gap-2 w-full sm:w-auto">
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search courses..."
+            value={filterText}
+            onChange={handleFilterChange}
+            className="p-2 pl-9 border border-gray-300 rounded bg-background text-foreground w-full"
+          />
+        </div>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <span className="text-sm text-muted-foreground whitespace-nowrap hidden sm:inline">Sort by:</span>
           <select
             id="sortOption"
             value={sortOption}
@@ -230,6 +282,7 @@ const CoursesPage: React.FC = () => {
           >
             <option value="alphabetical">Alphabetical</option>
             <option value="updatedDate">Last Update Time</option>
+            <option value="difficulty">Difficulty</option>
             <option value="longestTee">Longest Tee Length</option>
             <option value="par3Tee">Par 3 Tee Length</option>
             <option value="altitude">Altitude</option>
@@ -242,11 +295,129 @@ const CoursesPage: React.FC = () => {
             <option value="innerOOB">Inner OOB</option>
             <option value="islandGreens">Island Greens</option>
           </select>
-          <Button onClick={handleSortOrderChange} className="whitespace-nowrap">
-            {sortOrder === "asc" ? "Asc" : "Desc"}
+          <Button
+            onClick={handleSortOrderChange}
+            className="whitespace-nowrap"
+            variant="outline"
+            size="icon"
+            title={sortOrder === "asc" ? "Ascending" : "Descending"}
+          >
+            {sortOrder === "asc" ? (
+              <ArrowUpNarrowWide className="h-4 w-4" />
+            ) : (
+              <ArrowDownWideNarrow className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </div>
+
+      {/* Active filter chips */}
+      {hasActiveFilters && (
+        <div className="flex flex-wrap gap-2">
+          {advancedFilters.teeboxLength[0] !== MIN_TEEBOX_LENGTH ||
+          advancedFilters.teeboxLength[1] !== MAX_TEEBOX_LENGTH ? (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              Length: {advancedFilters.teeboxLength[0]}-{advancedFilters.teeboxLength[1]}
+              <button
+                onClick={() => clearFilter("teeboxLength")}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ) : null}
+          {advancedFilters.altitude[0] !== MIN_ALTITUDE ||
+          advancedFilters.altitude[1] !== MAX_ALTITUDE ? (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              Altitude: {advancedFilters.altitude[0]}-{advancedFilters.altitude[1]}ft
+              <button
+                onClick={() => clearFilter("altitude")}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ) : null}
+          {advancedFilters.difficulty[0] !== MIN_DIFFICULTY ||
+          advancedFilters.difficulty[1] !== MAX_DIFFICULTY ? (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              Difficulty: {advancedFilters.difficulty[0]}-{advancedFilters.difficulty[1]}
+              <button
+                onClick={() => clearFilter("difficulty")}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ) : null}
+          {advancedFilters.par[0] !== MIN_PAR ||
+          advancedFilters.par[1] !== MAX_PAR ? (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              Par: {advancedFilters.par[0]}-{advancedFilters.par[1]}
+              <button
+                onClick={() => clearFilter("par")}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ) : null}
+          {advancedFilters.onlyEighteenHoles && (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              18 holes only
+              <button
+                onClick={() => clearFilter("onlyEighteenHoles")}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {advancedFilters.isPar3 !== undefined && (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              Par 3 courses
+              <button
+                onClick={() => clearFilter("isPar3")}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {advancedFilters.rangeEnabled !== undefined && (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              Has driving range
+              <button
+                onClick={() => clearFilter("rangeEnabled")}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {advancedFilters.selectedAttributes.map((attrId) => {
+            const attr = attributes.find((a) => a.id === attrId);
+            if (!attr) return null;
+            return (
+              <Badge key={attrId} variant="secondary" className="flex items-center gap-1">
+                {attr.name}
+                <button
+                  onClick={() => clearFilter("attribute", attrId)}
+                  className="ml-1 hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            );
+          })}
+          <button
+            onClick={() => setAdvancedFilters(DEFAULT_ADVANCED_FILTERS)}
+            className="text-sm text-muted-foreground hover:text-foreground underline"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
 
       {/* Pass only the first "visibleCoursesCount" courses to the CourseCardView */}
       <CourseCardView courses={sortedCourses.slice(0, visibleCoursesCount)} />
