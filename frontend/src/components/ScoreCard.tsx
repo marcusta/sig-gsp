@@ -34,18 +34,9 @@ const getTeeColor = (teeName: string): string => {
   return "bg-slate-400"; // default color
 };
 
-// Lighter version of tee colors for cell backgrounds (data rows)
-const getTeeCellColor = (teeName: string): string => {
-  const name = teeName.toLowerCase();
-  if (name.includes("green")) return "bg-emerald-900/40";
-  if (name.includes("par3")) return "bg-slate-700/40";
-  if (name.includes("junior")) return "bg-orange-900/40";
-  if (name.includes("black")) return "bg-gray-800/50";
-  if (name.includes("yellow") || name.includes("gold")) return "bg-yellow-900/30";
-  if (name.includes("blue")) return "bg-blue-900/40";
-  if (name.includes("white")) return "bg-slate-600/30";
-  if (name.includes("red")) return "bg-red-900/40";
-  return "bg-slate-700/40"; // default color
+// Subtle tee color tint for cell backgrounds - more transparent to show gradient
+const getTeeCellColor = (_teeName: string): string => {
+  return "bg-slate-800/30";
 };
 
 const getTextColor = (teeName: string): string => {
@@ -118,7 +109,17 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-card text-card-foreground rounded-lg p-4 max-w-[95vw] max-h-[95vh] overflow-auto relative shadow-2xl border border-border/20">
+      <div
+        className="text-card-foreground rounded-lg p-4 max-w-[95vw] max-h-[95vh] overflow-auto relative shadow-2xl border border-slate-600/30"
+        style={{
+          background: `
+            linear-gradient(135deg, rgba(30, 41, 59, 0.97) 0%, rgba(15, 23, 42, 0.98) 50%, rgba(30, 41, 59, 0.97) 100%),
+            radial-gradient(ellipse at 20% 20%, rgba(56, 189, 148, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.04) 0%, transparent 60%)
+          `
+        }}
+      >
         <Button
           variant="ghost"
           size="icon"
@@ -146,18 +147,18 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Left side - Scorecard table */}
             <div className="flex-shrink-0">
-              <div className="overflow-x-auto rounded-lg shadow-lg border border-slate-700/50">
+              <div className="overflow-x-auto rounded-lg shadow-lg border border-slate-700/50 bg-slate-900/40 backdrop-blur-sm">
                 <table className="border-collapse text-sm">
                   <thead>
                     <tr>
                       {/* Index columns - darker left panel */}
-                      <th className="px-2 py-1.5 bg-slate-800 text-slate-300 text-xs font-semibold border-b border-slate-600 w-12">
+                      <th className="px-2 py-1.5 bg-slate-800/70 text-slate-300 text-xs font-semibold border-b border-slate-600 w-12">
                         Hole
                       </th>
-                      <th className="px-2 py-1.5 bg-slate-800 text-slate-300 text-xs font-semibold border-b border-slate-600 w-10">
+                      <th className="px-2 py-1.5 bg-slate-800/70 text-slate-300 text-xs font-semibold border-b border-slate-600 w-10">
                         Par
                       </th>
-                      <th className="px-2 py-1.5 bg-slate-800 text-slate-300 text-xs font-semibold border-b border-r-2 border-slate-600 w-12">
+                      <th className="px-2 py-1.5 bg-slate-800/70 text-slate-300 text-xs font-semibold border-b border-r-2 border-slate-600 w-12">
                         Index
                       </th>
                       {/* Tee columns - vibrant colored headers */}
@@ -179,16 +180,16 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                       (holeNumber) => (
                         <tr
                           key={holeNumber}
-                          className={`${holeNumber % 2 === 0 ? "bg-slate-800/60" : "bg-slate-900/60"} hover:bg-slate-700/50 transition-colors`}
+                          className={`${holeNumber % 2 === 0 ? "bg-slate-800/30" : "bg-slate-900/20"} hover:bg-slate-700/40 transition-colors`}
                         >
                           {/* Index columns - consistent dark styling */}
-                          <td className="px-2 py-1 text-center font-bold text-slate-200 bg-slate-800/80 border-b border-slate-700/50">
+                          <td className="px-2 py-1 text-center font-bold text-slate-200 bg-slate-800/60 border-b border-slate-700/50">
                             {holeNumber}
                           </td>
-                          <td className="px-2 py-1 text-center text-slate-300 bg-slate-800/80 border-b border-slate-700/50">
+                          <td className="px-2 py-1 text-center text-slate-300 bg-slate-800/60 border-b border-slate-700/50">
                             {data.teeBoxes[0].holes[holeNumber - 1].par}
                           </td>
-                          <td className="px-2 py-1 text-center text-slate-400 bg-slate-800/80 border-b border-r-2 border-slate-700/50">
+                          <td className="px-2 py-1 text-center text-slate-400 bg-slate-800/60 border-b border-r-2 border-slate-700/50">
                             {data.teeBoxes[0].holes[holeNumber - 1].index}
                           </td>
                           {/* Tee columns - subtle tinted backgrounds */}
@@ -208,13 +209,13 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                     )}
                     {/* Total row - prominent styling */}
                     <tr className="font-bold text-xs border-t-2 border-slate-500">
-                      <td className="px-2 py-1.5 text-center bg-slate-700 text-slate-100 font-bold">
+                      <td className="px-2 py-1.5 text-center bg-slate-700/70 text-slate-100 font-bold">
                         Total
                       </td>
-                      <td className="px-2 py-1.5 text-center bg-slate-700 text-slate-100 font-bold">
+                      <td className="px-2 py-1.5 text-center bg-slate-700/70 text-slate-100 font-bold">
                         {data.teeBoxes[0].totalPar}
                       </td>
-                      <td className="px-2 py-1.5 text-center bg-slate-700 text-slate-400 border-r-2 border-slate-500">
+                      <td className="px-2 py-1.5 text-center bg-slate-700/70 text-slate-400 border-r-2 border-slate-500">
                         -
                       </td>
                       {data.teeBoxes.map((tee, idx) => (
@@ -246,7 +247,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
               )}
 
               {/* Course details card */}
-              <div className="rounded-lg bg-slate-800/50 border border-slate-700/50 p-3 space-y-3">
+              <div className="rounded-lg bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 p-3 space-y-3">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <User className="h-3.5 w-3.5 text-slate-400" />
@@ -307,7 +308,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
 
               {/* Description */}
               {courseDetails.description && (
-                <div className="rounded-lg bg-slate-800/30 border border-slate-700/50 p-3">
+                <div className="rounded-lg bg-slate-800/20 backdrop-blur-sm border border-slate-700/50 p-3">
                   <p className="text-xs text-slate-400 leading-relaxed">
                     {courseDetails.description}
                   </p>
