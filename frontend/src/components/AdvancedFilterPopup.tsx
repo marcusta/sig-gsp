@@ -17,7 +17,7 @@ import {
 import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
 
-export const MIN_PAR = 0;
+export const MIN_PAR = 27;
 export const MAX_PAR = 80;
 export const MIN_TEEBOX_LENGTH = 0;
 export const MAX_TEEBOX_LENGTH = 8000;
@@ -108,10 +108,6 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
 
   const handleApply = () => {
     onFilterChange(localFilters);
-  };
-
-  const handleOk = () => {
-    onFilterChange(localFilters);
     onClose();
   };
 
@@ -158,7 +154,12 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
             </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="col-span-4">Par</Label>
+            <Label className="col-span-4">
+              Par
+              {localFilters.isPar3 && (
+                <span className="ml-2 text-xs text-muted-foreground">(using Par 3 filter)</span>
+              )}
+            </Label>
             <RangeSlider
               className="col-span-3"
               min={MIN_PAR}
@@ -166,6 +167,7 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
               step={1}
               value={localFilters.par}
               onValueChange={(value) => handleSliderChange("par", value)}
+              disabled={localFilters.isPar3}
             />
             <div className="col-span-1 text-right">
               {localFilters.par[0]} - {localFilters.par[1]}
@@ -234,16 +236,13 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
         </div>
         <div className="flex justify-between">
           <Button variant="outline" onClick={handleClearAll}>
-            Clear All
+            Reset
           </Button>
           <div className="space-x-2">
             <Button variant="outline" onClick={onClose}>
-              Close
+              Cancel
             </Button>
-            <Button variant="outline" onClick={handleApply}>
-              Apply
-            </Button>
-            <Button onClick={handleOk}>OK</Button>
+            <Button onClick={handleApply}>Apply</Button>
           </div>
         </div>
       </DialogContent>
