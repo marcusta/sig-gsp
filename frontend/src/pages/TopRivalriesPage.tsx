@@ -107,8 +107,8 @@ export default function TopRivalriesPage() {
                 <div className="px-6 py-6">
                   <div className="grid grid-cols-[1fr_auto_1fr] gap-6 items-center">
                     {/* Player 1 */}
-                    <div className="text-right">
-                      <div className="flex items-center justify-end gap-3 mb-2">
+                    <div className="flex items-start justify-end gap-3">
+                      <div className="flex items-center gap-3">
                         <button
                           onClick={() => navigate(`/records/player/${rivalry.player1.id}`)}
                           className="font-bold text-xl text-white hover:text-emerald-400 transition-colors"
@@ -116,6 +116,8 @@ export default function TopRivalriesPage() {
                           {rivalry.player1.displayName}
                         </button>
                         {getCountryFlag(rivalry.player1.countryCode)}
+                      </div>
+                      <div className="flex flex-col items-end">
                         {rivalry.player1.avatarUrl ? (
                           <img
                             src={rivalry.player1.avatarUrl}
@@ -127,16 +129,16 @@ export default function TopRivalriesPage() {
                             {rivalry.player1.displayName.charAt(0).toUpperCase()}
                           </div>
                         )}
-                      </div>
-                      <div className="text-sm text-slate-500">
-                        @{rivalry.player1.username}
-                      </div>
-                      <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20">
-                        <Trophy className="h-5 w-5 text-emerald-400" />
-                        <span className="text-2xl font-black text-emerald-400">
-                          {rivalry.player1Wins}
-                        </span>
-                        <span className="text-sm text-slate-400">wins</span>
+                        <div className="text-sm text-slate-500 mt-2">
+                          @{rivalry.player1.username}
+                        </div>
+                        <div className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20">
+                          <Trophy className="h-5 w-5 text-emerald-400" />
+                          <span className="text-2xl font-black text-emerald-400">
+                            {rivalry.player1Wins}
+                          </span>
+                          <span className="text-sm text-slate-400">wins</span>
+                        </div>
                       </div>
                     </div>
 
@@ -147,8 +149,8 @@ export default function TopRivalriesPage() {
                     </div>
 
                     {/* Player 2 */}
-                    <div className="text-left">
-                      <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-start justify-start gap-3">
+                      <div className="flex flex-col items-start">
                         {rivalry.player2.avatarUrl ? (
                           <img
                             src={rivalry.player2.avatarUrl}
@@ -160,6 +162,18 @@ export default function TopRivalriesPage() {
                             {rivalry.player2.displayName.charAt(0).toUpperCase()}
                           </div>
                         )}
+                        <div className="text-sm text-slate-500 mt-2">
+                          @{rivalry.player2.username}
+                        </div>
+                        <div className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20">
+                          <Trophy className="h-5 w-5 text-blue-400" />
+                          <span className="text-2xl font-black text-blue-400">
+                            {rivalry.player2Wins}
+                          </span>
+                          <span className="text-sm text-slate-400">wins</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
                         {getCountryFlag(rivalry.player2.countryCode)}
                         <button
                           onClick={() => navigate(`/records/player/${rivalry.player2.id}`)}
@@ -167,16 +181,6 @@ export default function TopRivalriesPage() {
                         >
                           {rivalry.player2.displayName}
                         </button>
-                      </div>
-                      <div className="text-sm text-slate-500 ml-20">
-                        @{rivalry.player2.username}
-                      </div>
-                      <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 ml-20">
-                        <Trophy className="h-5 w-5 text-blue-400" />
-                        <span className="text-2xl font-black text-blue-400">
-                          {rivalry.player2Wins}
-                        </span>
-                        <span className="text-sm text-slate-400">wins</span>
                       </div>
                     </div>
                   </div>
