@@ -34,14 +34,20 @@ const getTeeColor = (teeName: string): string => {
   return "bg-slate-400"; // default color
 };
 
-// Subtle tee color tint for cell backgrounds - more transparent to show gradient
+// Transparent cells to allow gradient to show through
 const getTeeCellColor = (_teeName: string): string => {
-  return "bg-slate-800/30";
+  return "bg-transparent";
 };
 
 const getTextColor = (teeName: string): string => {
   const name = teeName.toLowerCase();
-  if (name.includes("black") || name.includes("blue") || name.includes("green") || name.includes("red")) return "text-white";
+  if (
+    name.includes("black") ||
+    name.includes("blue") ||
+    name.includes("green") ||
+    name.includes("red")
+  )
+    return "text-white";
   return "text-gray-900";
 };
 
@@ -113,12 +119,24 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
         className="text-card-foreground rounded-lg p-4 max-w-[95vw] max-h-[95vh] overflow-auto relative shadow-2xl border border-slate-600/30"
         style={{
           background: `
-            radial-gradient(ellipse at 0% 0%, rgba(34, 197, 94, 0.15) 0%, transparent 40%),
-            radial-gradient(ellipse at 100% 100%, rgba(59, 130, 246, 0.18) 0%, transparent 45%),
-            radial-gradient(ellipse at 100% 0%, rgba(251, 191, 36, 0.08) 0%, transparent 35%),
-            radial-gradient(ellipse at 50% 100%, rgba(20, 184, 166, 0.1) 0%, transparent 40%),
-            linear-gradient(160deg, #1e293b 0%, #0f172a 50%, #1e293b 100%)
-          `
+      radial-gradient(
+        circle at 30% 20%,
+        hsla(50, 90%, 75%, 0.18) 0%,
+        hsla(50, 90%, 75%, 0) 50%
+      ),
+      radial-gradient(
+        circle at 80% 90%,
+        hsla(155, 40%, 18%, 0.20) 0%,
+        hsla(155, 40%, 12%, 0) 60%
+      ),
+      linear-gradient(
+        145deg,
+        hsl(150, 35%, 10%) 0%,
+        hsl(152, 33%, 12%) 35%,
+        hsl(149, 28%, 9%) 70%,
+        hsl(152, 30%, 11%) 100%
+      )
+    `,
         }}
       >
         <Button
@@ -148,7 +166,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Left side - Scorecard table */}
             <div className="flex-shrink-0">
-              <div className="overflow-x-auto rounded-lg shadow-lg border border-slate-700/50 bg-slate-900/40 backdrop-blur-sm">
+              <div className="overflow-x-auto rounded-lg shadow-lg border border-slate-700/50">
                 <table className="border-collapse text-sm">
                   <thead>
                     <tr>
@@ -166,9 +184,19 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                       {data.teeBoxes.map((tee, idx) => (
                         <th
                           key={tee.name}
-                          className={`px-2 py-1.5 ${getTeeColor(tee.name)} ${getTextColor(tee.name)} text-xs font-bold border-b border-slate-600 ${idx < data.teeBoxes.length - 1 ? 'border-r border-slate-600/30' : ''}`}
+                          className={`px-2 py-1.5 ${getTeeColor(
+                            tee.name
+                          )} ${getTextColor(
+                            tee.name
+                          )} text-xs font-bold border-b border-slate-600 ${
+                            idx < data.teeBoxes.length - 1
+                              ? "border-r border-slate-600/30"
+                              : ""
+                          }`}
                         >
-                          <div className="font-bold whitespace-nowrap">{tee.name}</div>
+                          <div className="font-bold whitespace-nowrap">
+                            {tee.name}
+                          </div>
                           <div className="text-[10px] font-medium opacity-90 whitespace-nowrap">
                             {tee.rating} / {tee.slope}
                           </div>
@@ -181,7 +209,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                       (holeNumber) => (
                         <tr
                           key={holeNumber}
-                          className={`${holeNumber % 2 === 0 ? "bg-slate-800/30" : "bg-slate-900/20"} hover:bg-slate-700/40 transition-colors`}
+                          className="hover:bg-slate-700/20 transition-colors"
                         >
                           {/* Index columns - consistent dark styling */}
                           <td className="px-2 py-1 text-center font-bold text-slate-200 bg-slate-800/60 border-b border-slate-700/50">
@@ -197,7 +225,15 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                           {data.teeBoxes.map((tee, idx) => (
                             <td
                               key={tee.name}
-                              className={`px-2 py-1 text-center ${getTeeCellColor(tee.name)} ${getCellTextColor(tee.name)} border-b border-slate-700/30 ${idx < data.teeBoxes.length - 1 ? 'border-r border-slate-700/20' : ''}`}
+                              className={`px-2 py-1 text-center ${getTeeCellColor(
+                                tee.name
+                              )} ${getCellTextColor(
+                                tee.name
+                              )} border-b border-slate-700/30 ${
+                                idx < data.teeBoxes.length - 1
+                                  ? "border-r border-slate-700/20"
+                                  : ""
+                              }`}
                             >
                               {convertDistance(
                                 tee.holes[holeNumber - 1].length,
@@ -222,9 +258,17 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                       {data.teeBoxes.map((tee, idx) => (
                         <td
                           key={tee.name}
-                          className={`px-2 py-1.5 text-center ${getTeeColor(tee.name)} ${getTextColor(tee.name)} font-bold ${idx < data.teeBoxes.length - 1 ? 'border-r border-slate-600/30' : ''}`}
+                          className={`px-2 py-1.5 text-center ${getTeeColor(
+                            tee.name
+                          )} ${getTextColor(tee.name)} font-bold ${
+                            idx < data.teeBoxes.length - 1
+                              ? "border-r border-slate-600/30"
+                              : ""
+                          }`}
                         >
-                          {convertDistance(tee.totalLength, unitSystem).toFixed(0)}
+                          {convertDistance(tee.totalLength, unitSystem).toFixed(
+                            0
+                          )}
                           {getDistanceUnit(unitSystem)}
                         </td>
                       ))}
