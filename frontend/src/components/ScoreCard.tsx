@@ -20,18 +20,18 @@ interface ScoreCardProps {
   onClose: () => void;
 }
 
-// More saturated, vibrant tee colors for better visual impact
+// Muted, desaturated tee colors for filmic integration
 const getTeeColor = (teeName: string): string => {
   const name = teeName.toLowerCase();
-  if (name.includes("green")) return "bg-emerald-600";
-  if (name.includes("par3")) return "bg-slate-500";
-  if (name.includes("junior")) return "bg-orange-500";
-  if (name.includes("black")) return "bg-gray-900";
-  if (name.includes("yellow") || name.includes("gold")) return "bg-yellow-400";
-  if (name.includes("blue")) return "bg-blue-600";
-  if (name.includes("white")) return "bg-slate-200";
-  if (name.includes("red")) return "bg-red-600";
-  return "bg-slate-400"; // default color
+  if (name.includes("green")) return "bg-emerald-800/70";
+  if (name.includes("par3")) return "bg-slate-600/70";
+  if (name.includes("junior")) return "bg-amber-700/70";
+  if (name.includes("black")) return "bg-zinc-800/80";
+  if (name.includes("yellow") || name.includes("gold")) return "bg-yellow-600/70";
+  if (name.includes("blue")) return "bg-blue-800/70";
+  if (name.includes("white")) return "bg-slate-400/70";
+  if (name.includes("red")) return "bg-red-800/70";
+  return "bg-slate-600/70"; // default color
 };
 
 // Transparent cells to allow gradient to show through
@@ -41,14 +41,10 @@ const getTeeCellColor = (_teeName: string): string => {
 
 const getTextColor = (teeName: string): string => {
   const name = teeName.toLowerCase();
-  if (
-    name.includes("black") ||
-    name.includes("blue") ||
-    name.includes("green") ||
-    name.includes("red")
-  )
-    return "text-white";
-  return "text-gray-900";
+  // Most muted backgrounds need light text now
+  if (name.includes("white")) return "text-slate-800";
+  if (name.includes("yellow") || name.includes("gold")) return "text-slate-900";
+  return "text-amber-50/90";
 };
 
 // Text color for data cells (lighter background needs different treatment)
@@ -120,9 +116,9 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
         style={{
           background: `
       radial-gradient(
-        circle at 30% 20%,
-        hsla(50, 90%, 75%, 0.18) 0%,
-        hsla(50, 90%, 75%, 0) 50%
+        ellipse 120% 100% at 20% 10%,
+        hsla(50, 85%, 70%, 0.12) 0%,
+        hsla(50, 85%, 70%, 0) 45%
       ),
       radial-gradient(
         circle at 80% 90%,
@@ -139,6 +135,20 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
     `,
         }}
       >
+        {/* Film grain overlay */}
+        <div
+          className="absolute inset-0 rounded-lg pointer-events-none opacity-[0.035] mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          }}
+        />
+        {/* Vignette effect */}
+        <div
+          className="absolute inset-0 rounded-lg pointer-events-none"
+          style={{
+            boxShadow: "inset 0 0 80px 20px rgba(0,0,0,0.3)",
+          }}
+        />
         <Button
           variant="ghost"
           size="icon"
@@ -148,15 +158,15 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
           <X className="h-4 w-4" />
         </Button>
 
-        <h2 className="text-lg font-bold mb-1">{data.courseName}</h2>
-        <p className="text-xs text-muted-foreground mb-3">{data.location}</p>
+        <h2 className="text-lg font-semibold mb-1 tracking-wide text-amber-50">{data.courseName}</h2>
+        <p className="text-xs text-amber-200/50 mb-3 tracking-wider uppercase">{data.location}</p>
 
         <Tabs
           value={view}
           onValueChange={(v) => setView(v as "scorecard" | "records")}
           className="mb-4"
         >
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 bg-slate-900/40 backdrop-blur-sm border border-slate-700/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.03),0_2px_4px_rgba(0,0,0,0.3)]">
             <TabsTrigger value="scorecard">Scorecard</TabsTrigger>
             <TabsTrigger value="records">Course Records</TabsTrigger>
           </TabsList>
@@ -166,31 +176,31 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Left side - Scorecard table */}
             <div className="flex-shrink-0">
-              <div className="overflow-x-auto rounded-lg shadow-lg border border-slate-700/50">
+              <div className="overflow-x-auto rounded-lg shadow-lg border border-amber-900/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
                 <table className="border-collapse text-sm">
                   <thead>
                     <tr>
-                      {/* Index columns - darker left panel */}
-                      <th className="px-2 py-1.5 bg-slate-800/70 text-slate-300 text-xs font-semibold border-b border-slate-600 w-12">
+                      {/* Index columns - translucent with backdrop blur */}
+                      <th className="px-2 py-1.5 bg-slate-800/50 backdrop-blur-[2px] text-amber-100/90 text-xs font-semibold border-b border-amber-900/30 w-12">
                         Hole
                       </th>
-                      <th className="px-2 py-1.5 bg-slate-800/70 text-slate-300 text-xs font-semibold border-b border-slate-600 w-10">
+                      <th className="px-2 py-1.5 bg-slate-800/50 backdrop-blur-[2px] text-amber-100/90 text-xs font-semibold border-b border-amber-900/30 w-10">
                         Par
                       </th>
-                      <th className="px-2 py-1.5 bg-slate-800/70 text-slate-300 text-xs font-semibold border-b border-r-2 border-slate-600 w-12">
+                      <th className="px-2 py-1.5 bg-slate-800/50 backdrop-blur-[2px] text-amber-100/90 text-xs font-semibold border-b border-r border-amber-900/30 w-12">
                         Index
                       </th>
-                      {/* Tee columns - vibrant colored headers */}
+                      {/* Tee columns - translucent colored headers */}
                       {data.teeBoxes.map((tee, idx) => (
                         <th
                           key={tee.name}
                           className={`px-2 py-1.5 ${getTeeColor(
                             tee.name
-                          )} ${getTextColor(
+                          )} backdrop-blur-[2px] ${getTextColor(
                             tee.name
-                          )} text-xs font-bold border-b border-slate-600 ${
+                          )} text-xs font-bold border-b border-amber-900/40 ${
                             idx < data.teeBoxes.length - 1
-                              ? "border-r border-slate-600/30"
+                              ? "border-r border-black/20"
                               : ""
                           }`}
                         >
@@ -211,14 +221,14 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                           key={holeNumber}
                           className="hover:bg-slate-700/20 transition-colors"
                         >
-                          {/* Index columns - consistent dark styling */}
-                          <td className="px-2 py-1 text-center font-bold text-slate-200 bg-slate-800/60 border-b border-slate-700/50">
+                          {/* Index columns - translucent with warm tint */}
+                          <td className="px-2 py-1 text-center font-bold text-amber-50 bg-slate-800/40 backdrop-blur-[1px] border-b border-slate-700/30">
                             {holeNumber}
                           </td>
-                          <td className="px-2 py-1 text-center text-slate-300 bg-slate-800/60 border-b border-slate-700/50">
+                          <td className="px-2 py-1 text-center text-amber-100/80 bg-slate-800/40 backdrop-blur-[1px] border-b border-slate-700/30">
                             {data.teeBoxes[0].holes[holeNumber - 1].par}
                           </td>
-                          <td className="px-2 py-1 text-center text-slate-400 bg-slate-800/60 border-b border-r-2 border-slate-700/50">
+                          <td className="px-2 py-1 text-center text-amber-100/50 bg-slate-800/40 backdrop-blur-[1px] border-b border-r border-slate-700/30">
                             {data.teeBoxes[0].holes[holeNumber - 1].index}
                           </td>
                           {/* Tee columns - subtle tinted backgrounds */}
@@ -244,15 +254,15 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                         </tr>
                       )
                     )}
-                    {/* Total row - prominent styling */}
-                    <tr className="font-bold text-xs border-t-2 border-slate-500">
-                      <td className="px-2 py-1.5 text-center bg-slate-700/70 text-slate-100 font-bold">
+                    {/* Total row - translucent with subtle gold accent */}
+                    <tr className="font-bold text-xs border-t border-amber-700/40">
+                      <td className="px-2 py-1.5 text-center bg-slate-700/50 backdrop-blur-[2px] text-amber-100 font-bold">
                         Total
                       </td>
-                      <td className="px-2 py-1.5 text-center bg-slate-700/70 text-slate-100 font-bold">
+                      <td className="px-2 py-1.5 text-center bg-slate-700/50 backdrop-blur-[2px] text-amber-100 font-bold">
                         {data.teeBoxes[0].totalPar}
                       </td>
-                      <td className="px-2 py-1.5 text-center bg-slate-700/70 text-slate-400 border-r-2 border-slate-500">
+                      <td className="px-2 py-1.5 text-center bg-slate-700/50 backdrop-blur-[2px] text-amber-100/60 border-r border-amber-900/30">
                         -
                       </td>
                       {data.teeBoxes.map((tee, idx) => (
@@ -260,9 +270,9 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                           key={tee.name}
                           className={`px-2 py-1.5 text-center ${getTeeColor(
                             tee.name
-                          )} ${getTextColor(tee.name)} font-bold ${
+                          )} backdrop-blur-[2px] ${getTextColor(tee.name)} font-bold ${
                             idx < data.teeBoxes.length - 1
-                              ? "border-r border-slate-600/30"
+                              ? "border-r border-black/20"
                               : ""
                           }`}
                         >
@@ -282,7 +292,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
             <div className="flex-1 min-w-[280px] max-w-[340px] space-y-4">
               {/* Course image */}
               {data.sgtSplashUrl && (
-                <div className="rounded-lg overflow-hidden shadow-lg border border-slate-700/50">
+                <div className="rounded-lg overflow-hidden shadow-lg border border-amber-900/30">
                   <img
                     src={`https://simulatorgolftour.com${data.sgtSplashUrl}`}
                     alt={data.courseName}
@@ -292,28 +302,28 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
               )}
 
               {/* Course details card */}
-              <div className="rounded-lg bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 p-3 space-y-3">
+              <div className="rounded-lg bg-slate-800/30 backdrop-blur-sm border border-amber-900/20 p-3 space-y-3">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <User className="h-3.5 w-3.5 text-slate-400" />
-                    <span className="text-xs text-slate-300">
+                    <User className="h-3.5 w-3.5 text-amber-200/50" />
+                    <span className="text-xs text-amber-100/80">
                       {courseDetails.designer}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CalendarDays className="h-3.5 w-3.5 text-slate-400" />
-                    <span className="text-xs text-slate-300">
+                    <CalendarDays className="h-3.5 w-3.5 text-amber-200/50" />
+                    <span className="text-xs text-amber-100/80">
                       {new Date(courseDetails.updatedDate).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
 
-                <Separator className="bg-slate-700" />
+                <Separator className="bg-amber-900/30" />
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Mountain className="h-3.5 w-3.5 text-slate-400" />
-                    <span className="text-xs text-slate-300">
+                    <Mountain className="h-3.5 w-3.5 text-amber-200/50" />
+                    <span className="text-xs text-amber-100/80">
                       {convertAltitude(
                         courseDetails.altitude / 3.28084,
                         unitSystem
@@ -321,27 +331,27 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
                       {getDistanceUnit(unitSystem)} altitude
                     </span>
                   </div>
-                  <div className="text-xs text-slate-300 pl-5">
+                  <div className="text-xs text-amber-100/60 pl-5">
                     {convertDistance(
                       courseDetails.largestElevationDrop,
                       unitSystem
                     ).toFixed(0)}
                     {getDistanceUnit(unitSystem)} max drop
                   </div>
-                  <div className="text-xs text-slate-300 pl-5">
+                  <div className="text-xs text-amber-100/60 pl-5">
                     Range: {courseDetails.rangeEnabled ? "Yes" : "No"}
                   </div>
                 </div>
 
                 {courseDetails.attributes.length > 0 && (
                   <>
-                    <Separator className="bg-slate-700" />
+                    <Separator className="bg-amber-900/30" />
                     <div className="flex flex-wrap gap-1">
                       {courseDetails.attributes.map((attr) => (
                         <Badge
                           key={attr.id}
                           variant="secondary"
-                          className="text-[10px] py-0 px-2 bg-slate-700 text-slate-300"
+                          className="text-[10px] py-0 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30"
                         >
                           {attr.name}
                         </Badge>
@@ -353,8 +363,8 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
 
               {/* Description */}
               {courseDetails.description && (
-                <div className="rounded-lg bg-slate-800/20 backdrop-blur-sm border border-slate-700/50 p-3">
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                <div className="rounded-lg bg-slate-800/20 backdrop-blur-sm border border-amber-900/20 p-3">
+                  <p className="text-xs text-amber-100/50 leading-relaxed italic">
                     {courseDetails.description}
                   </p>
                 </div>
