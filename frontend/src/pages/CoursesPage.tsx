@@ -234,27 +234,29 @@ const CoursesPage: React.FC = () => {
   const activeFilterCount = countActiveFilters(advancedFilters);
   const hasActiveFilters = activeFilterCount > 0;
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading courses</div>;
+  if (isLoading) return <div className="text-amber-100/80">Loading...</div>;
+  if (error) return <div className="text-red-400/80">Error loading courses</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">Golf Courses</h1>
-          <p className="text-slate-400">
+          <h1 className="text-2xl font-semibold tracking-wide text-amber-50">Golf Courses</h1>
+          <p className="text-xs tracking-wider uppercase text-amber-200/50">
             {filteredCourses?.length || 0} courses available
           </p>
         </div>
         <Button
           variant={hasActiveFilters ? "default" : "outline"}
-          className={hasActiveFilters ? "" : "text-white"}
+          className={hasActiveFilters
+            ? "bg-emerald-800/70 hover:bg-emerald-700/70 border-emerald-700/50 text-amber-50"
+            : "bg-slate-800/40 backdrop-blur-sm border-amber-900/30 text-amber-100/90 hover:bg-slate-700/50 hover:text-amber-50"}
           onClick={() => setShowAdvancedFilter(true)}
         >
           <FilterIcon className="mr-2 h-4 w-4" />
           Filters
           {hasActiveFilters && (
-            <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs">
+            <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs bg-amber-700/60 text-amber-50 border-none">
               {activeFilterCount}
             </Badge>
           )}
@@ -263,22 +265,22 @@ const CoursesPage: React.FC = () => {
 
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-amber-200/50" />
           <input
             type="text"
             placeholder="Search courses..."
             value={filterText}
             onChange={handleFilterChange}
-            className="p-2 pl-9 border border-gray-300 rounded bg-background text-foreground w-full"
+            className="p-2 pl-9 rounded-lg bg-slate-800/40 backdrop-blur-sm border border-amber-900/30 text-amber-100 placeholder:text-amber-200/40 w-full focus:outline-none focus:border-amber-700/50 focus:ring-1 focus:ring-amber-700/30"
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-sm text-muted-foreground whitespace-nowrap hidden sm:inline">Sort by:</span>
+          <span className="text-sm text-amber-200/50 whitespace-nowrap hidden sm:inline">Sort by:</span>
           <select
             id="sortOption"
             value={sortOption}
             onChange={handleSortChange}
-            className="p-2 border rounded bg-background text-foreground flex-1 sm:flex-none min-w-[200px]"
+            className="p-2 rounded-lg bg-slate-800/40 backdrop-blur-sm border border-amber-900/30 text-amber-100 flex-1 sm:flex-none min-w-[200px] focus:outline-none focus:border-amber-700/50"
           >
             <option value="alphabetical">Alphabetical</option>
             <option value="updatedDate">Last Update Time</option>
@@ -297,7 +299,7 @@ const CoursesPage: React.FC = () => {
           </select>
           <Button
             onClick={handleSortOrderChange}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap bg-slate-800/40 backdrop-blur-sm border-amber-900/30 text-amber-100/90 hover:bg-slate-700/50 hover:text-amber-50"
             variant="outline"
             size="icon"
             title={sortOrder === "asc" ? "Ascending" : "Descending"}
@@ -316,11 +318,11 @@ const CoursesPage: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           {advancedFilters.teeboxLength[0] !== MIN_TEEBOX_LENGTH ||
           advancedFilters.teeboxLength[1] !== MAX_TEEBOX_LENGTH ? (
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               Length: {advancedFilters.teeboxLength[0]}-{advancedFilters.teeboxLength[1]}
               <button
                 onClick={() => clearFilter("teeboxLength")}
-                className="ml-1 hover:text-destructive"
+                className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -328,11 +330,11 @@ const CoursesPage: React.FC = () => {
           ) : null}
           {advancedFilters.altitude[0] !== MIN_ALTITUDE ||
           advancedFilters.altitude[1] !== MAX_ALTITUDE ? (
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               Altitude: {advancedFilters.altitude[0]}-{advancedFilters.altitude[1]}ft
               <button
                 onClick={() => clearFilter("altitude")}
-                className="ml-1 hover:text-destructive"
+                className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -340,11 +342,11 @@ const CoursesPage: React.FC = () => {
           ) : null}
           {advancedFilters.difficulty[0] !== MIN_DIFFICULTY ||
           advancedFilters.difficulty[1] !== MAX_DIFFICULTY ? (
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               Difficulty: {advancedFilters.difficulty[0]}-{advancedFilters.difficulty[1]}
               <button
                 onClick={() => clearFilter("difficulty")}
-                className="ml-1 hover:text-destructive"
+                className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -352,44 +354,44 @@ const CoursesPage: React.FC = () => {
           ) : null}
           {advancedFilters.par[0] !== MIN_PAR ||
           advancedFilters.par[1] !== MAX_PAR ? (
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               Par: {advancedFilters.par[0]}-{advancedFilters.par[1]}
               <button
                 onClick={() => clearFilter("par")}
-                className="ml-1 hover:text-destructive"
+                className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           ) : null}
           {advancedFilters.onlyEighteenHoles && (
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               18 holes only
               <button
                 onClick={() => clearFilter("onlyEighteenHoles")}
-                className="ml-1 hover:text-destructive"
+                className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           )}
           {advancedFilters.isPar3 !== undefined && (
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               Par 3 courses
               <button
                 onClick={() => clearFilter("isPar3")}
-                className="ml-1 hover:text-destructive"
+                className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           )}
           {advancedFilters.rangeEnabled !== undefined && (
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               Has driving range
               <button
                 onClick={() => clearFilter("rangeEnabled")}
-                className="ml-1 hover:text-destructive"
+                className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -399,11 +401,11 @@ const CoursesPage: React.FC = () => {
             const attr = attributes.find((a) => a.id === attrId);
             if (!attr) return null;
             return (
-              <Badge key={attrId} variant="secondary" className="flex items-center gap-1">
+              <Badge key={attrId} variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
                 {attr.name}
                 <button
                   onClick={() => clearFilter("attribute", attrId)}
-                  className="ml-1 hover:text-destructive"
+                  className="ml-1 hover:text-red-400"
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -412,7 +414,7 @@ const CoursesPage: React.FC = () => {
           })}
           <button
             onClick={() => setAdvancedFilters(DEFAULT_ADVANCED_FILTERS)}
-            className="text-sm text-muted-foreground hover:text-foreground underline"
+            className="text-sm text-amber-200/50 hover:text-amber-100 underline"
           >
             Clear all
           </button>

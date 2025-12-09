@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Course, CourseWithData, ScoreCardData } from "@/types";
 import {
   useUnits,
@@ -22,23 +21,26 @@ interface CardViewProps {
   courses: Course[];
 }
 
+// Muted, desaturated tee colors for filmic integration
 const getTeeColor = (teeName: string): string => {
   const name = teeName.toLowerCase();
-  if (name.includes("green")) return "bg-green-400";
-  if (name.includes("par3")) return "bg-gray-400";
-  if (name.includes("junior")) return "bg-orange-400";
-  if (name.includes("black")) return "bg-black";
-  if (name.includes("yellow")) return "bg-yellow-200";
-  if (name.includes("blue")) return "bg-blue-500";
-  if (name.includes("white")) return "bg-gray-100";
-  if (name.includes("red")) return "bg-red-500";
-  return "bg-gray-300"; // default color
+  if (name.includes("green")) return "bg-emerald-800/70";
+  if (name.includes("par3")) return "bg-slate-600/70";
+  if (name.includes("junior")) return "bg-amber-700/70";
+  if (name.includes("black")) return "bg-zinc-800/80";
+  if (name.includes("yellow") || name.includes("gold")) return "bg-yellow-600/70";
+  if (name.includes("blue")) return "bg-blue-800/70";
+  if (name.includes("white")) return "bg-slate-400/70";
+  if (name.includes("red")) return "bg-red-800/70";
+  return "bg-slate-600/70"; // default color
 };
 
 const getTextColor = (teeName: string): string => {
   const name = teeName.toLowerCase();
-  if (name.includes("black") || name.includes("blue")) return "text-white";
-  return "text-black";
+  // Most muted backgrounds need light text now
+  if (name.includes("white")) return "text-slate-800";
+  if (name.includes("yellow") || name.includes("gold")) return "text-slate-900";
+  return "text-amber-50/90";
 };
 
 const transformToScoreCardData = (
@@ -142,16 +144,52 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
 
   return (
     <>
-      <Card
-        className="cursor-pointer shadow-lg relative"
-        style={{ minHeight: "400px" }}
+      <div
+        className="cursor-pointer relative rounded-lg overflow-hidden shadow-2xl border border-slate-600/30"
+        style={{
+          minHeight: "400px",
+          background: `
+            radial-gradient(
+              ellipse 120% 100% at 20% 10%,
+              hsla(50, 85%, 70%, 0.12) 0%,
+              hsla(50, 85%, 70%, 0) 45%
+            ),
+            radial-gradient(
+              circle at 80% 90%,
+              hsla(155, 40%, 18%, 0.20) 0%,
+              hsla(155, 40%, 12%, 0) 60%
+            ),
+            linear-gradient(
+              145deg,
+              hsl(150, 35%, 10%) 0%,
+              hsl(152, 33%, 12%) 35%,
+              hsl(149, 28%, 9%) 70%,
+              hsl(152, 30%, 11%) 100%
+            )
+          `,
+        }}
       >
-        <div className="absolute top-2 right-2 z-10 flex gap-2">
+        {/* Film grain overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.035] mix-blend-overlay z-20"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          }}
+        />
+        {/* Vignette effect */}
+        <div
+          className="absolute inset-0 pointer-events-none z-20"
+          style={{
+            boxShadow: "inset 0 0 60px 15px rgba(0,0,0,0.25)",
+          }}
+        />
+
+        <div className="absolute top-2 right-2 z-30 flex gap-2">
           <Button
             variant="secondary"
             size="icon"
             onClick={handleScoreCardClick}
-            className="h-8 w-8"
+            className="h-8 w-8 bg-slate-800/60 backdrop-blur-sm border border-amber-900/30 text-amber-100/90 hover:bg-slate-700/70 hover:text-amber-50"
           >
             <FileText className="h-4 w-4" />
           </Button>
@@ -160,17 +198,17 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
               variant="secondary"
               size="icon"
               onClick={handleYouTubeClick}
-              className="h-8 w-8"
+              className="h-8 w-8 bg-slate-800/60 backdrop-blur-sm border border-amber-900/30 text-amber-100/90 hover:bg-slate-700/70 hover:text-amber-50"
             >
               <Youtube className="h-4 w-4" />
             </Button>
           )}
         </div>
 
-        <CardHeader>
-          <CardTitle>{course.name}</CardTitle>
-          <p className="text-sm italic text-muted-foreground">
-            {course.location} by <b>{course.designer}</b>
+        <div className="relative z-10 p-4">
+          <h3 className="text-lg font-semibold tracking-wide text-amber-50">{course.name}</h3>
+          <p className="text-xs text-amber-100/50 leading-relaxed italic mt-1">
+            {course.location} by <span className="font-medium text-amber-100/70">{course.designer}</span>
             <br />
             {course.isPar3
               ? `${course.holes} par 3 holes`
@@ -179,18 +217,17 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
             {convertAltitude(course.altitude / 3.28084, unitSystem).toFixed(0)}
             {getAltitudeUnit(unitSystem)}
             {course.opcdVersion && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-amber-200/40">
                 , {course.opcdVersion}
               </span>
             )}
-            <br />
           </p>
-        </CardHeader>
+        </div>
 
-        <div className="relative w-full h-48 overflow-hidden">
+        <div className="relative w-full h-48 overflow-hidden z-10">
           {!imageLoaded && (
             <div className="absolute inset-0">
-              <Skeleton className="w-full h-full" />
+              <Skeleton className="w-full h-full bg-slate-700/50" />
             </div>
           )}
           <img
@@ -201,9 +238,11 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
             }`}
             onLoad={() => setImageLoaded(true)}
           />
+          {/* Image overlay for film look */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
         </div>
 
-        <CardContent className="grid grid-cols-1 gap-4 pt-4">
+        <div className="relative z-10 p-4 pt-3">
           <div className="flex flex-wrap gap-2">
             {course.teeBoxes &&
               course.teeBoxes
@@ -215,7 +254,7 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
                 .map((tee, index) => (
                   <div
                     key={index}
-                    className={`text-sm px-2 py-1 rounded-md ${getTeeColor(
+                    className={`text-xs px-2 py-1 rounded-md backdrop-blur-[1px] ${getTeeColor(
                       tee.name
                     )} ${getTextColor(tee.name)}`}
                   >
@@ -224,8 +263,8 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
                   </div>
                 ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {showScoreCard && scoreCardData && (
         <div onClick={(e) => e.preventDefault()}>
