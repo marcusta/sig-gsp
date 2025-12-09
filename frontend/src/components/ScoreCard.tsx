@@ -113,10 +113,11 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
         className="text-card-foreground rounded-lg p-4 max-w-[95vw] max-h-[95vh] overflow-auto relative shadow-2xl border border-slate-600/30"
         style={{
           background: `
-            linear-gradient(135deg, rgba(30, 41, 59, 0.97) 0%, rgba(15, 23, 42, 0.98) 50%, rgba(30, 41, 59, 0.97) 100%),
-            radial-gradient(ellipse at 20% 20%, rgba(56, 189, 148, 0.08) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.04) 0%, transparent 60%)
+            radial-gradient(ellipse at 0% 0%, rgba(34, 197, 94, 0.15) 0%, transparent 40%),
+            radial-gradient(ellipse at 100% 100%, rgba(59, 130, 246, 0.18) 0%, transparent 45%),
+            radial-gradient(ellipse at 100% 0%, rgba(251, 191, 36, 0.08) 0%, transparent 35%),
+            radial-gradient(ellipse at 50% 100%, rgba(20, 184, 166, 0.1) 0%, transparent 40%),
+            linear-gradient(160deg, #1e293b 0%, #0f172a 50%, #1e293b 100%)
           `
         }}
       >
