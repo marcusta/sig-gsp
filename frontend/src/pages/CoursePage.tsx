@@ -83,19 +83,20 @@ const CoursePage: React.FC = () => {
   const scoreCardData = transformToScoreCardData(course);
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-6">
-      <div className="flex flex-wrap items-center gap-4">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
+      <div className="flex flex-wrap items-center">
         <Button
           asChild
           variant="ghost"
-          className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30"
+          size="sm"
+          className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 -ml-2 h-8 px-2"
         >
           <Link
             to={`/courses${previousSearch}`}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="whitespace-nowrap">Back to Courses</span>
+            <span className="whitespace-nowrap text-sm">Back to Courses</span>
           </Link>
         </Button>
       </div>

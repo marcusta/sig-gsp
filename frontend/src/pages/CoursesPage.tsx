@@ -241,7 +241,7 @@ const CoursesPage: React.FC = () => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold tracking-wide text-amber-50">Golf Courses</h1>
+          <h1 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-wide text-amber-50">Golf Courses</h1>
           <p className="text-xs tracking-wider uppercase text-amber-200/50">
             {filteredCourses?.length || 0} courses available
           </p>

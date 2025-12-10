@@ -20,7 +20,6 @@ import {
   getHole,
   getPin,
   getTee,
-  getTeeTypeRating,
 } from "./course-data";
 import {
   useUnits,
@@ -32,7 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { FileText, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 
 const GolfCourseViewer: React.FC<{
   course: CourseWithData;
@@ -46,6 +45,7 @@ const GolfCourseViewer: React.FC<{
     longestTee.name
   );
   const [selectedPinDay, setSelectedPinDay] = useState<string>("Friday");
+  const [showMetadata, setShowMetadata] = useState(false);
 
   // Swipe handling refs
   const touchStartX = useRef<number | null>(null);
@@ -124,8 +124,6 @@ const GolfCourseViewer: React.FC<{
 
   const totalPar = courseData.Holes.reduce((sum, hole) => sum + hole.Par, 0);
 
-  const teeTypeRating = getTeeTypeRating(courseData, selectedTeeType);
-
   // Helper to format hole option label
   const formatHoleLabel = (holeNum: number) => {
     const hole = enabledHoles.find((h) => h.HoleNumber === holeNum);
@@ -136,57 +134,55 @@ const GolfCourseViewer: React.FC<{
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <Card className="bg-emerald-950/30 border-amber-900/20">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-2xl font-bold text-amber-50">
+        <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-6">
+          <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold text-amber-50">
             {course.name}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="text-amber-100/80">
+        <CardContent className="pt-2 sm:pt-4 px-3 sm:px-6">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4">
+              {/* Essential info */}
+              <div className="text-amber-100/80 space-y-0.5">
                 <p className="text-sm">
                   {course.location}, by <b className="text-amber-50">{course.designer}</b>
                 </p>
                 <p className="text-sm">
-                  {course.holes} holes par {totalPar}, Rating/Slope{" "}
-                  {teeTypeRating}
+                  {course.holes} holes par {totalPar}
+                  {course.rangeEnabled && <span className="text-emerald-400/80"> · Range</span>}
                 </p>
-                <p className="text-sm">
-                  Altitude:{" "}
-                  {convertAltitude(courseAltitude, unitSystem).toFixed(0)}
-                  {getAltitudeUnit(unitSystem)} (
-                  {((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)
-                </p>
-                <p className="text-sm">
-                  Driving Range: {course.rangeEnabled ? "Yes" : "No"}
-                </p>
+                
+                {/* Expandable metadata toggle */}
+                <button 
+                  onClick={() => setShowMetadata(!showMetadata)}
+                  className="text-xs text-amber-100/50 hover:text-amber-100/70 flex items-center gap-1 mt-1"
+                >
+                  {showMetadata ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                  {showMetadata ? "Hide details" : "Show details"}
+                </button>
+                
+                {/* Collapsible metadata */}
+                {showMetadata && (
+                  <div className="text-xs text-amber-100/60 mt-2 space-y-0.5 pl-1 border-l border-amber-900/30">
+                    <p>
+                      Altitude: {convertAltitude(courseAltitude, unitSystem).toFixed(0)}{getAltitudeUnit(unitSystem)} ({((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)
+                    </p>
+                    <p>
+                      Avg. Elevation Diff: {convertAltitude(course.averageElevationDifference, unitSystem).toFixed(1)}{getAltitudeUnit(unitSystem)}
+                    </p>
+                    <p>
+                      Largest Drop: {convertAltitude(course.largestElevationDrop, unitSystem).toFixed(1)}{getAltitudeUnit(unitSystem)}
+                    </p>
+                    <p>
+                      Water Hazards: {course.totalWaterHazards} | Inner OOB: {course.totalInnerOOB} | Island Greens: {course.islandGreens}
+                    </p>
+                  </div>
+                )}
               </div>
-              <div className="text-amber-100/80">
-                <p className="text-sm">
-                  Avg. Elevation Diff:{" "}
-                  {convertAltitude(
-                    course.averageElevationDifference,
-                    unitSystem
-                  ).toFixed(1)}
-                  {getAltitudeUnit(unitSystem)}
-                </p>
-                <p className="text-sm">
-                  Largest Drop:{" "}
-                  {convertAltitude(
-                    course.largestElevationDrop,
-                    unitSystem
-                  ).toFixed(1)}
-                  {getAltitudeUnit(unitSystem)}
-                </p>
-                <p className="text-sm">
-                  Water Hazards: {course.totalWaterHazards} | Inner OOB:{" "}
-                  {course.totalInnerOOB}
-                </p>
-                <p className="text-sm">Island Greens: {course.islandGreens}</p>
-              </div>
+              
+              {/* Controls */}
               <div className="flex items-center justify-start lg:justify-end">
                 <div className="w-full lg:w-auto space-y-2">
                   <div className="flex flex-col sm:flex-row gap-2">
@@ -194,7 +190,7 @@ const GolfCourseViewer: React.FC<{
                       onValueChange={setSelectedTeeType}
                       value={selectedTeeType}
                     >
-                      <SelectTrigger className="w-full sm:w-[140px] bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
+                      <SelectTrigger className="w-full sm:w-[180px] bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
                         <SelectValue placeholder="Select tee" />
                       </SelectTrigger>
                       <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30">
@@ -211,11 +207,8 @@ const GolfCourseViewer: React.FC<{
                               value={tee.name}
                               className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
                             >
-                              {tee.name} -{" "}
-                              {convertDistance(tee.length, unitSystem).toFixed(
-                                0
-                              )}
-                              {getDistanceUnit(unitSystem)}
+                              {tee.name} - {convertDistance(tee.length, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}
+                              {tee.rating > 0 && ` · ${tee.rating}/${tee.slope}`}
                             </SelectItem>
                           ))}
                       </SelectContent>

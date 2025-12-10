@@ -18,7 +18,7 @@ const Layout: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen relative"
+      className="min-h-screen relative overflow-x-hidden"
       style={{ background: mastersBackground }}
     >
       {/* Film grain overlay */}
@@ -38,18 +38,36 @@ const Layout: React.FC = () => {
       />
 
       <header className="relative z-10 border-b border-amber-900/15">
-        <div className="container mx-auto px-4 py-6">
-          <nav className="flex justify-between items-center">
-            <div className="flex items-center gap-8">
+        <div className="container mx-auto px-4 py-4 sm:py-6">
+          <nav className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+            {/* Top row on mobile: Logo and unit toggle */}
+            <div className="flex justify-between items-center">
               <Link to="/courses">
-                <h1 className="text-3xl font-bold text-amber-50 tracking-tight italic">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-50 tracking-tight italic">
                   GSPro Courses
                 </h1>
               </Link>
-              <div className="flex gap-2">
+              {/* Unit toggle - visible on mobile in top row */}
+              <div className="flex items-center space-x-2 sm:hidden">
+                <span className="text-amber-100/60 text-xs">
+                  {unitSystem === "imperial" ? "Yds" : "M"}
+                </span>
+                <Switch
+                  checked={unitSystem === "imperial"}
+                  onCheckedChange={(checked) =>
+                    setUnitSystem(checked ? "imperial" : "metric")
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Bottom row on mobile: Navigation tabs */}
+            {/* On desktop: Navigation tabs + unit toggle inline */}
+            <div className="flex items-center justify-between sm:gap-8">
+              <div className="flex gap-1 sm:gap-2">
                 <Link
                   to="/courses"
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                     isActive("/course")
                       ? "bg-emerald-800/70 text-amber-50 shadow-sm border border-emerald-700/30"
                       : "text-amber-100/70 hover:text-amber-50 hover:bg-slate-700/40"
@@ -59,7 +77,7 @@ const Layout: React.FC = () => {
                 </Link>
                 <Link
                   to="/records"
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all ${
                     isActive("/records")
                       ? "bg-emerald-800/70 text-amber-50 shadow-sm border border-emerald-700/30"
                       : "text-amber-100/70 hover:text-amber-50 hover:bg-slate-700/40"
@@ -68,9 +86,9 @@ const Layout: React.FC = () => {
                   Records
                 </Link>
               </div>
-            </div>
-            <ul className="flex items-center space-x-6">
-              <li className="flex items-center space-x-2">
+
+              {/* Unit toggle - hidden on mobile, visible on desktop */}
+              <div className="hidden sm:flex items-center space-x-2">
                 <span className="text-amber-100/60 text-sm">Imperial</span>
                 <Switch
                   checked={unitSystem === "imperial"}
@@ -78,12 +96,12 @@ const Layout: React.FC = () => {
                     setUnitSystem(checked ? "imperial" : "metric")
                   }
                 />
-              </li>
-            </ul>
+              </div>
+            </div>
           </nav>
         </div>
       </header>
-      <main className="relative z-10 container mx-auto px-4 py-8">
+      <main className="relative z-10 container mx-auto px-4 py-4 sm:py-6 md:py-8">
         <Outlet />
       </main>
     </div>

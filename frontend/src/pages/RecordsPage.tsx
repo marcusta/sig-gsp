@@ -119,7 +119,7 @@ export default function RecordsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-4xl font-bold text-amber-50 mb-2 tracking-tight">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-50 mb-2 tracking-tight">
             Course Record Leaderboard
           </h1>
           <p className="text-amber-100/60">
