@@ -4,7 +4,7 @@ import {
   getAltitudeUnit,
   getDistanceUnit,
 } from "@/contexts/UnitContext";
-import type { Hazard, Pin, Position, Tee } from "@/types";
+import type { Hazard, OobDefinition, Pin, Position, Tee } from "@/types";
 import { calculatePlaysAsDistanceByEffect, distance3D } from "./course-data";
 
 // Masters-inspired color palette - warm ambers and muted greens
@@ -31,12 +31,33 @@ const SVG_COLORS = {
     stroke: "#15803d",
     strokeOpacity: "0.4",
   },
-  // Water hazards - muted teal that complements the warm palette
-  water: {
+  // Water hazards - Yellow stakes (can play as it lies)
+  waterYellow: {
     fill: "#134e4a", // Dark teal
+    fillOpacity: "0.45",
+    stroke: "#ca8a04", // Yellow-600 for yellow stakes
+    strokeOpacity: "0.8",
+  },
+  // Water hazards - Red stakes (must take relief, noAIL)
+  waterRed: {
+    fill: "#172554", // Darker blue tint
     fillOpacity: "0.5",
-    stroke: "#0f766e",
-    strokeOpacity: "0.6",
+    stroke: "#dc2626", // Red-600 for red stakes
+    strokeOpacity: "0.8",
+  },
+  // Inner OOB areas - distinct from water
+  innerOOB: {
+    fill: "#44403c", // Stone-700
+    fillOpacity: "0.4",
+    stroke: "#f5f5f4", // White stakes
+    strokeOpacity: "0.7",
+    strokeDasharray: "4 3", // Dashed for OOB
+  },
+  // Perimeter OOB boundary
+  perimeterOOB: {
+    stroke: "#a8a29e", // Stone-400
+    strokeOpacity: "0.3",
+    strokeDasharray: "6 4",
   },
   // Aim points - warm amber
   aimPoint: {
@@ -59,6 +80,7 @@ export function generateSVG(
   greenCenterPoint: Tee | null,
   altitudeEffect: number,
   hazards: Hazard[],
+  perimeterOOB: OobDefinition | null,
   isMetric: boolean
 ): SVGSVGElement {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -115,7 +137,21 @@ export function generateSVG(
   );
   mainGroup.setAttribute("transform", `rotate(${rotation} 400 300)`);
 
-  drawWaterHazards(mainGroup, hazards, transformX, transformZ);
+  // Draw perimeter OOB boundary first (background layer)
+  if (perimeterOOB && perimeterOOB.coords.length > 0) {
+    drawPerimeterOOB(mainGroup, perimeterOOB, transformX, transformZ);
+  }
+
+  // Separate hazards by type
+  const innerOOBHazards = hazards.filter((h) => h.innerOOB);
+  const waterHazards = hazards.filter((h) => !h.innerOOB);
+
+  // Draw inner OOB areas
+  drawInnerOOBHazards(mainGroup, innerOOBHazards, transformX, transformZ);
+
+  // Draw water hazards (with noAIL distinction)
+  drawWaterHazards(mainGroup, waterHazards, transformX, transformZ);
+
   drawTee(mainGroup, selectedTee, transformX, transformZ);
   drawPin(mainGroup, selectedPin, transformX, transformZ);
 
@@ -498,25 +534,110 @@ function drawWaterHazards(
   transformX: (x: number) => number,
   transformZ: (z: number) => number
 ): void {
-  hazards.forEach((hazard) => {
+  hazards.forEach((hazard, index) => {
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     let pathData = "";
 
-    hazard.coords.forEach((coord, index) => {
+    hazard.coords.forEach((coord, idx) => {
       const x = transformX(coord.x);
       const z = transformZ(coord.z);
-      pathData += index === 0 ? `M ${x} ${z}` : ` L ${x} ${z}`;
+      pathData += idx === 0 ? `M ${x} ${z}` : ` L ${x} ${z}`;
     });
 
     pathData += " Z";
     path.setAttribute("d", pathData);
-    path.setAttribute("fill", SVG_COLORS.water.fill);
-    path.setAttribute("fill-opacity", SVG_COLORS.water.fillOpacity);
-    path.setAttribute("stroke", SVG_COLORS.water.stroke);
-    path.setAttribute("stroke-opacity", SVG_COLORS.water.strokeOpacity);
-    path.setAttribute("stroke-width", "1.5");
+
+    // Use different colors based on whether you can play "as it lies"
+    // noAIL = true means red stakes (must take relief)
+    // noAIL = false means yellow stakes (can play as it lies)
+    const colors = hazard.noAIL ? SVG_COLORS.waterRed : SVG_COLORS.waterYellow;
+    const hazardType = hazard.noAIL ? "water-red" : "water-yellow";
+
+    path.setAttribute("fill", colors.fill);
+    path.setAttribute("fill-opacity", colors.fillOpacity);
+    path.setAttribute("stroke", colors.stroke);
+    path.setAttribute("stroke-opacity", colors.strokeOpacity);
+    path.setAttribute("stroke-width", "2");
+
+    // Add data attributes for interactivity
+    path.setAttribute("data-hazard-type", hazardType);
+    path.setAttribute("data-hazard-index", index.toString());
+    path.setAttribute("class", "hazard-area");
+    path.style.cursor = "pointer";
+    path.style.transition = "filter 0.15s ease, stroke-width 0.15s ease";
+
     svg.appendChild(path);
   });
+}
+
+function drawInnerOOBHazards(
+  svg: SVGElement,
+  hazards: Hazard[],
+  transformX: (x: number) => number,
+  transformZ: (z: number) => number
+): void {
+  hazards.forEach((hazard, index) => {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let pathData = "";
+
+    hazard.coords.forEach((coord, idx) => {
+      const x = transformX(coord.x);
+      const z = transformZ(coord.z);
+      pathData += idx === 0 ? `M ${x} ${z}` : ` L ${x} ${z}`;
+    });
+
+    pathData += " Z";
+    path.setAttribute("d", pathData);
+    path.setAttribute("fill", SVG_COLORS.innerOOB.fill);
+    path.setAttribute("fill-opacity", SVG_COLORS.innerOOB.fillOpacity);
+    path.setAttribute("stroke", SVG_COLORS.innerOOB.stroke);
+    path.setAttribute("stroke-opacity", SVG_COLORS.innerOOB.strokeOpacity);
+    path.setAttribute("stroke-width", "2");
+    path.setAttribute("stroke-dasharray", SVG_COLORS.innerOOB.strokeDasharray);
+
+    // Add data attributes for interactivity
+    path.setAttribute("data-hazard-type", "inner-oob");
+    path.setAttribute("data-hazard-index", index.toString());
+    path.setAttribute("class", "hazard-area");
+    path.style.cursor = "pointer";
+    path.style.transition = "filter 0.15s ease, stroke-width 0.15s ease";
+
+    svg.appendChild(path);
+  });
+}
+
+function drawPerimeterOOB(
+  svg: SVGElement,
+  perimeterOOB: OobDefinition,
+  transformX: (x: number) => number,
+  transformZ: (z: number) => number
+): void {
+  if (perimeterOOB.coords.length < 3) return;
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  let pathData = "";
+
+  perimeterOOB.coords.forEach((coord, index) => {
+    const x = transformX(coord.x);
+    const z = transformZ(coord.z);
+    pathData += index === 0 ? `M ${x} ${z}` : ` L ${x} ${z}`;
+  });
+
+  pathData += " Z";
+  path.setAttribute("d", pathData);
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", SVG_COLORS.perimeterOOB.stroke);
+  path.setAttribute("stroke-opacity", SVG_COLORS.perimeterOOB.strokeOpacity);
+  path.setAttribute("stroke-width", "1");
+  path.setAttribute("stroke-dasharray", SVG_COLORS.perimeterOOB.strokeDasharray);
+
+  // Add data attributes for interactivity
+  path.setAttribute("data-hazard-type", "perimeter-oob");
+  path.setAttribute("class", "hazard-area");
+  path.style.cursor = "pointer";
+  path.style.transition = "filter 0.15s ease, stroke-width 0.15s ease";
+
+  svg.appendChild(path);
 }
 
 function drawAimPoint(
