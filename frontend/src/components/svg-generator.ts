@@ -7,6 +7,50 @@ import {
 import type { Hazard, Pin, Position, Tee } from "@/types";
 import { calculatePlaysAsDistanceByEffect, distance3D } from "./course-data";
 
+// Masters-inspired color palette - warm ambers and muted greens
+const SVG_COLORS = {
+  // Tee marker - muted dark with slight warmth
+  tee: {
+    fill: "#2d3a35", // Dark muted green-gray
+    stroke: "#4a5c54",
+  },
+  // Pin/flag - muted red (matches bg-red-800/70)
+  pin: {
+    fill: "#991b1b", // Muted red
+    glow: "rgba(153, 27, 27, 0.4)",
+  },
+  // Shot path - warm amber accent
+  path: {
+    stroke: "#b4846c", // Muted amber-brown
+    strokeWidth: "2",
+  },
+  // Green area - muted emerald (matches bg-emerald-800/70)
+  green: {
+    fill: "#166534", // Deep emerald
+    fillOpacity: "0.6",
+    stroke: "#15803d",
+    strokeOpacity: "0.4",
+  },
+  // Water hazards - muted teal that complements the warm palette
+  water: {
+    fill: "#134e4a", // Dark teal
+    fillOpacity: "0.5",
+    stroke: "#0f766e",
+    strokeOpacity: "0.6",
+  },
+  // Aim points - warm amber
+  aimPoint: {
+    fill: "#d97706", // Amber-600
+    stroke: "#b45309",
+  },
+  // Text - warm amber tints (matches text-amber-100/80)
+  text: {
+    primary: "#fef3c7", // amber-100
+    secondary: "#fde68a", // amber-200
+    muted: "rgba(254, 243, 199, 0.7)", // amber-100/70
+  },
+};
+
 export function generateSVG(
   selectedTee: Tee,
   selectedPin: Pin,
@@ -165,8 +209,10 @@ function drawTee(
   );
   teeCircle.setAttribute("cx", transformX(selectedTee.Position!.x).toString());
   teeCircle.setAttribute("cy", transformZ(selectedTee.Position!.z).toString());
-  teeCircle.setAttribute("r", "5");
-  teeCircle.setAttribute("fill", "#000000");
+  teeCircle.setAttribute("r", "6");
+  teeCircle.setAttribute("fill", SVG_COLORS.tee.fill);
+  teeCircle.setAttribute("stroke", SVG_COLORS.tee.stroke);
+  teeCircle.setAttribute("stroke-width", "1.5");
   svg.appendChild(teeCircle);
 }
 
@@ -176,14 +222,29 @@ function drawPin(
   transformX: (x: number) => number,
   transformZ: (z: number) => number
 ): void {
+  const cx = transformX(selectedPin.Position.x).toString();
+  const cy = transformZ(selectedPin.Position.z).toString();
+
+  // Glow effect behind pin
+  const pinGlow = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "circle"
+  );
+  pinGlow.setAttribute("cx", cx);
+  pinGlow.setAttribute("cy", cy);
+  pinGlow.setAttribute("r", "8");
+  pinGlow.setAttribute("fill", SVG_COLORS.pin.glow);
+  svg.appendChild(pinGlow);
+
+  // Main pin circle
   const pinCircle = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "circle"
   );
-  pinCircle.setAttribute("cx", transformX(selectedPin.Position.x).toString());
-  pinCircle.setAttribute("cy", transformZ(selectedPin.Position.z).toString());
-  pinCircle.setAttribute("r", "3");
-  pinCircle.setAttribute("fill", "#FF0000");
+  pinCircle.setAttribute("cx", cx);
+  pinCircle.setAttribute("cy", cy);
+  pinCircle.setAttribute("r", "4");
+  pinCircle.setAttribute("fill", SVG_COLORS.pin.fill);
   svg.appendChild(pinCircle);
 }
 
@@ -258,8 +319,10 @@ function drawPath(
   )}`;
 
   path.setAttribute("d", pathData);
-  path.setAttribute("stroke", "#000000");
-  path.setAttribute("stroke-width", "2");
+  path.setAttribute("stroke", SVG_COLORS.path.stroke);
+  path.setAttribute("stroke-width", SVG_COLORS.path.strokeWidth);
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("stroke-dasharray", "8 4");
   path.setAttribute("fill", "none");
   path.setAttribute("id", "golf-hole-path");
   mainGroup.appendChild(path);
@@ -309,13 +372,50 @@ function drawLineWithDistance(
     elevationValue > 0 ? "+" : ""
   }${elevationValue.toFixed(1)}${altUnit}`;
 
+  // Text shadow/outline for better legibility
+  const textShadow = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "text"
+  );
+  textShadow.setAttribute("x", rotatedMid.x.toString());
+  textShadow.setAttribute("y", rotatedMid.y.toString());
+  textShadow.setAttribute("font-size", Math.max(13, 16 / scale).toString());
+  textShadow.setAttribute("font-family", "system-ui, -apple-system, sans-serif");
+  textShadow.setAttribute("font-weight", "500");
+  textShadow.setAttribute("letter-spacing", "0.025em");
+  textShadow.setAttribute("text-anchor", "middle");
+  textShadow.setAttribute("dominant-baseline", "middle");
+  textShadow.setAttribute("fill", "none");
+  textShadow.setAttribute("stroke", "rgba(0,0,0,0.6)");
+  textShadow.setAttribute("stroke-width", "3");
+  textShadow.setAttribute("stroke-linejoin", "round");
+
+  const tspan1Shadow = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "tspan"
+  );
+  tspan1Shadow.textContent = `${label}${distanceValue.toFixed(0)}${distUnit} (${elevationText})`;
+  tspan1Shadow.setAttribute("x", rotatedMid.x.toString());
+  tspan1Shadow.setAttribute("dy", "0em");
+
+  const tspan2Shadow = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "tspan"
+  );
+  tspan2Shadow.textContent = `Plays as: ${playsAsValue.toFixed(0)}${distUnit}`;
+  tspan2Shadow.setAttribute("x", rotatedMid.x.toString());
+  tspan2Shadow.setAttribute("dy", "1.3em");
+
+  textShadow.appendChild(tspan1Shadow);
+  textShadow.appendChild(tspan2Shadow);
+  svg.appendChild(textShadow);
+
+  // Main text
   const tspan1 = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "tspan"
   );
-  tspan1.textContent = `${label}${distanceValue.toFixed(
-    0
-  )}${distUnit} (${elevationText})`;
+  tspan1.textContent = `${label}${distanceValue.toFixed(0)}${distUnit} (${elevationText})`;
   tspan1.setAttribute("x", rotatedMid.x.toString());
   tspan1.setAttribute("dy", "0em");
 
@@ -325,15 +425,19 @@ function drawLineWithDistance(
   );
   tspan2.textContent = `Plays as: ${playsAsValue.toFixed(0)}${distUnit}`;
   tspan2.setAttribute("x", rotatedMid.x.toString());
-  tspan2.setAttribute("dy", "1.2em");
+  tspan2.setAttribute("dy", "1.3em");
+  tspan2.setAttribute("fill", SVG_COLORS.text.muted);
 
   const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
   text.setAttribute("x", rotatedMid.x.toString());
   text.setAttribute("y", rotatedMid.y.toString());
-  text.setAttribute("font-size", Math.max(10, 12 / scale).toString());
+  text.setAttribute("font-size", Math.max(13, 16 / scale).toString());
+  text.setAttribute("font-family", "system-ui, -apple-system, sans-serif");
+  text.setAttribute("font-weight", "500");
+  text.setAttribute("letter-spacing", "0.025em");
   text.setAttribute("text-anchor", "middle");
   text.setAttribute("dominant-baseline", "middle");
-  text.setAttribute("fill", "#aaa");
+  text.setAttribute("fill", SVG_COLORS.text.primary);
   text.appendChild(tspan1);
   text.appendChild(tspan2);
 
@@ -379,8 +483,11 @@ function drawGreenArea(
       transformZ(greenCenterPoint.Position.z).toString()
     );
     greenCircle.setAttribute("r", "30");
-    greenCircle.setAttribute("fill", "#90EE90");
-    greenCircle.setAttribute("fill-opacity", "0.5");
+    greenCircle.setAttribute("fill", SVG_COLORS.green.fill);
+    greenCircle.setAttribute("fill-opacity", SVG_COLORS.green.fillOpacity);
+    greenCircle.setAttribute("stroke", SVG_COLORS.green.stroke);
+    greenCircle.setAttribute("stroke-opacity", SVG_COLORS.green.strokeOpacity);
+    greenCircle.setAttribute("stroke-width", "2");
     svg.appendChild(greenCircle);
   }
 }
@@ -403,10 +510,11 @@ function drawWaterHazards(
 
     pathData += " Z";
     path.setAttribute("d", pathData);
-    path.setAttribute("fill", "#87CEFA");
-    path.setAttribute("fill-opacity", "0.5");
-    path.setAttribute("stroke", "#4682B4");
-    path.setAttribute("stroke-width", "2");
+    path.setAttribute("fill", SVG_COLORS.water.fill);
+    path.setAttribute("fill-opacity", SVG_COLORS.water.fillOpacity);
+    path.setAttribute("stroke", SVG_COLORS.water.stroke);
+    path.setAttribute("stroke-opacity", SVG_COLORS.water.strokeOpacity);
+    path.setAttribute("stroke-width", "1.5");
     svg.appendChild(path);
   });
 }
@@ -423,8 +531,10 @@ function drawAimPoint(
   );
   aimPointCircle.setAttribute("cx", transformX(position.x).toString());
   aimPointCircle.setAttribute("cy", transformZ(position.z).toString());
-  aimPointCircle.setAttribute("r", "4");
-  aimPointCircle.setAttribute("fill", "#FFA500"); // Orange color for visibility
+  aimPointCircle.setAttribute("r", "5");
+  aimPointCircle.setAttribute("fill", SVG_COLORS.aimPoint.fill);
+  aimPointCircle.setAttribute("stroke", SVG_COLORS.aimPoint.stroke);
+  aimPointCircle.setAttribute("stroke-width", "1.5");
 
   svg.appendChild(aimPointCircle);
 }

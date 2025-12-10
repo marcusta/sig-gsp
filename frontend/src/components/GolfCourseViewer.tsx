@@ -50,8 +50,14 @@ const GolfCourseViewer: React.FC<{
 
   // Swipe handling refs
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
-  const minSwipeDistance = 50;
+  const touchEndY = useRef<number | null>(null);
+  const touchStartTime = useRef<number | null>(null);
+  const isMultiTouch = useRef<boolean>(false);
+  const minSwipeDistance = 80; // Increased from 50
+  const maxSwipeTime = 300; // Must complete within 300ms
+  const maxVerticalRatio = 0.5; // Vertical movement must be less than 50% of horizontal
 
   const enabledHoles = courseData.Holes.filter((hole) => hole.Enabled);
   const totalHoles = enabledHoles.length;
@@ -86,24 +92,58 @@ const GolfCourseViewer: React.FC<{
     });
   }, [enabledHoles]);
 
-  // Swipe handlers
+  // Swipe handlers - only trigger on fast, horizontal, single-finger swipes
   const onTouchStart = (e: React.TouchEvent) => {
+    // Reset all tracking
     touchEndX.current = null;
-    touchStartX.current = e.targetTouches[0].clientX;
+    touchEndY.current = null;
+    isMultiTouch.current = e.touches.length > 1;
+
+    if (e.touches.length === 1) {
+      touchStartX.current = e.targetTouches[0].clientX;
+      touchStartY.current = e.targetTouches[0].clientY;
+      touchStartTime.current = Date.now();
+    }
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
+    // If multiple fingers touch at any point, mark as multi-touch
+    if (e.touches.length > 1) {
+      isMultiTouch.current = true;
+    }
+
+    if (e.touches.length === 1) {
+      touchEndX.current = e.targetTouches[0].clientX;
+      touchEndY.current = e.targetTouches[0].clientY;
+    }
   };
 
   const onTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-    if (isLeftSwipe) {
+    // Don't trigger swipe for multi-touch gestures (pinch/zoom)
+    if (isMultiTouch.current) {
+      isMultiTouch.current = false;
+      return;
+    }
+
+    if (!touchStartX.current || !touchEndX.current || !touchStartY.current || !touchEndY.current || !touchStartTime.current) {
+      return;
+    }
+
+    const deltaX = touchStartX.current - touchEndX.current;
+    const deltaY = Math.abs(touchStartY.current - touchEndY.current);
+    const elapsed = Date.now() - touchStartTime.current;
+
+    // Must be a quick gesture
+    if (elapsed > maxSwipeTime) return;
+
+    // Must be primarily horizontal (not diagonal panning)
+    const absDeltaX = Math.abs(deltaX);
+    if (absDeltaX < minSwipeDistance) return;
+    if (deltaY > absDeltaX * maxVerticalRatio) return;
+
+    if (deltaX > 0) {
       goToNextHole();
-    } else if (isRightSwipe) {
+    } else {
       goToPrevHole();
     }
   };
