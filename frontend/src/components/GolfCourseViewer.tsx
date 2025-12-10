@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -29,7 +31,8 @@ import {
 } from "@/contexts/UnitContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, ChevronLeft, ChevronRight } from "lucide-react";
 
 const GolfCourseViewer: React.FC<{
   course: CourseWithData;
@@ -44,12 +47,65 @@ const GolfCourseViewer: React.FC<{
   );
   const [selectedPinDay, setSelectedPinDay] = useState<string>("Friday");
 
+  // Swipe handling refs
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const minSwipeDistance = 50;
+
+  const enabledHoles = courseData.Holes.filter((hole) => hole.Enabled);
+  const totalHoles = enabledHoles.length;
+  const front9 = enabledHoles.filter((h) => h.HoleNumber <= 9);
+  const back9 = enabledHoles.filter((h) => h.HoleNumber > 9);
+
   const courseAltitude = getAltitudeInMeters(courseData);
   const currentHole = getHole(courseData, currentHoleNumber);
   const holePar = currentHole.Par;
   const holeIndex = currentHole.Index;
   const currentPin = getPin(courseData, currentHoleNumber, selectedPinDay);
   const currentTee = getTee(courseData, currentHoleNumber, selectedTeeType);
+
+  // Navigation functions
+  const goToPrevHole = useCallback(() => {
+    setCurrentHoleNumber((prev) => {
+      const currentIndex = enabledHoles.findIndex((h) => h.HoleNumber === prev);
+      if (currentIndex > 0) {
+        return enabledHoles[currentIndex - 1].HoleNumber;
+      }
+      return enabledHoles[enabledHoles.length - 1].HoleNumber; // Wrap to last
+    });
+  }, [enabledHoles]);
+
+  const goToNextHole = useCallback(() => {
+    setCurrentHoleNumber((prev) => {
+      const currentIndex = enabledHoles.findIndex((h) => h.HoleNumber === prev);
+      if (currentIndex < enabledHoles.length - 1) {
+        return enabledHoles[currentIndex + 1].HoleNumber;
+      }
+      return enabledHoles[0].HoleNumber; // Wrap to first
+    });
+  }, [enabledHoles]);
+
+  // Swipe handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEndX.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      goToNextHole();
+    } else if (isRightSwipe) {
+      goToPrevHole();
+    }
+  };
 
   if (!currentTee || !currentPin) {
     return <div className="text-center py-12 text-amber-100/50">No tee or pin data available</div>;
@@ -69,6 +125,15 @@ const GolfCourseViewer: React.FC<{
   const totalPar = courseData.Holes.reduce((sum, hole) => sum + hole.Par, 0);
 
   const teeTypeRating = getTeeTypeRating(courseData, selectedTeeType);
+
+  // Helper to format hole option label
+  const formatHoleLabel = (holeNum: number) => {
+    const hole = enabledHoles.find((h) => h.HoleNumber === holeNum);
+    if (!hole) return `Hole ${holeNum}`;
+    const tee = hole.Tees.find((t) => t.TeeType === selectedTeeType);
+    const dist = tee ? convertDistance(tee.Distance, unitSystem).toFixed(0) : "—";
+    return `${holeNum} · Par ${hole.Par} · ${dist}${getDistanceUnit(unitSystem)}`;
+  };
 
   return (
     <div className="space-y-4">
@@ -204,38 +269,123 @@ const GolfCourseViewer: React.FC<{
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <div className="lg:col-span-1">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
-            {courseData.Holes.filter((hole) => hole.Enabled).map((hole) => (
-              <div
-                key={hole.HoleNumber}
-                className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
-                  currentHoleNumber === hole.HoleNumber
-                    ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
-                    : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
-                }`}
-                onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
-              >
-                {hole.HoleNumber} | Par {hole.Par} |{" "}
-                {convertDistance(
-                  hole.Tees.find((t) => t.TeeType === selectedTeeType)
-                    ?.Distance || 0,
-                  unitSystem
-                ).toFixed(0)}
-                {getDistanceUnit(unitSystem)}
-              </div>
-            ))}
-          </div>
+      {/* Main content grid - sidebar hidden on mobile */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 pb-20 lg:pb-0">
+        {/* Desktop Sidebar - hidden on mobile */}
+        <div className="hidden lg:block lg:col-span-1">
+          <Tabs
+            value={currentHoleNumber <= 9 ? "front" : "back"}
+            onValueChange={(value) => {
+              // When switching tabs, go to first hole of that nine
+              if (value === "front" && currentHoleNumber > 9) {
+                setCurrentHoleNumber(front9[0]?.HoleNumber || 1);
+              } else if (value === "back" && currentHoleNumber <= 9) {
+                setCurrentHoleNumber(back9[0]?.HoleNumber || 10);
+              }
+            }}
+          >
+            <TabsList className="w-full bg-emerald-950/50 border border-amber-900/20">
+              {front9.length > 0 && (
+                <TabsTrigger
+                  value="front"
+                  className="flex-1 text-amber-100/70 data-[state=active]:bg-emerald-800/50 data-[state=active]:text-amber-50"
+                >
+                  Front 9
+                </TabsTrigger>
+              )}
+              {back9.length > 0 && (
+                <TabsTrigger
+                  value="back"
+                  className="flex-1 text-amber-100/70 data-[state=active]:bg-emerald-800/50 data-[state=active]:text-amber-50"
+                >
+                  Back 9
+                </TabsTrigger>
+              )}
+            </TabsList>
+            {front9.length > 0 && (
+              <TabsContent value="front" className="space-y-2 mt-3">
+                {front9.map((hole) => (
+                  <div
+                    key={hole.HoleNumber}
+                    className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
+                      currentHoleNumber === hole.HoleNumber
+                        ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
+                        : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
+                    }`}
+                    onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
+                  >
+                    {hole.HoleNumber} | Par {hole.Par} |{" "}
+                    {convertDistance(
+                      hole.Tees.find((t) => t.TeeType === selectedTeeType)
+                        ?.Distance || 0,
+                      unitSystem
+                    ).toFixed(0)}
+                    {getDistanceUnit(unitSystem)}
+                  </div>
+                ))}
+              </TabsContent>
+            )}
+            {back9.length > 0 && (
+              <TabsContent value="back" className="space-y-2 mt-3">
+                {back9.map((hole) => (
+                  <div
+                    key={hole.HoleNumber}
+                    className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
+                      currentHoleNumber === hole.HoleNumber
+                        ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
+                        : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
+                    }`}
+                    onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
+                  >
+                    {hole.HoleNumber} | Par {hole.Par} |{" "}
+                    {convertDistance(
+                      hole.Tees.find((t) => t.TeeType === selectedTeeType)
+                        ?.Distance || 0,
+                      unitSystem
+                    ).toFixed(0)}
+                    {getDistanceUnit(unitSystem)}
+                  </div>
+                ))}
+              </TabsContent>
+            )}
+          </Tabs>
         </div>
+
+        {/* Hole Detail Card */}
         <Card className="lg:col-span-3 bg-emerald-950/30 border-amber-900/20">
-          <CardHeader>
-            <CardTitle className="text-amber-50">
-              Hole {currentHoleNumber}
-            </CardTitle>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={goToPrevHole}
+                className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <CardTitle className="text-amber-50 text-center">
+                Hole {currentHoleNumber}
+                <span className="text-amber-100/50 text-sm font-normal ml-2">
+                  of {totalHoles}
+                </span>
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={goToNextHole}
+                className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="relative w-full h-full">
+            <div
+              className="relative w-full h-full"
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+            >
               <div className="lg:absolute lg:top-2 lg:left-2 z-10 p-4 lg:p-0">
                 <div className="min-w-[300px] grid grid-cols-2 gap-1 text-sm p-4 rounded-lg border border-amber-900/30 bg-emerald-950/95 backdrop-blur-sm text-amber-100/80 shadow-lg">
                   <span className="font-semibold text-amber-100">Par:</span>
@@ -284,6 +434,74 @@ const GolfCourseViewer: React.FC<{
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Mobile Sticky Bottom Bar - visible only on mobile */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-emerald-950/95 backdrop-blur-sm border-t border-amber-900/30 px-4 py-3 safe-area-pb">
+        <div className="flex items-center justify-between gap-3 max-w-screen-xl mx-auto">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={goToPrevHole}
+            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50 shrink-0"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+
+          <Select
+            value={currentHoleNumber.toString()}
+            onValueChange={(val) => setCurrentHoleNumber(parseInt(val))}
+          >
+            <SelectTrigger className="flex-1 bg-transparent border-amber-900/30 text-amber-100 hover:border-amber-700/40">
+              <SelectValue>
+                {formatHoleLabel(currentHoleNumber)}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30 max-h-[60vh]">
+              {front9.length > 0 && (
+                <SelectGroup>
+                  <SelectLabel className="text-amber-100/50 text-xs uppercase tracking-wider">
+                    Front 9
+                  </SelectLabel>
+                  {front9.map((hole) => (
+                    <SelectItem
+                      key={hole.HoleNumber}
+                      value={hole.HoleNumber.toString()}
+                      className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
+                    >
+                      {formatHoleLabel(hole.HoleNumber)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              )}
+              {back9.length > 0 && (
+                <SelectGroup>
+                  <SelectLabel className="text-amber-100/50 text-xs uppercase tracking-wider">
+                    Back 9
+                  </SelectLabel>
+                  {back9.map((hole) => (
+                    <SelectItem
+                      key={hole.HoleNumber}
+                      value={hole.HoleNumber.toString()}
+                      className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
+                    >
+                      {formatHoleLabel(hole.HoleNumber)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              )}
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={goToNextHole}
+            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50 shrink-0"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </Button>
+        </div>
       </div>
     </div>
   );
