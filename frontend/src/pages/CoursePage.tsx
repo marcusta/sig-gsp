@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCourseById } from "@/api/useApi";
 import GolfCourseViewer from "@/components/GolfCourseViewer";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Target, Circle } from "lucide-react";
 import { ScoreCard } from "@/components/ScoreCard";
 import { CourseWithData, ScoreCardData } from "@/types";
+import { useCalculator } from "@/contexts/CalculatorContext";
 
 // Reuse the transform function from CourseCardView
 const transformToScoreCardData = (
@@ -61,7 +62,9 @@ const transformToScoreCardData = (
 const CoursePage: React.FC = () => {
   const { courseId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [showScoreCard, setShowScoreCard] = useState(false);
+  const { setCurrentCourse, setAltitudeFromCourse } = useCalculator();
 
   // Get the search params from the previous location state or default to empty string
   const previousSearch = location.state?.search || "";
@@ -82,9 +85,28 @@ const CoursePage: React.FC = () => {
 
   const scoreCardData = transformToScoreCardData(course);
 
+  const handleNavigateToSuggester = () => {
+    setCurrentCourse({
+      courseId: course.id,
+      courseName: course.name,
+      altitude: course.altitude,
+    });
+    setAltitudeFromCourse(course.altitude);
+    navigate("/suggester");
+  };
+
+  const handleNavigateToPutting = () => {
+    setCurrentCourse({
+      courseId: course.id,
+      courseName: course.name,
+      altitude: course.altitude,
+    });
+    navigate("/putting");
+  };
+
   return (
     <div className="space-y-3 sm:space-y-4 md:space-y-6">
-      <div className="flex flex-wrap items-center">
+      <div className="flex flex-wrap items-center justify-between">
         <Button
           asChild
           variant="ghost"
@@ -99,6 +121,28 @@ const CoursePage: React.FC = () => {
             <span className="whitespace-nowrap text-sm">Back to Courses</span>
           </Link>
         </Button>
+
+        {/* Calculator navigation */}
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleNavigateToSuggester}
+            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 h-8 px-2"
+          >
+            <Target className="h-4 w-4 mr-1" />
+            <span className="text-sm">Shot</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleNavigateToPutting}
+            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 h-8 px-2"
+          >
+            <Circle className="h-4 w-4 mr-1" />
+            <span className="text-sm">Putt</span>
+          </Button>
+        </div>
       </div>
 
       <GolfCourseViewer

@@ -2,6 +2,7 @@ import type {
   Course,
   CourseAttributeOption,
   CourseData,
+  CourseRecordHistoryResponse,
   CourseRecords,
   CourseRecordsResponse,
   CourseRecordType,
@@ -12,7 +13,6 @@ import type {
   PlayerProfileResponse,
   PlayerRankHistoryResponse,
   PlayerRecordChangesResponse,
-  CourseRecordHistoryResponse,
   RecordActivityResponse,
   RecordMoversResponse,
   RivalriesResponse,
@@ -168,10 +168,7 @@ export const fetchRecordMovers = (daysBack: number = 7, limit: number = 10) =>
     .then((res) => res.data);
 
 // Player rivalries (who took records from this player)
-export const fetchPlayerRivalries = (
-  playerId: number,
-  daysBack?: number
-) =>
+export const fetchPlayerRivalries = (playerId: number, daysBack?: number) =>
   api
     .get<RivalriesResponse>(`/players/${playerId}/rivalries`, {
       params: daysBack ? { daysBack } : {},
