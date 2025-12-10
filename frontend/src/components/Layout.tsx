@@ -3,6 +3,13 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { Switch } from "./ui/switch";
 import { useUnits } from "@/contexts/UnitContext";
 
+// Masters broadcast gradient background
+const mastersBackground = `
+  radial-gradient(ellipse 120% 100% at 20% 10%, hsla(50, 85%, 70%, 0.08) 0%, hsla(50, 85%, 70%, 0) 45%),
+  radial-gradient(circle at 80% 90%, hsla(155, 40%, 18%, 0.15) 0%, hsla(155, 40%, 12%, 0) 60%),
+  linear-gradient(145deg, hsl(150, 35%, 8%) 0%, hsl(152, 33%, 10%) 35%, hsl(149, 28%, 7%) 70%, hsl(152, 30%, 9%) 100%)
+`;
+
 const Layout: React.FC = () => {
   const { unitSystem, setUnitSystem } = useUnits();
   const location = useLocation();
@@ -10,13 +17,32 @@ const Layout: React.FC = () => {
   const isActive = (path: string) => location.pathname.startsWith(path);
 
   return (
-    <div className="min-h-screen bg-[#1A1D29]">
-      <header className="bg-[#1F2937] border-b border-[#374151]">
+    <div
+      className="min-h-screen relative"
+      style={{ background: mastersBackground }}
+    >
+      {/* Film grain overlay */}
+      <div
+        className="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay z-50"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Vignette effect */}
+      <div
+        className="fixed inset-0 pointer-events-none z-40"
+        style={{
+          boxShadow: "inset 0 0 150px 50px rgba(0,0,0,0.4)",
+        }}
+      />
+
+      <header className="relative z-10 border-b border-amber-900/15">
         <div className="container mx-auto px-4 py-6">
           <nav className="flex justify-between items-center">
             <div className="flex items-center gap-8">
               <Link to="/courses">
-                <h1 className="text-3xl font-bold text-white tracking-tight">
+                <h1 className="text-3xl font-bold text-amber-50 tracking-tight italic">
                   GSPro Courses
                 </h1>
               </Link>
@@ -25,8 +51,8 @@ const Layout: React.FC = () => {
                   to="/courses"
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                     isActive("/course")
-                      ? "bg-[#2D6A4F] text-white shadow-sm"
-                      : "text-slate-300 hover:text-white hover:bg-[#374151]"
+                      ? "bg-emerald-800/70 text-amber-50 shadow-sm border border-emerald-700/30"
+                      : "text-amber-100/70 hover:text-amber-50 hover:bg-slate-700/40"
                   }`}
                 >
                   Courses
@@ -35,8 +61,8 @@ const Layout: React.FC = () => {
                   to="/records"
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                     isActive("/records")
-                      ? "bg-[#2D6A4F] text-white shadow-sm"
-                      : "text-slate-300 hover:text-white hover:bg-[#374151]"
+                      ? "bg-emerald-800/70 text-amber-50 shadow-sm border border-emerald-700/30"
+                      : "text-amber-100/70 hover:text-amber-50 hover:bg-slate-700/40"
                   }`}
                 >
                   Records
@@ -45,7 +71,7 @@ const Layout: React.FC = () => {
             </div>
             <ul className="flex items-center space-x-6">
               <li className="flex items-center space-x-2">
-                <span className="text-slate-300 text-sm">Imperial</span>
+                <span className="text-amber-100/60 text-sm">Imperial</span>
                 <Switch
                   checked={unitSystem === "imperial"}
                   onCheckedChange={(checked) =>
@@ -57,7 +83,7 @@ const Layout: React.FC = () => {
           </nav>
         </div>
       </header>
-      <main className="container mx-auto px-4 py-8">
+      <main className="relative z-10 container mx-auto px-4 py-8">
         <Outlet />
       </main>
     </div>

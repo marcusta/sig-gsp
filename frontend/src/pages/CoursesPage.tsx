@@ -271,7 +271,7 @@ const CoursesPage: React.FC = () => {
             placeholder="Search courses..."
             value={filterText}
             onChange={handleFilterChange}
-            className="p-2 pl-9 rounded-lg bg-slate-800/40 backdrop-blur-sm border border-amber-900/30 text-amber-100 placeholder:text-amber-200/40 w-full focus:outline-none focus:border-amber-700/50 focus:ring-1 focus:ring-amber-700/30"
+            className="p-2 pl-9 rounded-lg bg-transparent border border-amber-900/20 text-amber-100 placeholder:text-amber-200/30 w-full focus:outline-none focus:border-amber-700/40 focus:bg-slate-900/20"
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -280,7 +280,7 @@ const CoursesPage: React.FC = () => {
             id="sortOption"
             value={sortOption}
             onChange={handleSortChange}
-            className="p-2 rounded-lg bg-slate-800/40 backdrop-blur-sm border border-amber-900/30 text-amber-100 flex-1 sm:flex-none min-w-[200px] focus:outline-none focus:border-amber-700/50"
+            className="p-2 rounded-lg bg-transparent border border-amber-900/20 text-amber-100 flex-1 sm:flex-none min-w-[200px] focus:outline-none focus:border-amber-700/40 focus:bg-slate-900/20"
           >
             <option value="alphabetical">Alphabetical</option>
             <option value="updatedDate">Last Update Time</option>
@@ -299,7 +299,7 @@ const CoursesPage: React.FC = () => {
           </select>
           <Button
             onClick={handleSortOrderChange}
-            className="whitespace-nowrap bg-slate-800/40 backdrop-blur-sm border-amber-900/30 text-amber-100/90 hover:bg-slate-700/50 hover:text-amber-50"
+            className="whitespace-nowrap bg-transparent border-amber-900/20 text-amber-100/70 hover:bg-slate-900/30 hover:text-amber-50 hover:border-amber-700/40"
             variant="outline"
             size="icon"
             title={sortOrder === "asc" ? "Ascending" : "Descending"}

@@ -76,8 +76,8 @@ const CoursePage: React.FC = () => {
     enabled: !!courseId,
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading course data</div>;
+  if (isLoading) return <div className="text-center py-12 text-amber-100/50">Loading course...</div>;
+  if (error) return <div className="text-center py-12 text-red-400/70">Error loading course data</div>;
   if (!course) return null;
 
   const scoreCardData = transformToScoreCardData(course);
@@ -88,7 +88,7 @@ const CoursePage: React.FC = () => {
         <Button
           asChild
           variant="ghost"
-          className="text-white hover:text-white/80"
+          className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30"
         >
           <Link
             to={`/courses${previousSearch}`}

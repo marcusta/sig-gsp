@@ -6,85 +6,92 @@
 
 @layer base {
   :root {
-    /* Clubhouse Navy - Dark backgrounds */
-    --background: 215 20% 15%;
-    --foreground: 210 10% 97%;
+    /* Masters Broadcast - Deep Augusta Greens */
+    --background: 150 35% 9%;
+    --foreground: 45 90% 96%;
 
-    /* Slate Gray - Cards and surfaces */
-    --card: 210 15% 20%;
-    --card-foreground: 210 10% 97%;
+    /* Cards with warm green undertones */
+    --card: 150 30% 12%;
+    --card-foreground: 45 90% 96%;
 
-    --popover: 210 15% 20%;
-    --popover-foreground: 210 10% 97%;
+    --popover: 150 30% 12%;
+    --popover-foreground: 45 90% 96%;
 
     /* Fairway Green - Primary interactive */
     --primary: 152 44% 30%;
-    --primary-foreground: 210 10% 97%;
+    --primary-foreground: 45 90% 96%;
 
     /* Deep Forest Green - Secondary */
     --secondary: 152 44% 20%;
-    --secondary-foreground: 210 10% 97%;
+    --secondary-foreground: 45 90% 96%;
 
-    /* Muted grays */
-    --muted: 210 15% 25%;
-    --muted-foreground: 210 10% 60%;
+    /* Muted with warm undertones */
+    --muted: 150 20% 18%;
+    --muted-foreground: 45 30% 65%;
 
     /* Augusta Green - Accents */
     --accent: 152 50% 52%;
     --accent-foreground: 152 44% 15%;
 
-    /* Bogey Red - Destructive */
-    --destructive: 356 44% 58%;
-    --destructive-foreground: 210 10% 97%;
+    /* Bogey Red - Destructive (muted) */
+    --destructive: 0 50% 45%;
+    --destructive-foreground: 45 90% 96%;
 
-    --border: 210 15% 25%;
-    --input: 210 15% 25%;
-    --ring: 152 50% 52%;
+    --border: 45 30% 20%;
+    --input: 150 20% 18%;
+    --ring: 45 70% 50%;
 
     --radius: 0.5rem;
 
     /* Golf-inspired chart colors */
     --chart-1: 152 50% 52%;
-    --chart-2: 32 72% 56%;
-    --chart-3: 195 38% 50%;
-    --chart-4: 42 74% 68%;
+    --chart-2: 45 72% 56%;
+    --chart-3: 155 38% 40%;
+    --chart-4: 50 74% 60%;
     --chart-5: 152 44% 30%;
   }
 
   .dark {
-    /* Same as root since we're dark by default */
-    --background: 215 20% 15%;
-    --foreground: 210 10% 97%;
+    /* Masters Broadcast - Deep Augusta Greens */
+    --background: 150 35% 9%;
+    --foreground: 45 90% 96%;
 
-    --card: 210 15% 20%;
-    --card-foreground: 210 10% 97%;
+    /* Cards with warm green undertones */
+    --card: 150 30% 12%;
+    --card-foreground: 45 90% 96%;
 
-    --popover: 210 15% 20%;
-    --popover-foreground: 210 10% 97%;
+    --popover: 150 30% 12%;
+    --popover-foreground: 45 90% 96%;
 
+    /* Fairway Green - Primary interactive */
     --primary: 152 44% 30%;
-    --primary-foreground: 210 10% 97%;
+    --primary-foreground: 45 90% 96%;
 
+    /* Deep Forest Green - Secondary */
     --secondary: 152 44% 20%;
-    --secondary-foreground: 210 10% 97%;
+    --secondary-foreground: 45 90% 96%;
 
-    --muted: 210 15% 25%;
-    --muted-foreground: 210 10% 60%;
+    /* Muted with warm undertones */
+    --muted: 150 20% 18%;
+    --muted-foreground: 45 30% 65%;
 
+    /* Augusta Green - Accents */
     --accent: 152 50% 52%;
     --accent-foreground: 152 44% 15%;
 
-    --destructive: 356 44% 58%;
-    --destructive-foreground: 210 10% 97%;
+    /* Bogey Red - Destructive (muted) */
+    --destructive: 0 50% 45%;
+    --destructive-foreground: 45 90% 96%;
 
-    --border: 210 15% 25%;
-    --input: 210 15% 25%;
-    --ring: 152 50% 52%;
+    --border: 45 30% 20%;
+    --input: 150 20% 18%;
+    --ring: 45 70% 50%;
 
+    /* Golf-inspired chart colors */
     --chart-1: 152 50% 52%;
-    --chart-2: 32 72% 56%;
-    --chart-3: 195 38% 50%;
-    --chart-4: 42 74% 68%;
+    --chart-2: 45 72% 56%;
+    --chart-3: 155 38% 40%;
+    --chart-4: 50 74% 60%;
     --chart-5: 152 44% 30%;
   }
 }

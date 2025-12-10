@@ -52,7 +52,7 @@ const GolfCourseViewer: React.FC<{
   const currentTee = getTee(courseData, currentHoleNumber, selectedTeeType);
 
   if (!currentTee || !currentPin) {
-    return <div>No tee or pin data available</div>;
+    return <div className="text-center py-12 text-amber-100/50">No tee or pin data available</div>;
   }
 
   const holeDistance = currentTee.Distance;
@@ -72,18 +72,18 @@ const GolfCourseViewer: React.FC<{
 
   return (
     <div className="space-y-4">
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-emerald-950/30 border-amber-900/20">
         <CardHeader className="pb-2">
-          <CardTitle className="text-2xl font-bold text-white">
+          <CardTitle className="text-2xl font-bold text-amber-50">
             {course.name}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="text-slate-200">
+              <div className="text-amber-100/80">
                 <p className="text-sm">
-                  {course.location}, by <b>{course.designer}</b>
+                  {course.location}, by <b className="text-amber-50">{course.designer}</b>
                 </p>
                 <p className="text-sm">
                   {course.holes} holes par {totalPar}, Rating/Slope{" "}
@@ -99,7 +99,7 @@ const GolfCourseViewer: React.FC<{
                   Driving Range: {course.rangeEnabled ? "Yes" : "No"}
                 </p>
               </div>
-              <div className="text-slate-200">
+              <div className="text-amber-100/80">
                 <p className="text-sm">
                   Avg. Elevation Diff:{" "}
                   {convertAltitude(
@@ -129,10 +129,10 @@ const GolfCourseViewer: React.FC<{
                       onValueChange={setSelectedTeeType}
                       value={selectedTeeType}
                     >
-                      <SelectTrigger className="w-full sm:w-[140px] bg-slate-700/50 border-slate-600 text-white">
+                      <SelectTrigger className="w-full sm:w-[140px] bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
                         <SelectValue placeholder="Select tee" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
+                      <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30">
                         {course.teeBoxes
                           .sort((a, b) => b.length - a.length)
                           .filter(
@@ -144,7 +144,7 @@ const GolfCourseViewer: React.FC<{
                             <SelectItem
                               key={tee.name}
                               value={tee.name}
-                              className="text-slate-200"
+                              className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
                             >
                               {tee.name} -{" "}
                               {convertDistance(tee.length, unitSystem).toFixed(
@@ -159,15 +159,15 @@ const GolfCourseViewer: React.FC<{
                       onValueChange={setSelectedPinDay}
                       value={selectedPinDay}
                     >
-                      <SelectTrigger className="w-full sm:w-[140px] bg-slate-700/50 border-slate-600 text-white">
+                      <SelectTrigger className="w-full sm:w-[140px] bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
                         <SelectValue placeholder="Select pin day" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
+                      <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30">
                         {courseData.Holes[0].Pins.map((pin) => (
                           <SelectItem
                             key={pin.Day}
                             value={pin.Day}
-                            className="text-slate-200"
+                            className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
                           >
                             {pin.Day}
                           </SelectItem>
@@ -178,7 +178,7 @@ const GolfCourseViewer: React.FC<{
                   <Button
                     variant="secondary"
                     onClick={onShowScoreCard}
-                    className="w-full sm:w-auto bg-slate-700/50 border-slate-600 text-white hover:bg-slate-700"
+                    className="w-full sm:w-auto bg-emerald-900/40 border border-amber-900/20 text-amber-100 hover:bg-emerald-800/50 hover:text-amber-50"
                   >
                     <FileText className="h-4 w-4 mr-2" />
                     Scorecard
@@ -193,7 +193,7 @@ const GolfCourseViewer: React.FC<{
                   <Badge
                     key={attr.id}
                     variant="secondary"
-                    className="bg-slate-700/50 hover:bg-slate-700 text-xs py-0.5 px-2"
+                    className="bg-emerald-900/40 hover:bg-emerald-800/50 text-amber-100/80 text-xs py-0.5 px-2 border border-amber-900/20"
                   >
                     {attr.name}
                   </Badge>
@@ -212,8 +212,8 @@ const GolfCourseViewer: React.FC<{
                 key={hole.HoleNumber}
                 className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
                   currentHoleNumber === hole.HoleNumber
-                    ? "bg-purple-600 text-white"
-                    : "bg-slate-800/50 text-slate-200 hover:bg-slate-700/50 border border-slate-700"
+                    ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
+                    : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
                 }`}
                 onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
               >
@@ -228,21 +228,21 @@ const GolfCourseViewer: React.FC<{
             ))}
           </div>
         </div>
-        <Card className="lg:col-span-3 bg-slate-800/50 border-slate-700">
+        <Card className="lg:col-span-3 bg-emerald-950/30 border-amber-900/20">
           <CardHeader>
-            <CardTitle className="text-white">
+            <CardTitle className="text-amber-50">
               Hole {currentHoleNumber}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="relative w-full h-full">
               <div className="lg:absolute lg:top-2 lg:left-2 z-10 p-4 lg:p-0">
-                <div className="min-w-[300px] grid grid-cols-2 gap-1 text-sm p-4 rounded-lg border border-slate-600 bg-slate-900/95 text-slate-200 shadow-lg">
-                  <span className="font-semibold">Par:</span>
+                <div className="min-w-[300px] grid grid-cols-2 gap-1 text-sm p-4 rounded-lg border border-amber-900/30 bg-emerald-950/95 backdrop-blur-sm text-amber-100/80 shadow-lg">
+                  <span className="font-semibold text-amber-100">Par:</span>
                   <span>{holePar}</span>
-                  <span className="font-semibold">Index:</span>
+                  <span className="font-semibold text-amber-100">Index:</span>
                   <span>{holeIndex}</span>
-                  <span className="font-semibold">Distance:</span>
+                  <span className="font-semibold text-amber-100">Distance:</span>
                   <span>
                     {convertDistance(holeDistance, unitSystem).toFixed(0)}
                     {getDistanceUnit(unitSystem)} (
@@ -251,12 +251,12 @@ const GolfCourseViewer: React.FC<{
                     )}
                     {getDistanceUnit(unitSystem)})
                   </span>
-                  <span className="font-semibold">Elevation:</span>
+                  <span className="font-semibold text-amber-100">Elevation:</span>
                   <span>
                     {convertAltitude(holeElevation, unitSystem).toFixed(1)}
                     {getAltitudeUnit(unitSystem)}
                   </span>
-                  <span className="font-semibold">Tee-to-pin:</span>
+                  <span className="font-semibold text-amber-100">Tee-to-pin:</span>
                   <span>
                     {convertDistance(
                       distance3D(currentTee.Position!, currentPin.Position!),
