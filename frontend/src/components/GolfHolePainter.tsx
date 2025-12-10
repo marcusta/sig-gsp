@@ -86,13 +86,18 @@ const GolfHolePainter: React.FC<GolfCourseProps> = ({
   return (
     <div
       className={`
-        bg-slate-800/50 
-        rounded-lg 
-        p-4 
-        overflow-hidden 
-        w-full 
-        h-[400px] 
-        lg:h-[600px] 
+        bg-slate-800/50
+        rounded-b-lg
+        lg:rounded-lg
+        p-2
+        sm:p-4
+        overflow-hidden
+        w-full
+        h-[calc(100vh-220px)]
+        min-h-[350px]
+        max-h-[500px]
+        lg:h-[600px]
+        lg:max-h-none
         relative
       `}
     >

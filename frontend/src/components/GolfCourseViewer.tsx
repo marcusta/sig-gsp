@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -31,7 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { FileText, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Info } from "lucide-react";
 
 const GolfCourseViewer: React.FC<{
   course: CourseWithData;
@@ -46,6 +46,7 @@ const GolfCourseViewer: React.FC<{
   );
   const [selectedPinDay, setSelectedPinDay] = useState<string>("Friday");
   const [showMetadata, setShowMetadata] = useState(false);
+  const [showMobileHoleInfo, setShowMobileHoleInfo] = useState(false);
 
   // Swipe handling refs
   const touchStartX = useRef<number | null>(null);
@@ -133,143 +134,134 @@ const GolfCourseViewer: React.FC<{
     return `${holeNum} · Par ${hole.Par} · ${dist}${getDistanceUnit(unitSystem)}`;
   };
 
+  // Format elevation with sign
+  const formatElevation = (elev: number) => {
+    const converted = convertAltitude(elev, unitSystem);
+    const sign = converted >= 0 ? "+" : "";
+    return `${sign}${converted.toFixed(1)}${getAltitudeUnit(unitSystem)}`;
+  };
+
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-2">
+      {/* Course Header Card - Compact */}
       <Card className="bg-emerald-950/30 border-amber-900/20">
-        <CardHeader className="pb-1 sm:pb-2 pt-3 sm:pt-4 px-3 sm:px-6">
-          <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold text-amber-50">
-            {course.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-2 sm:pt-4 px-3 sm:px-6">
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4">
-              {/* Essential info */}
-              <div className="text-amber-100/80 space-y-0.5">
-                <p className="text-sm">
-                  {course.location}, by <b className="text-amber-50">{course.designer}</b>
-                </p>
-                <p className="text-sm">
-                  {course.holes} holes par {totalPar}
-                  {course.rangeEnabled && <span className="text-emerald-400/80"> · Range</span>}
-                </p>
-                
-                {/* Expandable metadata toggle */}
-                <button 
-                  onClick={() => setShowMetadata(!showMetadata)}
-                  className="text-xs text-amber-100/50 hover:text-amber-100/70 flex items-center gap-1 mt-1"
-                >
-                  {showMetadata ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                  {showMetadata ? "Hide details" : "Show details"}
-                </button>
-                
-                {/* Collapsible metadata */}
-                {showMetadata && (
-                  <div className="text-xs text-amber-100/60 mt-2 space-y-0.5 pl-1 border-l border-amber-900/30">
-                    <p>
-                      Altitude: {convertAltitude(courseAltitude, unitSystem).toFixed(0)}{getAltitudeUnit(unitSystem)} ({((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)
-                    </p>
-                    <p>
-                      Avg. Elevation Diff: {convertAltitude(course.averageElevationDifference, unitSystem).toFixed(1)}{getAltitudeUnit(unitSystem)}
-                    </p>
-                    <p>
-                      Largest Drop: {convertAltitude(course.largestElevationDrop, unitSystem).toFixed(1)}{getAltitudeUnit(unitSystem)}
-                    </p>
-                    <p>
-                      Water Hazards: {course.totalWaterHazards} | Inner OOB: {course.totalInnerOOB} | Island Greens: {course.islandGreens}
-                    </p>
-                  </div>
+        <CardContent className="py-3 px-3 sm:px-4">
+          {/* Mobile: Stacked, Desktop: Horizontal */}
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-2 lg:gap-4">
+            {/* Course Info */}
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-xl font-bold text-amber-50 truncate">
+                {course.name}
+              </h1>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-amber-100/80">
+                <span className="truncate">{course.location}</span>
+                <span className="text-amber-100/40">•</span>
+                <span>by <b className="text-amber-50">{course.designer}</b></span>
+                <span className="text-amber-100/40">•</span>
+                <span>{course.holes}h par {totalPar}</span>
+                {course.rangeEnabled && (
+                  <>
+                    <span className="text-amber-100/40">•</span>
+                    <span className="text-emerald-400/80">Range</span>
+                  </>
+                )}
+                {/* Tags inline */}
+                {course?.attributes && course.attributes.length > 0 && (
+                  <>
+                    <span className="text-amber-100/40">•</span>
+                    {course.attributes.map((attr) => (
+                      <Badge
+                        key={attr.id}
+                        variant="secondary"
+                        className="bg-emerald-900/40 hover:bg-emerald-800/50 text-amber-100/80 text-xs py-0 px-1.5 border border-amber-900/20"
+                      >
+                        {attr.name}
+                      </Badge>
+                    ))}
+                  </>
                 )}
               </div>
-              
-              {/* Controls */}
-              <div className="flex items-center justify-start lg:justify-end">
-                <div className="w-full lg:w-auto space-y-2">
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Select
-                      onValueChange={setSelectedTeeType}
-                      value={selectedTeeType}
-                    >
-                      <SelectTrigger className="w-full sm:w-[180px] bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
-                        <SelectValue placeholder="Select tee" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30">
-                        {course.teeBoxes
-                          .sort((a, b) => b.length - a.length)
-                          .filter(
-                            (tee, index, self) =>
-                              index ===
-                              self.findIndex((t) => t.name === tee.name)
-                          )
-                          .map((tee) => (
-                            <SelectItem
-                              key={tee.name}
-                              value={tee.name}
-                              className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
-                            >
-                              {tee.name} - {convertDistance(tee.length, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}
-                              {tee.rating > 0 && ` · ${tee.rating}/${tee.slope}`}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                    <Select
-                      onValueChange={setSelectedPinDay}
-                      value={selectedPinDay}
-                    >
-                      <SelectTrigger className="w-full sm:w-[140px] bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
-                        <SelectValue placeholder="Select pin day" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30">
-                        {courseData.Holes[0].Pins.map((pin) => (
-                          <SelectItem
-                            key={pin.Day}
-                            value={pin.Day}
-                            className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
-                          >
-                            {pin.Day}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button
-                    variant="secondary"
-                    onClick={onShowScoreCard}
-                    className="w-full sm:w-auto bg-emerald-900/40 border border-amber-900/20 text-amber-100 hover:bg-emerald-800/50 hover:text-amber-50"
-                  >
-                    <FileText className="h-4 w-4 mr-2" />
-                    Scorecard
-                  </Button>
+
+              {/* Expandable metadata */}
+              <button
+                onClick={() => setShowMetadata(!showMetadata)}
+                className="text-xs text-amber-100/50 hover:text-amber-100/70 flex items-center gap-1 mt-1"
+              >
+                {showMetadata ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                {showMetadata ? "Hide details" : "Details"}
+              </button>
+
+              {showMetadata && (
+                <div className="text-xs text-amber-100/60 mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
+                  <span>Alt: {convertAltitude(courseAltitude, unitSystem).toFixed(0)}{getAltitudeUnit(unitSystem)} ({((2 * (courseAltitude * 3.28084)) / 1000).toFixed(1)}%)</span>
+                  <span>Avg Δ: {convertAltitude(course.averageElevationDifference, unitSystem).toFixed(1)}{getAltitudeUnit(unitSystem)}</span>
+                  <span>Max ↓: {convertAltitude(course.largestElevationDrop, unitSystem).toFixed(1)}{getAltitudeUnit(unitSystem)}</span>
+                  <span>Water: {course.totalWaterHazards}</span>
+                  <span>OOB: {course.totalInnerOOB}</span>
+                  <span>Islands: {course.islandGreens}</span>
                 </div>
-              </div>
+              )}
             </div>
 
-            {course?.attributes && course.attributes.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {course.attributes.map((attr) => (
-                  <Badge
-                    key={attr.id}
-                    variant="secondary"
-                    className="bg-emerald-900/40 hover:bg-emerald-800/50 text-amber-100/80 text-xs py-0.5 px-2 border border-amber-900/20"
-                  >
-                    {attr.name}
-                  </Badge>
-                ))}
-              </div>
-            )}
+            {/* Controls - Horizontal on all sizes */}
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              <Select onValueChange={setSelectedTeeType} value={selectedTeeType}>
+                <SelectTrigger className="w-[140px] sm:w-[160px] h-8 text-sm bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
+                  <SelectValue placeholder="Tee" />
+                </SelectTrigger>
+                <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30">
+                  {course.teeBoxes
+                    .sort((a, b) => b.length - a.length)
+                    .filter((tee, index, self) => index === self.findIndex((t) => t.name === tee.name))
+                    .map((tee) => (
+                      <SelectItem
+                        key={tee.name}
+                        value={tee.name}
+                        className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
+                      >
+                        {tee.name} - {convertDistance(tee.length, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}
+                        {tee.rating > 0 && ` · ${tee.rating}/${tee.slope}`}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+              <Select onValueChange={setSelectedPinDay} value={selectedPinDay}>
+                <SelectTrigger className="w-[100px] h-8 text-sm bg-transparent border-amber-900/20 text-amber-100 hover:border-amber-700/40">
+                  <SelectValue placeholder="Pin" />
+                </SelectTrigger>
+                <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30">
+                  {courseData.Holes[0].Pins.map((pin) => (
+                    <SelectItem
+                      key={pin.Day}
+                      value={pin.Day}
+                      className="text-amber-100 focus:bg-emerald-800/50 focus:text-amber-50"
+                    >
+                      {pin.Day}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={onShowScoreCard}
+                className="h-8 bg-emerald-900/40 border border-amber-900/20 text-amber-100 hover:bg-emerald-800/50 hover:text-amber-50"
+              >
+                <FileText className="h-4 w-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Scorecard</span>
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Main content grid - sidebar hidden on mobile */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 pb-20 lg:pb-0">
-        {/* Desktop Sidebar - hidden on mobile */}
-        <div className="hidden lg:block lg:col-span-1">
+      {/* Main content - Desktop: sidebar + content, Mobile: just content */}
+      <div className="flex gap-3 pb-16 lg:pb-0">
+        {/* Desktop Sidebar - Narrower */}
+        <div className="hidden lg:block w-[180px] shrink-0">
           <Tabs
             value={currentHoleNumber <= 9 ? "front" : "back"}
             onValueChange={(value) => {
-              // When switching tabs, go to first hole of that nine
               if (value === "front" && currentHoleNumber > 9) {
                 setCurrentHoleNumber(front9[0]?.HoleNumber || 1);
               } else if (value === "back" && currentHoleNumber <= 9) {
@@ -281,7 +273,7 @@ const GolfCourseViewer: React.FC<{
               {front9.length > 0 && (
                 <TabsTrigger
                   value="front"
-                  className="flex-1 text-amber-100/70 data-[state=active]:bg-emerald-800/50 data-[state=active]:text-amber-50"
+                  className="flex-1 text-xs text-amber-100/70 data-[state=active]:bg-emerald-800/50 data-[state=active]:text-amber-50"
                 >
                   Front 9
                 </TabsTrigger>
@@ -289,135 +281,144 @@ const GolfCourseViewer: React.FC<{
               {back9.length > 0 && (
                 <TabsTrigger
                   value="back"
-                  className="flex-1 text-amber-100/70 data-[state=active]:bg-emerald-800/50 data-[state=active]:text-amber-50"
+                  className="flex-1 text-xs text-amber-100/70 data-[state=active]:bg-emerald-800/50 data-[state=active]:text-amber-50"
                 >
                   Back 9
                 </TabsTrigger>
               )}
             </TabsList>
             {front9.length > 0 && (
-              <TabsContent value="front" className="space-y-2 mt-3">
-                {front9.map((hole) => (
-                  <div
-                    key={hole.HoleNumber}
-                    className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
-                      currentHoleNumber === hole.HoleNumber
-                        ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
-                        : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
-                    }`}
-                    onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
-                  >
-                    {hole.HoleNumber} | Par {hole.Par} |{" "}
-                    {convertDistance(
-                      hole.Tees.find((t) => t.TeeType === selectedTeeType)
-                        ?.Distance || 0,
-                      unitSystem
-                    ).toFixed(0)}
-                    {getDistanceUnit(unitSystem)}
-                  </div>
-                ))}
+              <TabsContent value="front" className="space-y-1.5 mt-2">
+                {front9.map((hole) => {
+                  const tee = hole.Tees.find((t) => t.TeeType === selectedTeeType);
+                  return (
+                    <div
+                      key={hole.HoleNumber}
+                      className={`px-3 py-1.5 rounded text-xs font-medium cursor-pointer transition-colors ${
+                        currentHoleNumber === hole.HoleNumber
+                          ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
+                          : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
+                      }`}
+                      onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
+                    >
+                      <span className="font-bold">{hole.HoleNumber}</span>
+                      <span className="text-amber-100/60 ml-1">P{hole.Par}</span>
+                      <span className="float-right">{convertDistance(tee?.Distance || 0, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}</span>
+                    </div>
+                  );
+                })}
               </TabsContent>
             )}
             {back9.length > 0 && (
-              <TabsContent value="back" className="space-y-2 mt-3">
-                {back9.map((hole) => (
-                  <div
-                    key={hole.HoleNumber}
-                    className={`px-4 py-2 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-colors ${
-                      currentHoleNumber === hole.HoleNumber
-                        ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
-                        : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
-                    }`}
-                    onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
-                  >
-                    {hole.HoleNumber} | Par {hole.Par} |{" "}
-                    {convertDistance(
-                      hole.Tees.find((t) => t.TeeType === selectedTeeType)
-                        ?.Distance || 0,
-                      unitSystem
-                    ).toFixed(0)}
-                    {getDistanceUnit(unitSystem)}
-                  </div>
-                ))}
+              <TabsContent value="back" className="space-y-1.5 mt-2">
+                {back9.map((hole) => {
+                  const tee = hole.Tees.find((t) => t.TeeType === selectedTeeType);
+                  return (
+                    <div
+                      key={hole.HoleNumber}
+                      className={`px-3 py-1.5 rounded text-xs font-medium cursor-pointer transition-colors ${
+                        currentHoleNumber === hole.HoleNumber
+                          ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
+                          : "bg-emerald-950/30 text-amber-100/70 hover:bg-emerald-900/40 hover:text-amber-100 border border-amber-900/20"
+                      }`}
+                      onClick={() => setCurrentHoleNumber(hole.HoleNumber)}
+                    >
+                      <span className="font-bold">{hole.HoleNumber}</span>
+                      <span className="text-amber-100/60 ml-1">P{hole.Par}</span>
+                      <span className="float-right">{convertDistance(tee?.Distance || 0, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}</span>
+                    </div>
+                  );
+                })}
               </TabsContent>
             )}
           </Tabs>
         </div>
 
-        {/* Hole Detail Card */}
-        <Card className="lg:col-span-3 bg-emerald-950/30 border-amber-900/20">
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
+        {/* Hole Content */}
+        <Card className="flex-1 bg-emerald-950/30 border-amber-900/20 overflow-hidden">
+          {/* Desktop: Horizontal info bar above SVG */}
+          <div className="hidden lg:flex items-center justify-between px-4 py-2 border-b border-amber-900/20 bg-emerald-950/50">
+            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={goToPrevHole}
-                className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50"
+                className="h-7 w-7 text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-4 w-4" />
               </Button>
-              <CardTitle className="text-amber-50 text-center">
+              <span className="text-amber-50 font-semibold">
                 Hole {currentHoleNumber}
-                <span className="text-amber-100/50 text-sm font-normal ml-2">
-                  of {totalHoles}
-                </span>
-              </CardTitle>
+                <span className="text-amber-100/50 text-sm font-normal ml-1">of {totalHoles}</span>
+              </span>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={goToNextHole}
-                className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50"
+                className="h-7 w-7 text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50"
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-          </CardHeader>
+            <div className="flex items-center gap-4 text-sm text-amber-100/80">
+              <span><b className="text-amber-100">Par {holePar}</b></span>
+              <span className="text-amber-100/40">•</span>
+              <span>SI {holeIndex}</span>
+              <span className="text-amber-100/40">•</span>
+              <span>
+                {convertDistance(holeDistance, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}
+                <span className="text-amber-100/50 ml-1">({convertDistance(holePlaysAsDistance, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)})</span>
+              </span>
+              <span className="text-amber-100/40">•</span>
+              <span>{formatElevation(holeElevation)}</span>
+              <span className="text-amber-100/40">•</span>
+              <span className="text-amber-100/60">
+                3D: {convertDistance(distance3D(currentTee.Position!, currentPin.Position!), unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}
+                <span className="text-amber-100/40 ml-1">({convertDistance(calculatePlaysAsDistance(distance3D(currentTee.Position!, currentPin.Position!), holeElevation, getAltitude(courseData)), unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)})</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Mobile: Minimal header - hole number only, info available via button */}
+          <div className="lg:hidden flex items-center justify-between px-3 py-2 border-b border-amber-900/20 bg-emerald-950/50">
+            <span className="text-amber-50 font-semibold text-sm">
+              Hole {currentHoleNumber} <span className="text-amber-100/50 font-normal">of {totalHoles}</span>
+            </span>
+            <div className="flex items-center gap-1 text-xs text-amber-100/80">
+              <span className="font-semibold text-amber-100">P{holePar}</span>
+              <span className="text-amber-100/40">•</span>
+              <span>{convertDistance(holeDistance, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}</span>
+              <span className="text-amber-100/40">•</span>
+              <span>{formatElevation(holeElevation)}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowMobileHoleInfo(!showMobileHoleInfo)}
+                className="h-6 w-6 ml-1 text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50"
+              >
+                <Info className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Mobile: Expandable detailed info */}
+          {showMobileHoleInfo && (
+            <div className="lg:hidden px-3 py-2 border-b border-amber-900/20 bg-emerald-950/70 text-xs text-amber-100/80 grid grid-cols-2 gap-x-4 gap-y-1">
+              <span>Index: <b className="text-amber-100">{holeIndex}</b></span>
+              <span>Plays as: <b className="text-amber-100">{convertDistance(holePlaysAsDistance, unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}</b></span>
+              <span>Tee-to-pin: <b className="text-amber-100">{convertDistance(distance3D(currentTee.Position!, currentPin.Position!), unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}</b></span>
+              <span>3D plays as: <b className="text-amber-100">{convertDistance(calculatePlaysAsDistance(distance3D(currentTee.Position!, currentPin.Position!), holeElevation, getAltitude(courseData)), unitSystem).toFixed(0)}{getDistanceUnit(unitSystem)}</b></span>
+            </div>
+          )}
+
+          {/* SVG Container */}
           <CardContent className="p-0">
             <div
-              className="relative w-full h-full"
+              className="relative w-full"
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
             >
-              <div className="lg:absolute lg:top-2 lg:left-2 z-10 p-4 lg:p-0">
-                <div className="min-w-[300px] grid grid-cols-2 gap-1 text-sm p-4 rounded-lg border border-amber-900/30 bg-emerald-950/95 backdrop-blur-sm text-amber-100/80 shadow-lg">
-                  <span className="font-semibold text-amber-100">Par:</span>
-                  <span>{holePar}</span>
-                  <span className="font-semibold text-amber-100">Index:</span>
-                  <span>{holeIndex}</span>
-                  <span className="font-semibold text-amber-100">Distance:</span>
-                  <span>
-                    {convertDistance(holeDistance, unitSystem).toFixed(0)}
-                    {getDistanceUnit(unitSystem)} (
-                    {convertDistance(holePlaysAsDistance, unitSystem).toFixed(
-                      0
-                    )}
-                    {getDistanceUnit(unitSystem)})
-                  </span>
-                  <span className="font-semibold text-amber-100">Elevation:</span>
-                  <span>
-                    {convertAltitude(holeElevation, unitSystem).toFixed(1)}
-                    {getAltitudeUnit(unitSystem)}
-                  </span>
-                  <span className="font-semibold text-amber-100">Tee-to-pin:</span>
-                  <span>
-                    {convertDistance(
-                      distance3D(currentTee.Position!, currentPin.Position!),
-                      unitSystem
-                    ).toFixed(0)}
-                    {getDistanceUnit(unitSystem)} (
-                    {convertDistance(
-                      calculatePlaysAsDistance(
-                        distance3D(currentTee.Position!, currentPin.Position!),
-                        holeElevation,
-                        getAltitude(courseData)
-                      ),
-                      unitSystem
-                    ).toFixed(0)}
-                    {getDistanceUnit(unitSystem)})
-                  </span>
-                </div>
-              </div>
               <GolfHolePainter
                 courseData={courseData}
                 selectedHoleNumber={currentHoleNumber}
@@ -429,23 +430,23 @@ const GolfCourseViewer: React.FC<{
         </Card>
       </div>
 
-      {/* Mobile Sticky Bottom Bar - visible only on mobile */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-emerald-950/95 backdrop-blur-sm border-t border-amber-900/30 px-4 py-3 safe-area-pb">
-        <div className="flex items-center justify-between gap-3 max-w-screen-xl mx-auto">
+      {/* Mobile Sticky Bottom Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-emerald-950/95 backdrop-blur-sm border-t border-amber-900/30 px-3 py-2 safe-area-pb">
+        <div className="flex items-center gap-2 max-w-screen-xl mx-auto">
           <Button
             variant="ghost"
             size="icon"
             onClick={goToPrevHole}
-            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50 shrink-0"
+            className="h-9 w-9 text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50 shrink-0"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-5 w-5" />
           </Button>
 
           <Select
             value={currentHoleNumber.toString()}
             onValueChange={(val) => setCurrentHoleNumber(parseInt(val))}
           >
-            <SelectTrigger className="flex-1 bg-transparent border-amber-900/30 text-amber-100 hover:border-amber-700/40">
+            <SelectTrigger className="flex-1 h-9 bg-transparent border-amber-900/30 text-amber-100 hover:border-amber-700/40">
               <SelectValue>
                 {formatHoleLabel(currentHoleNumber)}
               </SelectValue>
@@ -453,9 +454,7 @@ const GolfCourseViewer: React.FC<{
             <SelectContent className="bg-emerald-950/95 backdrop-blur-sm border-amber-900/30 max-h-[60vh]">
               {front9.length > 0 && (
                 <SelectGroup>
-                  <SelectLabel className="text-amber-100/50 text-xs uppercase tracking-wider">
-                    Front 9
-                  </SelectLabel>
+                  <SelectLabel className="text-amber-100/50 text-xs uppercase tracking-wider">Front 9</SelectLabel>
                   {front9.map((hole) => (
                     <SelectItem
                       key={hole.HoleNumber}
@@ -469,9 +468,7 @@ const GolfCourseViewer: React.FC<{
               )}
               {back9.length > 0 && (
                 <SelectGroup>
-                  <SelectLabel className="text-amber-100/50 text-xs uppercase tracking-wider">
-                    Back 9
-                  </SelectLabel>
+                  <SelectLabel className="text-amber-100/50 text-xs uppercase tracking-wider">Back 9</SelectLabel>
                   {back9.map((hole) => (
                     <SelectItem
                       key={hole.HoleNumber}
@@ -490,9 +487,9 @@ const GolfCourseViewer: React.FC<{
             variant="ghost"
             size="icon"
             onClick={goToNextHole}
-            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50 shrink-0"
+            className="h-9 w-9 text-amber-100/70 hover:text-amber-50 hover:bg-emerald-800/50 shrink-0"
           >
-            <ChevronRight className="h-6 w-6" />
+            <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
       </div>
