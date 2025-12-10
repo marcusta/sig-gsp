@@ -749,15 +749,19 @@ const routes = new Elysia()
       const year = (query.year as string) || "all";
       const limit = Math.min(Number(query.limit) || 50, 200);
       const offset = Number(query.offset) || 0;
-      const period = (query.period as string) || "week"; // 'day', 'week', 'month'
+      const period = (query.period as string) || "week"; // 'day', 'week', 'thisWeek', 'month'
 
       // Map period to days
+      const { getDaysIntoCurrentWeek } = await import(
+        "./scraper/snapshot-service"
+      );
       const periodToDays: Record<string, number> = {
         day: 1,
         week: 7,
+        thisWeek: getDaysIntoCurrentWeek(), // Days since Monday of current week
         month: 30,
       };
-      const daysAgo = periodToDays[period] || 7;
+      const daysAgo = periodToDays[period] ?? 7;
 
       // Get base leaderboard
       const leaderboard = await getPlayerLeaderboard(
@@ -769,20 +773,30 @@ const routes = new Elysia()
       const total = await getPlayerLeaderboardCount(teeType, year);
 
       // Enhance with rank changes over the specified period
-      const { getPlayerRankChangeOverPeriod } = await import(
+      const { getPlayerRankChangeOverPeriod, getDateDaysAgo } = await import(
         "./scraper/snapshot-service"
       );
+      const { getPlayerRecordsGainedLost } = await import(
+        "./scraper/history-service"
+      );
+
+      // Calculate cutoff date for history queries
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysAgo);
+      const cutoffDateStr = cutoffDate.toISOString();
 
       const entriesWithChanges = await Promise.all(
         leaderboard.map(async (entry: any) => {
-          const change = await getPlayerRankChangeOverPeriod(
-            entry.player.id,
-            daysAgo
-          );
+          const [change, gainedLost] = await Promise.all([
+            getPlayerRankChangeOverPeriod(entry.player.id, daysAgo),
+            getPlayerRecordsGainedLost(entry.player.id, cutoffDateStr),
+          ]);
           return {
             ...entry,
             rankChange: change?.rankChange ?? 0,
             recordsChange: change?.recordsChange ?? 0,
+            recordsGained: gainedLost.recordsGained,
+            recordsLost: gainedLost.recordsLost,
             previousRank: change?.previousRank,
             comparisonPeriod: period,
             comparisonDays: daysAgo,

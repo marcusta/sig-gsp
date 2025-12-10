@@ -328,8 +328,10 @@ export interface LeaderboardWithChangesResponse {
 
 export interface LeaderboardEntryWithPeriod extends LeaderboardEntryWithChanges {
   previousRank: number | null;
-  comparisonPeriod: string; // 'day', 'week', 'month'
+  comparisonPeriod: string; // 'day', 'week', 'thisWeek', 'month'
   comparisonDays: number;
+  recordsGained: number; // Records taken from others during period
+  recordsLost: number; // Records lost to others during period
 }
 
 export interface LeaderboardWithPeriodResponse {

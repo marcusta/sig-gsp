@@ -33,11 +33,23 @@ import {
 
 const ITEMS_PER_PAGE = 50;
 
+// Calculate days into current week (Monday = 0, Sunday = 6)
+function getDaysIntoCurrentWeek(): number {
+  const day = new Date().getDay();
+  return day === 0 ? 6 : day - 1;
+}
+
+// Determine default period: "thisWeek" if 3+ days into week (Wed+), else "week"
+// getDaysIntoCurrentWeek returns 0-indexed (Mon=0, Tue=1, Wed=2, etc.)
+function getDefaultPeriod(): string {
+  return getDaysIntoCurrentWeek() >= 2 ? "thisWeek" : "week";
+}
+
 export default function RecordsPage() {
   const navigate = useNavigate();
   const [teeType, setTeeType] = useState("all");
   const [year, setYear] = useState("all");
-  const [period, setPeriod] = useState("week");
+  const [period, setPeriod] = useState(getDefaultPeriod);
   const [page, setPage] = useState(0);
 
   // Fetch available years
@@ -125,7 +137,7 @@ export default function RecordsPage() {
           <p className="text-amber-100/60">
             Players ranked by total course records{" "}
             {year !== "all" ? `set in ${year}` : "held"}
-            {" · "}Movement over last {period === "day" ? "day" : period === "week" ? "week" : "month"}
+            {" · "}Movement {period === "thisWeek" ? "this week" : `over last ${period === "day" ? "day" : period === "week" ? "week" : "month"}`}
           </p>
         </div>
         <div className="flex gap-3 mt-4 md:mt-0">
@@ -236,6 +248,12 @@ export default function RecordsPage() {
                     Last Day
                   </SelectItem>
                   <SelectItem
+                    value="thisWeek"
+                    className="text-amber-100 focus:bg-slate-700/50 focus:text-amber-50"
+                  >
+                    This Week
+                  </SelectItem>
+                  <SelectItem
                     value="week"
                     className="text-amber-100 focus:bg-slate-700/50 focus:text-amber-50"
                   >
@@ -338,6 +356,7 @@ export default function RecordsPage() {
                                     <span className="font-semibold text-amber-50">
                                       {entry.player.displayName}
                                     </span>
+                                    {/* Net change badge */}
                                     {entry.recordsChange > 0 && (
                                       <Badge className="ml-1 bg-emerald-900/30 text-emerald-400 border-emerald-700/30 text-[10px] px-1.5 py-0">
                                         +{entry.recordsChange}
@@ -347,6 +366,20 @@ export default function RecordsPage() {
                                       <Badge className="ml-1 bg-red-900/30 text-red-400/80 border-red-800/30 text-[10px] px-1.5 py-0">
                                         {entry.recordsChange}
                                       </Badge>
+                                    )}
+                                    {/* Records gained (taken from others) */}
+                                    {entry.recordsGained > 0 && (
+                                      <span className="ml-1 text-[10px] text-emerald-500/70" title="Records taken from others">
+                                        <TrendingUp className="inline h-2.5 w-2.5 mr-0.5" />
+                                        {entry.recordsGained}
+                                      </span>
+                                    )}
+                                    {/* Records lost (broken by others) */}
+                                    {entry.recordsLost > 0 && (
+                                      <span className="ml-1 text-[10px] text-red-400/60" title="Records lost to others">
+                                        <TrendingDown className="inline h-2.5 w-2.5 mr-0.5" />
+                                        {entry.recordsLost}
+                                      </span>
                                     )}
                                   </div>
                                   <span className="text-xs text-amber-100/40">

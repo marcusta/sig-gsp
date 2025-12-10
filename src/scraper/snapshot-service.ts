@@ -342,6 +342,25 @@ export function getLastWeekStart(): string {
 }
 
 /**
+ * Get the date for the start of the current week (Monday)
+ */
+export function getCurrentWeekStart(): string {
+  const date = new Date();
+  const day = date.getDay();
+  const diff = day === 0 ? 6 : day - 1; // If Sunday (0), go back 6 days, else go back to Monday
+  date.setDate(date.getDate() - diff); // Go back to this Monday
+  return date.toISOString().split("T")[0];
+}
+
+/**
+ * Get the number of days since the start of the current week (Monday = 0)
+ */
+export function getDaysIntoCurrentWeek(): number {
+  const day = new Date().getDay();
+  return day === 0 ? 6 : day - 1; // Sunday = 6, Monday = 0, Tuesday = 1, etc.
+}
+
+/**
  * Get rank change for a player over a specific time period
  */
 export async function getPlayerRankChangeOverPeriod(

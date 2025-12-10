@@ -273,6 +273,38 @@ export async function getPlayersWithGainedRecords(
 }
 
 /**
+ * Get records gained (taken from others) and lost (broken by others) for a specific player
+ * over a given time period
+ */
+export async function getPlayerRecordsGainedLost(
+  playerId: number,
+  cutoffDate: string
+): Promise<{ recordsGained: number; recordsLost: number }> {
+  // Records gained: this player broke someone else's record
+  const gainedResult = await db.all(sql`
+    SELECT COUNT(*) as count
+    FROM course_record_history
+    WHERE new_player_id = ${playerId}
+      AND change_type = 'BROKEN'
+      AND detected_at >= ${cutoffDate}
+  `);
+
+  // Records lost: someone else broke this player's record
+  const lostResult = await db.all(sql`
+    SELECT COUNT(*) as count
+    FROM course_record_history
+    WHERE previous_player_id = ${playerId}
+      AND change_type = 'BROKEN'
+      AND detected_at >= ${cutoffDate}
+  `);
+
+  return {
+    recordsGained: (gainedResult[0] as any)?.count || 0,
+    recordsLost: (lostResult[0] as any)?.count || 0,
+  };
+}
+
+/**
  * Get bidirectional rivalry data for a specific player
  * Shows records taken FROM this player and records taken BY this player
  */
