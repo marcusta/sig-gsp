@@ -89,6 +89,25 @@ const SIDE_SLOPE_DATA: { distance: number; offsets: number[] }[] = [
   { distance: 220, offsets: [3.3, 10.0, 16.7, 23.5, 33.7] },
 ];
 
+// Wind effect data at 4m/s base wind speed
+// Based on TARGET carry distance in meters
+// Crosswind: lateral offset in meters (pure 90° crosswind)
+// Headwind: carry reduction in meters (pure 0° headwind)
+// Tailwind: carry increase in meters (pure 180° tailwind)
+const WIND_4MS_DATA: {
+  distance: number;
+  crosswind: number;  // lateral offset at 4m/s pure crosswind
+  headwind: number;   // carry loss at 4m/s pure headwind
+  tailwind: number;   // carry gain at 4m/s pure tailwind
+}[] = [
+  { distance: 40, crosswind: 1.5, headwind: 0.5, tailwind: 0.3 },
+  { distance: 70, crosswind: 3.5, headwind: 3.5, tailwind: 2 },
+  { distance: 100, crosswind: 6, headwind: 6.5, tailwind: 5 },
+  { distance: 150, crosswind: 8.5, headwind: 9, tailwind: 8 },
+  { distance: 200, crosswind: 10.5, headwind: 11, tailwind: 9 },
+  { distance: 252, crosswind: 11, headwind: 11, tailwind: 9.5 },
+];
+
 /**
  * Linear interpolation between two points
  */
@@ -195,6 +214,88 @@ export function calculateAimOffset(playsAsMeters: number, slopeAngle: number): n
   const result = lerp(playsAsMeters, d0, d1, r0, r1);
 
   return result;
+}
+
+/**
+ * Interpolate a single wind effect value for a given distance.
+ */
+function interpolateWindValue(
+  targetCarryMeters: number,
+  getValue: (data: typeof WIND_4MS_DATA[0]) => number
+): number {
+  const distances = WIND_4MS_DATA.map(d => d.distance);
+  const [low, high] = findBracketingIndices(targetCarryMeters, distances);
+
+  const d0 = distances[low];
+  const d1 = distances[high];
+  const v0 = getValue(WIND_4MS_DATA[low]);
+  const v1 = getValue(WIND_4MS_DATA[high]);
+
+  return lerp(targetCarryMeters, d0, d1, v0, v1);
+}
+
+export interface WindEffect {
+  carryAdjustment: number;  // meters to add/subtract from plays-as (negative = shorter)
+  offlineAdjustment: number; // meters to aim left (negative) or right (positive)
+}
+
+/**
+ * Calculate wind effects on a shot using empirical data and trigonometry.
+ *
+ * @param targetCarryMeters - The target carry distance in meters
+ * @param windSpeedMs - Wind speed in m/s
+ * @param windDirectionDeg - Wind direction: 0° = headwind, 90° = from right, 180° = tailwind, 270° = from left
+ * @param isDeepRough - Whether the lie is deep rough (reduces wind effect by 25%)
+ * @returns Wind effects on carry and offline
+ */
+export function calculateWindEffect(
+  targetCarryMeters: number,
+  windSpeedMs: number,
+  windDirectionDeg: number,
+  isDeepRough: boolean = false
+): WindEffect {
+  if (windSpeedMs === 0) {
+    return { carryAdjustment: 0, offlineAdjustment: 0 };
+  }
+
+  // Convert direction to radians
+  const dirRad = (windDirectionDeg * Math.PI) / 180;
+
+  // Decompose wind into components
+  // cos(0°) = 1 = full headwind, cos(180°) = -1 = full tailwind
+  // sin(90°) = 1 = full crosswind from right, sin(270°) = -1 = full crosswind from left
+  const headwindComponent = Math.cos(dirRad);  // positive = headwind, negative = tailwind
+  const crosswindComponent = Math.sin(dirRad); // positive = from right, negative = from left
+
+  // Get base effects at 4m/s for this distance
+  const baseCrosswind = interpolateWindValue(targetCarryMeters, d => d.crosswind);
+  const baseHeadwind = interpolateWindValue(targetCarryMeters, d => d.headwind);
+  const baseTailwind = interpolateWindValue(targetCarryMeters, d => d.tailwind);
+
+  // Scale by wind speed (data is at 4m/s)
+  const windScale = windSpeedMs / 4;
+
+  // Calculate carry adjustment
+  let carryAdjustment: number;
+  if (headwindComponent > 0) {
+    // Headwind - reduces carry
+    carryAdjustment = -baseHeadwind * headwindComponent * windScale;
+  } else {
+    // Tailwind - increases carry
+    carryAdjustment = baseTailwind * (-headwindComponent) * windScale;
+  }
+
+  // Calculate offline adjustment (crosswind pushes ball in wind direction)
+  // Positive crosswind (from right) pushes ball left = negative offline adjustment
+  const offlineAdjustment = -baseCrosswind * crosswindComponent * windScale;
+
+  // Apply deep rough reduction (25% less wind effect due to lower spin)
+  const roughMultiplier = isDeepRough ? 0.75 : 1;
+
+  return {
+    carryAdjustment: carryAdjustment * roughMultiplier,
+    offlineAdjustment: offlineAdjustment * roughMultiplier,
+  };
 }
 
 /**

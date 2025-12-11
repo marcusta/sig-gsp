@@ -20,6 +20,8 @@ interface SuggesterState {
   rightLeftSlope: string;
   altitude: string;
   elevationDiff: string;
+  windSpeed: string;
+  windDirection: string;
 }
 
 interface CalculatorContextType {
@@ -53,6 +55,8 @@ const defaultSuggesterState: SuggesterState = {
   rightLeftSlope: "0",
   altitude: "0",
   elevationDiff: "0",
+  windSpeed: "0",
+  windDirection: "0",
 };
 
 const CalculatorContext = createContext<CalculatorContextType | undefined>(

@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, Circle, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronLeft, Circle, ChevronDown, ChevronUp, Wind } from "lucide-react";
 import { useUnits } from "@/contexts/UnitContext";
 import { useCalculator } from "@/contexts/CalculatorContext";
 import { getMaterials, calculateShot } from "@/api/shotApi";
@@ -90,6 +90,22 @@ function MobileSlider({
   );
 }
 
+// Wind direction labels
+function getWindDirectionLabel(degrees: number): string {
+  if (degrees === 0) return "Headwind";
+  if (degrees === 180) return "Tailwind";
+  if (degrees === 90) return "From right";
+  if (degrees === 270) return "From left";
+  if (degrees > 0 && degrees <= 45) return "Head + slight right";
+  if (degrees > 45 && degrees < 90) return "Head + right";
+  if (degrees > 90 && degrees < 135) return "Tail + right";
+  if (degrees >= 135 && degrees < 180) return "Tail + slight right";
+  if (degrees > 180 && degrees <= 225) return "Tail + slight left";
+  if (degrees > 225 && degrees < 270) return "Tail + left";
+  if (degrees > 270 && degrees < 315) return "Head + left";
+  return "Head + slight left";
+}
+
 const materials = getMaterials();
 
 export default function ShotSuggesterPage() {
@@ -102,9 +118,12 @@ export default function ShotSuggesterPage() {
     rightLeftSlope,
     altitude,
     elevationDiff,
+    windSpeed,
+    windDirection,
   } = suggester;
 
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showWind, setShowWind] = useState(false);
 
   const distanceUnit = unitSystem === "imperial" ? "yd" : "m";
 
@@ -119,6 +138,8 @@ export default function ShotSuggesterPage() {
   const altitudeValue = parseFloat(altitude) || 0;
   const rightLeftValue = parseFloat(rightLeftSlope) || 0;
   const elevValue = parseFloat(elevationDiff) || 0;
+  const windSpeedValue = parseFloat(windSpeed) || 0;
+  const windDirectionValue = parseFloat(windDirection) || 0;
 
   // Calculate result in real-time
   const result = useMemo(() => {
@@ -137,28 +158,47 @@ export default function ShotSuggesterPage() {
       material,
       parseFloat(rightLeftSlope) || 0,
       elevationMeters,
-      parseFloat(altitude) || 0
+      parseFloat(altitude) || 0,
+      parseFloat(windSpeed) || 0,
+      parseFloat(windDirection) || 0
     );
 
     // Convert back to display units
     const playsAs = unitSystem === "imperial"
       ? shotResult.playsAs * 1.09361
       : shotResult.playsAs;
-    const aimAmount = unitSystem === "imperial"
+    const slopeAimAmount = unitSystem === "imperial"
       ? Math.abs(shotResult.offlineAimAdjustment) * 1.09361
       : Math.abs(shotResult.offlineAimAdjustment);
+    const windOffline = unitSystem === "imperial"
+      ? shotResult.windOfflineEffect * 1.09361
+      : shotResult.windOfflineEffect;
+
+    // Combine slope and wind aim adjustments
+    const totalOffline = shotResult.offlineAimAdjustment + shotResult.windOfflineEffect;
+    const totalOfflineDisplay = unitSystem === "imperial"
+      ? totalOffline * 1.09361
+      : totalOffline;
 
     return {
       playsAs,
-      aimAdjust:
+      slopeAimAdjust:
         shotResult.offlineAimAdjustment !== 0
           ? {
               direction: shotResult.offlineAimAdjustment < 0 ? "left" : "right",
-              amount: aimAmount,
+              amount: slopeAimAmount,
+            }
+          : undefined,
+      windDrift: windOffline,
+      totalAimAdjust:
+        Math.abs(totalOfflineDisplay) >= 0.5
+          ? {
+              direction: totalOfflineDisplay < 0 ? "left" : "right",
+              amount: Math.abs(totalOfflineDisplay),
             }
           : undefined,
     };
-  }, [targetCarry, material, rightLeftSlope, elevationDiff, altitude, unitSystem]);
+  }, [targetCarry, material, rightLeftSlope, elevationDiff, altitude, windSpeed, windDirection, unitSystem]);
 
   // Set altitude from course if available and not already set
   useMemo(() => {
@@ -172,6 +212,8 @@ export default function ShotSuggesterPage() {
       targetCarry: carryMin.toString(),
       rightLeftSlope: "0",
       elevationDiff: "0",
+      windSpeed: "0",
+      windDirection: "0",
     });
   };
 
@@ -304,17 +346,81 @@ export default function ShotSuggesterPage() {
                   {result.playsAs.toFixed(0)} {distanceUnit}
                 </p>
               </div>
-              {result.aimAdjust && result.aimAdjust.amount >= 0.5 && (
+              {result.totalAimAdjust && (
                 <div className="text-center pt-3 border-t border-emerald-800/30">
                   <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
                     Aim adjustment
                   </p>
                   <p className="text-xl text-amber-50">
-                    {result.aimAdjust.amount.toFixed(1)} {distanceUnit}{" "}
-                    {result.aimAdjust.direction}
+                    {result.totalAimAdjust.amount.toFixed(1)} {distanceUnit}{" "}
+                    {result.totalAimAdjust.direction}
                   </p>
+                  {/* Show breakdown if both slope and wind contribute */}
+                  {result.slopeAimAdjust && Math.abs(result.windDrift) >= 0.5 && (
+                    <p className="text-xs text-amber-100/40 mt-1">
+                      (slope: {result.slopeAimAdjust.amount.toFixed(1)} {result.slopeAimAdjust.direction},
+                      wind: {Math.abs(result.windDrift).toFixed(1)} {result.windDrift < 0 ? "left" : "right"})
+                    </p>
+                  )}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Wind Section Toggle */}
+          <button
+            type="button"
+            onClick={() => setShowWind(!showWind)}
+            className="w-full flex items-center justify-between py-2 px-3 rounded-lg bg-slate-800/30 border border-amber-900/20 text-amber-100/60 hover:text-amber-100/80 transition-colors"
+          >
+            <span className="text-sm flex items-center gap-2">
+              <Wind className="h-4 w-4" />
+              Wind {windSpeedValue > 0 && `(${windSpeedValue} m/s)`}
+            </span>
+            {showWind ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </button>
+
+          {/* Wind Options */}
+          {showWind && (
+            <div className="space-y-6 pt-2">
+              {/* Wind Speed */}
+              <div className="space-y-2">
+                <Label className="text-amber-100/80 text-sm">Wind Speed</Label>
+                <MobileSlider
+                  value={windSpeedValue}
+                  onChange={(v) => updateSuggester({ windSpeed: v.toString() })}
+                  min={0}
+                  max={10}
+                  step={0.5}
+                  formatValue={(v) => `${v} m/s`}
+                />
+              </div>
+
+              {/* Wind Direction */}
+              <div className="space-y-2">
+                <Label className="text-amber-100/80 text-sm">
+                  Wind Direction: {getWindDirectionLabel(windDirectionValue)}
+                </Label>
+                <MobileSlider
+                  value={windDirectionValue}
+                  onChange={(v) => updateSuggester({ windDirection: v.toString() })}
+                  min={0}
+                  max={345}
+                  step={15}
+                  formatValue={(v) => `${v}°`}
+                />
+                <div className="flex justify-between text-xs text-amber-100/40 px-1">
+                  <span>Head</span>
+                  <span>→</span>
+                  <span>Tail</span>
+                  <span>←</span>
+                  <span>Head</span>
+                </div>
+              </div>
             </div>
           )}
 
