@@ -49,7 +49,7 @@ const defaultPuttingState: PuttingState = {
 };
 
 const defaultSuggesterState: SuggesterState = {
-  targetCarry: "",
+  targetCarry: "125",
   material: "fairway",
   upDownSlope: "0",
   rightLeftSlope: "0",

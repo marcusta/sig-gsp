@@ -134,7 +134,7 @@ export default function ShotSuggesterPage() {
   const elevMax = unitSystem === "imperial" ? 50 : 20;
 
   // Parse values for sliders
-  const carryValue = parseFloat(targetCarry) || carryMin;
+  const carryValue = parseFloat(targetCarry) || 125;
   const altitudeValue = parseFloat(altitude) || 0;
   const rightLeftValue = parseFloat(rightLeftSlope) || 0;
   const elevValue = parseFloat(elevationDiff) || 0;
@@ -209,7 +209,7 @@ export default function ShotSuggesterPage() {
 
   const handleClear = () => {
     updateSuggester({
-      targetCarry: carryMin.toString(),
+      targetCarry: "125",
       rightLeftSlope: "0",
       elevationDiff: "0",
       windSpeed: "0",
@@ -375,7 +375,7 @@ export default function ShotSuggesterPage() {
           >
             <span className="text-sm flex items-center gap-2">
               <Wind className="h-4 w-4" />
-              Wind {windSpeedValue > 0 && `(${windSpeedValue} m/s)`}
+              Wind {windSpeedValue > 0 && `(${windSpeedValue} m/s ${getWindDirectionLabel(windDirectionValue)})`}
             </span>
             {showWind ? (
               <ChevronUp className="h-4 w-4" />
