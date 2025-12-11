@@ -335,38 +335,6 @@ export default function ShotSuggesterPage() {
             />
           </div>
 
-          {/* Result Display - Always visible */}
-          {result && (
-            <div className="p-5 rounded-lg bg-emerald-900/30 border border-emerald-800/40 space-y-3">
-              <div className="text-center">
-                <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
-                  Plays as
-                </p>
-                <p className="text-3xl font-semibold text-amber-50">
-                  {result.playsAs.toFixed(0)} {distanceUnit}
-                </p>
-              </div>
-              {result.totalAimAdjust && (
-                <div className="text-center pt-3 border-t border-emerald-800/30">
-                  <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
-                    Aim adjustment
-                  </p>
-                  <p className="text-xl text-amber-50">
-                    {result.totalAimAdjust.amount.toFixed(1)} {distanceUnit}{" "}
-                    {result.totalAimAdjust.direction}
-                  </p>
-                  {/* Show breakdown if both slope and wind contribute */}
-                  {result.slopeAimAdjust && Math.abs(result.windDrift) >= 0.5 && (
-                    <p className="text-xs text-amber-100/40 mt-1">
-                      (slope: {result.slopeAimAdjust.amount.toFixed(1)} {result.slopeAimAdjust.direction},
-                      wind: {Math.abs(result.windDrift).toFixed(1)} {result.windDrift < 0 ? "left" : "right"})
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Wind Section Toggle */}
           <button
             type="button"
@@ -478,7 +446,39 @@ export default function ShotSuggesterPage() {
             </div>
           )}
 
-          {/* Clear Button */}
+          {/* Result Display */}
+          {result && (
+            <div className="p-5 rounded-lg bg-emerald-900/30 border border-emerald-800/40 space-y-3">
+              <div className="text-center">
+                <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
+                  Plays as
+                </p>
+                <p className="text-3xl font-semibold text-amber-50">
+                  {result.playsAs.toFixed(0)} {distanceUnit}
+                </p>
+              </div>
+              {result.totalAimAdjust && (
+                <div className="text-center pt-3 border-t border-emerald-800/30">
+                  <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
+                    Aim adjustment
+                  </p>
+                  <p className="text-xl text-amber-50">
+                    {result.totalAimAdjust.amount.toFixed(1)} {distanceUnit}{" "}
+                    {result.totalAimAdjust.direction}
+                  </p>
+                  {/* Show breakdown if both slope and wind contribute */}
+                  {result.slopeAimAdjust && Math.abs(result.windDrift) >= 0.5 && (
+                    <p className="text-xs text-amber-100/40 mt-1">
+                      (slope: {result.slopeAimAdjust.amount.toFixed(1)} {result.slopeAimAdjust.direction},
+                      wind: {Math.abs(result.windDrift).toFixed(1)} {result.windDrift < 0 ? "left" : "right"})
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Reset Button */}
           <Button
             onClick={handleClear}
             variant="outline"
