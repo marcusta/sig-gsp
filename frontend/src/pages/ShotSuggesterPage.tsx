@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,7 @@ import {
 import { ChevronLeft, Circle, ChevronDown, ChevronUp } from "lucide-react";
 import { useUnits } from "@/contexts/UnitContext";
 import { useCalculator } from "@/contexts/CalculatorContext";
-import { getMaterials, suggestShot, type MaterialInfo } from "@/api/shotApi";
+import { getMaterials, calculateShot } from "@/api/shotApi";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/utils";
 
@@ -90,6 +90,8 @@ function MobileSlider({
   );
 }
 
+const materials = getMaterials();
+
 export default function ShotSuggesterPage() {
   const { unitSystem } = useUnits();
   const { currentCourse, suggester, updateSuggester } = useCalculator();
@@ -97,46 +99,12 @@ export default function ShotSuggesterPage() {
   const {
     targetCarry,
     material,
-    upDownSlope,
     rightLeftSlope,
     altitude,
     elevationDiff,
   } = suggester;
 
-  const [materials, setMaterials] = useState<MaterialInfo[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [result, setResult] = useState<{
-    playsAs: number;
-    aimAdjust?: { direction: string; amount: number };
-  } | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Fetch materials on mount
-  useEffect(() => {
-    getMaterials()
-      .then((mats) => {
-        setMaterials(mats);
-        if (!mats.some((m) => m.name === material)) {
-          updateSuggester({ material: mats[0]?.name || "fairway" });
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to load materials:", err);
-        setMaterials([
-          { name: "fairway", title: "Fairway" },
-          { name: "rough", title: "Rough" },
-          { name: "sand", title: "Sand" },
-        ]);
-      });
-  }, []);
-
-  // Set altitude from course if available and not already set
-  useEffect(() => {
-    if (currentCourse && currentCourse.altitude > 0 && altitude === "0") {
-      updateSuggester({ altitude: Math.round(currentCourse.altitude).toString() });
-    }
-  }, [currentCourse]);
 
   const distanceUnit = unitSystem === "imperial" ? "yd" : "m";
 
@@ -146,77 +114,66 @@ export default function ShotSuggesterPage() {
   const elevMin = unitSystem === "imperial" ? -50 : -20;
   const elevMax = unitSystem === "imperial" ? 50 : 20;
 
-  const handleCalculate = async () => {
-    const carryValue = parseFloat(targetCarry);
-    if (!carryValue) {
-      setError("Please set a target distance");
-      return;
+  // Parse values for sliders
+  const carryValue = parseFloat(targetCarry) || carryMin;
+  const altitudeValue = parseFloat(altitude) || 0;
+  const rightLeftValue = parseFloat(rightLeftSlope) || 0;
+  const elevValue = parseFloat(elevationDiff) || 0;
+
+  // Calculate result in real-time
+  const result = useMemo(() => {
+    const carryNum = parseFloat(targetCarry);
+    if (!carryNum || carryNum < carryMin) return null;
+
+    // Convert to meters for calculation
+    const targetMeters = unitSystem === "imperial" ? carryNum / 1.09361 : carryNum;
+    const elevationMeters =
+      unitSystem === "imperial"
+        ? parseFloat(elevationDiff || "0") / 1.09361
+        : parseFloat(elevationDiff || "0");
+
+    const shotResult = calculateShot(
+      targetMeters,
+      material,
+      parseFloat(rightLeftSlope) || 0,
+      elevationMeters,
+      parseFloat(altitude) || 0
+    );
+
+    // Convert back to display units
+    const playsAs = unitSystem === "imperial"
+      ? shotResult.playsAs * 1.09361
+      : shotResult.playsAs;
+    const aimAmount = unitSystem === "imperial"
+      ? Math.abs(shotResult.offlineAimAdjustment) * 1.09361
+      : Math.abs(shotResult.offlineAimAdjustment);
+
+    return {
+      playsAs,
+      aimAdjust:
+        shotResult.offlineAimAdjustment !== 0
+          ? {
+              direction: shotResult.offlineAimAdjustment < 0 ? "left" : "right",
+              amount: aimAmount,
+            }
+          : undefined,
+    };
+  }, [targetCarry, material, rightLeftSlope, elevationDiff, altitude, unitSystem]);
+
+  // Set altitude from course if available and not already set
+  useMemo(() => {
+    if (currentCourse && currentCourse.altitude > 0 && altitude === "0") {
+      updateSuggester({ altitude: Math.round(currentCourse.altitude).toString() });
     }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const targetMeters =
-        unitSystem === "imperial" ? carryValue / 1.09361 : carryValue;
-
-      const elevationMeters =
-        unitSystem === "imperial"
-          ? parseFloat(elevationDiff || "0") / 1.09361
-          : parseFloat(elevationDiff || "0");
-
-      const data = await suggestShot(
-        targetMeters,
-        material,
-        parseFloat(upDownSlope) || 0,
-        parseFloat(rightLeftSlope) || 0,
-        elevationMeters,
-        parseFloat(altitude) || 0
-      );
-
-      const playsAs =
-        unitSystem === "imperial" ? data.rawCarry * 1.09361 : data.rawCarry;
-
-      const aimAmount =
-        unitSystem === "imperial"
-          ? Math.abs(data.offlineAimAdjustment) * 1.09361
-          : Math.abs(data.offlineAimAdjustment);
-
-      setResult({
-        playsAs,
-        aimAdjust:
-          data.offlineAimAdjustment !== 0
-            ? {
-                direction: data.offlineAimAdjustment < 0 ? "left" : "right",
-                amount: aimAmount,
-              }
-            : undefined,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to calculate shot");
-      setResult(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [currentCourse]);
 
   const handleClear = () => {
     updateSuggester({
       targetCarry: carryMin.toString(),
-      upDownSlope: "0",
       rightLeftSlope: "0",
       elevationDiff: "0",
     });
-    setResult(null);
-    setError(null);
   };
-
-  // Parse values for sliders
-  const carryValue = parseFloat(targetCarry) || carryMin;
-  const altitudeValue = parseFloat(altitude) || 0;
-  const upDownValue = parseFloat(upDownSlope) || 0;
-  const rightLeftValue = parseFloat(rightLeftSlope) || 0;
-  const elevValue = parseFloat(elevationDiff) || 0;
 
   return (
     <div className="min-h-screen p-4 flex flex-col items-center pt-4">
@@ -336,13 +293,38 @@ export default function ShotSuggesterPage() {
             />
           </div>
 
+          {/* Result Display - Always visible */}
+          {result && (
+            <div className="p-5 rounded-lg bg-emerald-900/30 border border-emerald-800/40 space-y-3">
+              <div className="text-center">
+                <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
+                  Plays as
+                </p>
+                <p className="text-3xl font-semibold text-amber-50">
+                  {result.playsAs.toFixed(0)} {distanceUnit}
+                </p>
+              </div>
+              {result.aimAdjust && result.aimAdjust.amount >= 0.5 && (
+                <div className="text-center pt-3 border-t border-emerald-800/30">
+                  <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
+                    Aim adjustment
+                  </p>
+                  <p className="text-xl text-amber-50">
+                    {result.aimAdjust.amount.toFixed(1)} {distanceUnit}{" "}
+                    {result.aimAdjust.direction}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Advanced Section Toggle */}
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
             className="w-full flex items-center justify-between py-2 px-3 rounded-lg bg-slate-800/30 border border-amber-900/20 text-amber-100/60 hover:text-amber-100/80 transition-colors"
           >
-            <span className="text-sm">Advanced (slopes & elevation)</span>
+            <span className="text-sm">Advanced (altitude & elevation)</span>
             {showAdvanced ? (
               <ChevronUp className="h-4 w-4" />
             ) : (
@@ -373,21 +355,6 @@ export default function ShotSuggesterPage() {
                 />
               </div>
 
-              {/* Up/Down Slope */}
-              <div className="space-y-2">
-                <Label className="text-amber-100/80 text-sm">
-                  Up/Down Slope (+ = uphill lie)
-                </Label>
-                <MobileSlider
-                  value={upDownValue}
-                  onChange={(v) => updateSuggester({ upDownSlope: v.toString() })}
-                  min={-10}
-                  max={10}
-                  step={1}
-                  formatValue={(v) => `${v > 0 ? "+" : ""}${v}°`}
-                />
-              </div>
-
               {/* Elevation Diff */}
               <div className="space-y-2">
                 <Label className="text-amber-100/80 text-sm">
@@ -405,54 +372,13 @@ export default function ShotSuggesterPage() {
             </div>
           )}
 
-          {/* Calculate Button */}
-          <Button
-            onClick={handleCalculate}
-            disabled={loading}
-            className="w-full h-14 text-lg font-medium bg-emerald-800/70 hover:bg-emerald-700/80 text-amber-50 border border-emerald-700/50"
-          >
-            {loading ? "Calculating..." : "Calculate"}
-          </Button>
-
-          {/* Error Display */}
-          {error && (
-            <div className="p-3 rounded-lg bg-red-900/30 border border-red-800/40">
-              <p className="text-red-200 text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Result Display */}
-          {result && (
-            <div className="p-5 rounded-lg bg-emerald-900/30 border border-emerald-800/40 space-y-3">
-              <div className="text-center">
-                <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
-                  Plays as
-                </p>
-                <p className="text-3xl font-semibold text-amber-50">
-                  {result.playsAs.toFixed(0)} {distanceUnit}
-                </p>
-              </div>
-              {result.aimAdjust && (
-                <div className="text-center pt-3 border-t border-emerald-800/30">
-                  <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
-                    Aim adjustment
-                  </p>
-                  <p className="text-xl text-amber-50">
-                    {result.aimAdjust.amount.toFixed(1)} {distanceUnit}{" "}
-                    {result.aimAdjust.direction}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Clear Button */}
           <Button
             onClick={handleClear}
             variant="outline"
             className="w-full h-11 bg-slate-800/40 text-amber-100/70 border-amber-900/30 hover:bg-slate-700/50 hover:text-amber-50"
           >
-            Clear
+            Reset
           </Button>
         </div>
       </div>

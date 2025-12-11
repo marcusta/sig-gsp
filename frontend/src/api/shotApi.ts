@@ -1,82 +1,64 @@
 /**
- * Shot Calculator API
- * Calls the backend at app.swedenindoorgolf.se/mycal/api
+ * Shot Calculator - Local calculations using empirical lie penalty data
  */
 
-const API_BASE = "https://app.swedenindoorgolf.se/mycal";
+import {
+  getMaterials as getLocalMaterials,
+  calculatePlaysAs,
+  calculateAimOffset,
+  type MaterialInfo,
+} from "@/lib/liePenalties";
 
-export interface MaterialInfo {
-  name: string;
-  title: string;
-}
+export type { MaterialInfo };
 
-export interface ShotSuggestion {
-  ballSpeed: number;
-  rawBallSpeed: number;
-  spin: number;
-  rawSpin: number;
-  vla: number;
-  rawCarry: number;
-  estimatedCarry: number;
-  clubName: string;
+export interface ShotResult {
+  playsAs: number;
   offlineAimAdjustment: number;
 }
 
-export interface SuggestShotRequest {
-  targetCarry: number;
-  material: string;
-  upDownLie?: number;
-  rightLeftLie?: number;
-  elevation?: number;
-  altitude?: number;
-}
+/**
+ * Get available materials/lies
+ */
+export const getMaterials = getLocalMaterials;
 
-// Cache for materials
-let materialsCache: MaterialInfo[] | null = null;
-
-export async function getMaterials(): Promise<MaterialInfo[]> {
-  if (materialsCache) {
-    return materialsCache;
-  }
-
-  const response = await fetch(`${API_BASE}/api/materials`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch materials");
-  }
-
-  const materials = await response.json();
-  materialsCache = materials;
-  return materials;
-}
-
-export async function suggestShot(
+/**
+ * Calculate shot suggestion using empirical lie penalty data.
+ *
+ * @param targetCarry - Target carry distance in meters
+ * @param material - Lie/material type
+ * @param rightLeftLie - Side slope in degrees (+ = ball above feet)
+ * @param elevation - Elevation difference to target in meters (+ = uphill)
+ * @param altitude - Course altitude in feet
+ * @returns Shot result with plays-as distance and aim adjustment
+ */
+export function calculateShot(
   targetCarry: number,
   material: string,
-  upDownLie: number = 0,
   rightLeftLie: number = 0,
   elevation: number = 0,
   altitude: number = 0
-): Promise<ShotSuggestion> {
-  const response = await fetch(`${API_BASE}/api/suggestShot`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      targetCarry,
-      material,
-      upDownLie,
-      rightLeftLie,
-      elevation,
-      altitude,
-    }),
-  });
+): ShotResult {
+  // 1. Calculate base plays-as from lie penalty
+  let playsAs = calculatePlaysAs(targetCarry, material);
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: "Request failed" }));
-    throw new Error(error.error || "Failed to get shot suggestion");
-  }
+  // 2. Adjust for elevation difference to target
+  // Rule of thumb: add ~1m per 1m of uphill elevation
+  playsAs += elevation;
 
-  return response.json();
+  // 3. Adjust for altitude (thin air = ball goes further)
+  // Approximately 2% more distance per 1000ft of altitude
+  // So we need to swing LESS to achieve same distance
+  const altitudeAdjustment = 1 - (altitude / 1000) * 0.02;
+  playsAs *= altitudeAdjustment;
+
+  // 4. Calculate aim adjustment for side slope using empirical data
+  // Based on plays-as distance, not target distance
+  // Positive slope (ball above feet) = aim right for right-hander
+  const aimMagnitude = calculateAimOffset(playsAs, rightLeftLie);
+  const offlineAimAdjustment = rightLeftLie >= 0 ? aimMagnitude : -aimMagnitude;
+
+  return {
+    playsAs,
+    offlineAimAdjustment,
+  };
 }
