@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -13,6 +13,7 @@ import {
 } from "@/lib/putting";
 import { useUnits } from "@/contexts/UnitContext";
 import { useCalculator } from "@/contexts/CalculatorContext";
+import { fetchCourseById } from "@/api/useApi";
 
 // Masters-style container background
 const mastersBackground = `
@@ -93,10 +94,60 @@ function MobileSlider({
 
 export default function PuttingPage() {
   const { unitSystem } = useUnits();
-  const { currentCourse, putting, updatePutting } = useCalculator();
+  const { currentCourse, setCurrentCourse, putting, updatePutting } = useCalculator();
+  const [searchParams, setSearchParams] = useSearchParams();
   const stimpValues = getAvailableStimps();
 
   const { stimp, mode, speed, distance } = putting;
+
+  // Restore course context from URL param if missing
+  useEffect(() => {
+    const courseIdParam = searchParams.get("course");
+    if (!currentCourse && courseIdParam) {
+      const courseId = parseInt(courseIdParam, 10);
+      if (!isNaN(courseId)) {
+        fetchCourseById(courseId).then((course) => {
+          setCurrentCourse({
+            courseId: course.id,
+            courseName: course.name,
+            altitude: course.altitude,
+          });
+        }).catch(() => {
+          // Course not found, ignore
+        });
+      }
+    }
+  }, [currentCourse, searchParams, setCurrentCourse]);
+
+  // Restore stimp from URL param on mount
+  useEffect(() => {
+    const stimpParam = searchParams.get("stimp");
+    if (stimpParam) {
+      const stimpValue = parseInt(stimpParam, 10);
+      if (stimpValues.includes(stimpValue) && stimpValue !== stimp) {
+        updatePutting({ stimp: stimpValue });
+      }
+    }
+  }, []); // Only run on mount
+
+  // Update URL when stimp changes
+  const handleStimpChange = (newStimp: number) => {
+    updatePutting({ stimp: newStimp });
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("stimp", newStimp.toString());
+      return newParams;
+    }, { replace: true });
+  };
+
+  // Build URL params for navigation links
+  const buildLinkParams = () => {
+    const params = new URLSearchParams();
+    if (currentCourse) params.set("course", currentCourse.courseId.toString());
+    params.set("stimp", stimp.toString());
+    const paramString = params.toString();
+    return paramString ? `?${paramString}` : "";
+  };
 
   // Distance range in meters: 1.5 to 30
   // Speed range: 2 to 20 mph
@@ -104,6 +155,12 @@ export default function PuttingPage() {
   const distanceMax = 30;
   const speedMin = 2;
   const speedMax = 20;
+
+  // Overshoot distance in meters based on stimp (how far past the hole the ball should roll)
+  const getOvershoot = (stimpValue: number): number => {
+    if (stimpValue <= 11) return 0.3;
+    return 0.2; // stimp 12 and 13
+  };
 
   const calculate = useCallback(() => {
     if (mode === "speedToDistance" && speed) {
@@ -117,7 +174,9 @@ export default function PuttingPage() {
         unitSystem === "imperial"
           ? Number(distance) / 3.28084
           : Number(distance);
-      const result = getSpeedForDistance(distanceInMeters, stimp);
+      // Add overshoot to ensure ball passes the hole
+      const targetDistance = distanceInMeters + getOvershoot(stimp);
+      const result = getSpeedForDistance(targetDistance, stimp);
       updatePutting({ speed: result.toFixed(1) });
     }
   }, [mode, speed, distance, stimp, unitSystem, updatePutting]);
@@ -156,31 +215,34 @@ export default function PuttingPage() {
     <div className="min-h-screen p-4 flex flex-col items-center pt-4">
       {/* Navigation Header */}
       <div className="w-full max-w-md mb-4 flex items-center justify-between">
-        {currentCourse ? (
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 -ml-2 h-8 px-2"
-          >
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
+          className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 -ml-2 h-8 px-2"
+        >
+          {currentCourse ? (
             <Link
-              to={`/course/${currentCourse.courseId}`}
+              to={`/course/${currentCourse.courseId}?stimp=${stimp}`}
               className="flex items-center gap-1"
             >
               <ChevronLeft className="h-4 w-4" />
               <span className="text-sm">{currentCourse.courseName}</span>
             </Link>
-          </Button>
-        ) : (
-          <div />
-        )}
+          ) : (
+            <Link to="/courses" className="flex items-center gap-1">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="text-sm">Courses</span>
+            </Link>
+          )}
+        </Button>
         <Button
           asChild
           variant="ghost"
           size="sm"
           className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 h-8 px-2"
         >
-          <Link to="/suggester" className="flex items-center gap-1">
+          <Link to={`/suggester${buildLinkParams()}`} className="flex items-center gap-1">
             <Target className="h-4 w-4" />
             <span className="text-sm">Shot Suggester</span>
           </Link>
@@ -223,7 +285,7 @@ export default function PuttingPage() {
                   key={stimpValue}
                   variant="outline"
                   size="sm"
-                  onClick={() => updatePutting({ stimp: stimpValue })}
+                  onClick={() => handleStimpChange(stimpValue)}
                   className={`flex-1 h-12 text-base transition-all ${
                     stimp === stimpValue
                       ? "bg-emerald-800/70 text-amber-50 border-emerald-700/50 hover:bg-emerald-800/80"

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCourseById } from "@/api/useApi";
 import GolfCourseViewer from "@/components/GolfCourseViewer";
@@ -63,11 +63,25 @@ const CoursePage: React.FC = () => {
   const { courseId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [showScoreCard, setShowScoreCard] = useState(false);
-  const { setCurrentCourse, setAltitudeFromCourse } = useCalculator();
+  const { setCurrentCourse, setAltitudeFromCourse, putting, updatePutting } = useCalculator();
+
+  const { stimp } = putting;
 
   // Get the search params from the previous location state or default to empty string
   const previousSearch = location.state?.search || "";
+
+  // Restore stimp from URL param on mount
+  useEffect(() => {
+    const stimpParam = searchParams.get("stimp");
+    if (stimpParam) {
+      const stimpValue = parseInt(stimpParam, 10);
+      if ([10, 11, 12, 13].includes(stimpValue) && stimpValue !== stimp) {
+        updatePutting({ stimp: stimpValue });
+      }
+    }
+  }, []); // Only run on mount
 
   const {
     data: course,
@@ -92,7 +106,7 @@ const CoursePage: React.FC = () => {
       altitude: course.altitude,
     });
     setAltitudeFromCourse(course.altitude);
-    navigate("/suggester");
+    navigate(`/suggester?course=${course.id}&stimp=${stimp}`);
   };
 
   const handleNavigateToPutting = () => {
@@ -101,7 +115,7 @@ const CoursePage: React.FC = () => {
       courseName: course.name,
       altitude: course.altitude,
     });
-    navigate("/putting");
+    navigate(`/putting?course=${course.id}&stimp=${stimp}`);
   };
 
   return (

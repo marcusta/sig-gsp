@@ -1,18 +1,12 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ChevronLeft, Circle, ChevronDown, ChevronUp, Wind } from "lucide-react";
 import { useUnits } from "@/contexts/UnitContext";
 import { useCalculator } from "@/contexts/CalculatorContext";
 import { getMaterials, calculateShot } from "@/api/shotApi";
+import { fetchCourseById } from "@/api/useApi";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/utils";
 
@@ -110,7 +104,8 @@ const materials = getMaterials();
 
 export default function ShotSuggesterPage() {
   const { unitSystem } = useUnits();
-  const { currentCourse, suggester, updateSuggester } = useCalculator();
+  const { currentCourse, setCurrentCourse, suggester, updateSuggester, putting, updatePutting } = useCalculator();
+  const [searchParams] = useSearchParams();
 
   const {
     targetCarry,
@@ -122,8 +117,49 @@ export default function ShotSuggesterPage() {
     windDirection,
   } = suggester;
 
+  const { stimp } = putting;
+
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showWind, setShowWind] = useState(false);
+
+  // Restore course context from URL param if missing
+  useEffect(() => {
+    const courseIdParam = searchParams.get("course");
+    if (!currentCourse && courseIdParam) {
+      const courseId = parseInt(courseIdParam, 10);
+      if (!isNaN(courseId)) {
+        fetchCourseById(courseId).then((course) => {
+          setCurrentCourse({
+            courseId: course.id,
+            courseName: course.name,
+            altitude: course.altitude,
+          });
+        }).catch(() => {
+          // Course not found, ignore
+        });
+      }
+    }
+  }, [currentCourse, searchParams, setCurrentCourse]);
+
+  // Restore stimp from URL param on mount
+  useEffect(() => {
+    const stimpParam = searchParams.get("stimp");
+    if (stimpParam) {
+      const stimpValue = parseInt(stimpParam, 10);
+      if ([10, 11, 12, 13].includes(stimpValue) && stimpValue !== stimp) {
+        updatePutting({ stimp: stimpValue });
+      }
+    }
+  }, []); // Only run on mount
+
+  // Build URL params for navigation links
+  const buildLinkParams = () => {
+    const params = new URLSearchParams();
+    if (currentCourse) params.set("course", currentCourse.courseId.toString());
+    params.set("stimp", stimp.toString());
+    const paramString = params.toString();
+    return paramString ? `?${paramString}` : "";
+  };
 
   const distanceUnit = unitSystem === "imperial" ? "yd" : "m";
 
@@ -221,31 +257,34 @@ export default function ShotSuggesterPage() {
     <div className="min-h-screen p-4 flex flex-col items-center pt-4">
       {/* Navigation Header */}
       <div className="w-full max-w-md mb-4 flex items-center justify-between">
-        {currentCourse ? (
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 -ml-2 h-8 px-2"
-          >
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
+          className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 -ml-2 h-8 px-2"
+        >
+          {currentCourse ? (
             <Link
-              to={`/course/${currentCourse.courseId}`}
+              to={`/course/${currentCourse.courseId}?stimp=${stimp}`}
               className="flex items-center gap-1"
             >
               <ChevronLeft className="h-4 w-4" />
               <span className="text-sm">{currentCourse.courseName}</span>
             </Link>
-          </Button>
-        ) : (
-          <div />
-        )}
+          ) : (
+            <Link to="/courses" className="flex items-center gap-1">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="text-sm">Courses</span>
+            </Link>
+          )}
+        </Button>
         <Button
           asChild
           variant="ghost"
           size="sm"
           className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 h-8 px-2"
         >
-          <Link to="/putting" className="flex items-center gap-1">
+          <Link to={`/putting${buildLinkParams()}`} className="flex items-center gap-1">
             <Circle className="h-4 w-4" />
             <span className="text-sm">Putting</span>
           </Link>
@@ -296,28 +335,27 @@ export default function ShotSuggesterPage() {
             />
           </div>
 
-          {/* Material */}
+          {/* Material - toggle buttons grid */}
+          {/* Future additions: concrete, pine straw - grid will accommodate 2 rows of 3 */}
           <div className="space-y-2">
             <Label className="text-amber-100/80 text-sm">Lie / Material</Label>
-            <Select
-              value={material}
-              onValueChange={(v) => updateSuggester({ material: v })}
-            >
-              <SelectTrigger className="h-12 bg-slate-800/40 border-amber-900/30 text-amber-50 text-base">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-amber-900/30">
-                {materials.map((mat) => (
-                  <SelectItem
-                    key={mat.name}
-                    value={mat.name}
-                    className="text-amber-100/90 focus:bg-slate-700 focus:text-amber-50 text-base py-3"
-                  >
-                    {mat.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-2 gap-2">
+              {materials.map((mat) => (
+                <button
+                  key={mat.name}
+                  type="button"
+                  onClick={() => updateSuggester({ material: mat.name })}
+                  className={cn(
+                    "py-3 px-4 rounded-lg text-sm font-medium transition-colors",
+                    material === mat.name
+                      ? "bg-emerald-700/70 text-amber-50 border border-emerald-600/50"
+                      : "bg-slate-800/40 text-amber-100/70 border border-amber-900/30 hover:bg-slate-700/50 hover:text-amber-50"
+                  )}
+                >
+                  {mat.title}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Side Slope - visible by default */}
