@@ -98,7 +98,7 @@ export default function PuttingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const stimpValues = getAvailableStimps();
 
-  const { stimp, mode, speed, distance } = putting;
+  const { stimp, mode, speed, distance, slopeCm } = putting;
 
   // Restore course context from URL param if missing
   useEffect(() => {
@@ -162,24 +162,32 @@ export default function PuttingPage() {
     return 0.2; // stimp 12 and 13
   };
 
+  // Slope adjustment: 1 meter per 8 cm of height difference
+  // Uphill (+) = putt plays longer, downhill (-) = putt plays shorter
+  const getSlopeAdjustment = (slope: number): number => slope / 8;
+
   const calculate = useCallback(() => {
     if (mode === "speedToDistance" && speed) {
       let result = getDistanceForSpeed(Number(speed), stimp);
+      // Apply slope adjustment (subtract for uphill since speed gives shorter effective distance)
+      result = result - getSlopeAdjustment(slopeCm);
       if (unitSystem === "imperial") {
         result = result * 3.28084;
       }
-      updatePutting({ distance: result.toFixed(1) });
+      updatePutting({ distance: Math.max(0, result).toFixed(1) });
     } else if (mode === "distanceToSpeed" && distance) {
       const distanceInMeters =
         unitSystem === "imperial"
           ? Number(distance) / 3.28084
           : Number(distance);
+      // Add slope adjustment (uphill needs more speed, so effective distance is longer)
+      const effectiveDistance = distanceInMeters + getSlopeAdjustment(slopeCm);
       // Add overshoot to ensure ball passes the hole
-      const targetDistance = distanceInMeters + getOvershoot(stimp);
+      const targetDistance = effectiveDistance + getOvershoot(stimp);
       const result = getSpeedForDistance(targetDistance, stimp);
       updatePutting({ speed: result.toFixed(1) });
     }
-  }, [mode, speed, distance, stimp, unitSystem, updatePutting]);
+  }, [mode, speed, distance, stimp, slopeCm, unitSystem, updatePutting]);
 
   // Auto-calculate when inputs change
   useEffect(() => {
@@ -187,10 +195,10 @@ export default function PuttingPage() {
     if (inputValue && !isNaN(Number(inputValue))) {
       calculate();
     }
-  }, [speed, distance, stimp, mode, calculate]);
+  }, [speed, distance, stimp, slopeCm, mode, calculate]);
 
   const handleClear = () => {
-    updatePutting({ speed: "", distance: "" });
+    updatePutting({ speed: "", distance: "", slopeCm: 0 });
   };
 
   const handleModeChange = (checked: boolean) => {
@@ -348,6 +356,26 @@ export default function PuttingPage() {
               />
             </div>
           )}
+
+          {/* Slope Adjustment */}
+          <div className="space-y-2">
+            <Label className="text-amber-100/80 text-sm">
+              Slope ({(slopeCm ?? 0) > 0 ? "uphill" : (slopeCm ?? 0) < 0 ? "downhill" : "flat"})
+            </Label>
+            <MobileSlider
+              value={slopeCm ?? 0}
+              onChange={(v) => updatePutting({ slopeCm: v })}
+              min={-150}
+              max={150}
+              step={2}
+              formatValue={(v) => {
+                if (v === 0) return "0 cm (flat)";
+                const sign = v > 0 ? "+" : "";
+                const adjustment = Math.abs(v / 8).toFixed(1);
+                return `${sign}${v} cm (${v > 0 ? "+" : "-"}${adjustment}m)`;
+              }}
+            />
+          </div>
 
           {/* Result Display */}
           {((mode === "speedToDistance" && speed && distance) ||

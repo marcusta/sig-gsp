@@ -11,6 +11,7 @@ interface PuttingState {
   mode: "speedToDistance" | "distanceToSpeed";
   speed: string;
   distance: string;
+  slopeCm: number; // Height difference in cm (positive = uphill, negative = downhill)
 }
 
 interface SuggesterState {
@@ -46,6 +47,7 @@ const defaultPuttingState: PuttingState = {
   mode: "distanceToSpeed",
   speed: "",
   distance: "",
+  slopeCm: 0,
 };
 
 const defaultSuggesterState: SuggesterState = {
