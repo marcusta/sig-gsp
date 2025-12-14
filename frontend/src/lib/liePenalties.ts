@@ -63,6 +63,69 @@ const DEEP_ROUGH_DATA: [number, number][] = [
   [148, 231],
 ];
 
+// Rough data: [targetCarry, playsAs] in meters
+// Derived from empirical testing - rough has a smaller penalty than deep rough
+const ROUGH_DATA: [number, number][] = [
+  [10.7, 11.8],
+  [15, 16.6],
+  [22.3, 24.7],
+  [25.4, 27.8],
+  [30, 33.2],
+  [37, 41.4],
+  [38.1, 42.7],
+  [41, 46],
+  [47.7, 53.1],
+  [50.3, 55.8],
+  [55.1, 60.9],
+  [56.5, 62.3],
+  [58.7, 65.1],
+  [60.6, 66.4],
+  [61.4, 67.6],
+  [64.8, 71.4],
+  [72.9, 78.1],
+  [72.9, 78.9],
+  [75, 81.2],
+  [78.3, 84.6],
+  [82.8, 88.6],
+  [86.3, 91.3],
+  [87.5, 93.0],
+  [90, 95.4],
+  [94.1, 99.5],
+  [95.0, 100.3],
+  [98.7, 104],
+  [100.1, 106.3],
+  [104, 110.1],
+  [113.4, 118.7],
+  [114.2, 119.4],
+  [114.6, 120.8],
+  [117.6, 123.7],
+  [121, 126.7],
+  [123.7, 128.8],
+  [123.9, 129.8],
+  [129.1, 134.8],
+  [133.7, 140.7],
+  [141.7, 146.9],
+  [145.7, 150.4],
+  [145.1, 152.5],
+  [149, 155.3],
+  [152.5, 157.9],
+  [157.4, 163.5],
+  [161.2, 167.8],
+  [163.2, 169.5],
+  [168.1, 176.6],
+  [172, 181],
+  [176.2, 185.4],
+  [178.1, 188.6],
+  [180.5, 191.6],
+  [185.5, 198.3],
+  [193.1, 205.4],
+  [197.4, 209.8],
+  [206, 224.2],
+  [218.5, 227.7],
+  [226.4, 241.1],
+  [241.5, 258],
+];
+
 // Side slope aim offset data
 // Key: plays-as distance in meters
 // Value: [1°, 3°, 5°, 7°, 10°] aim offset in meters
@@ -96,9 +159,9 @@ const SIDE_SLOPE_DATA: { distance: number; offsets: number[] }[] = [
 // Tailwind: carry increase in meters (pure 180° tailwind)
 const WIND_4MS_DATA: {
   distance: number;
-  crosswind: number;  // lateral offset at 4m/s pure crosswind
-  headwind: number;   // carry loss at 4m/s pure headwind
-  tailwind: number;   // carry gain at 4m/s pure tailwind
+  crosswind: number; // lateral offset at 4m/s pure crosswind
+  headwind: number; // carry loss at 4m/s pure headwind
+  tailwind: number; // carry gain at 4m/s pure tailwind
 }[] = [
   { distance: 40, crosswind: 1.5, headwind: 0.5, tailwind: 0.3 },
   { distance: 70, crosswind: 3.5, headwind: 3.5, tailwind: 2 },
@@ -111,7 +174,13 @@ const WIND_4MS_DATA: {
 /**
  * Linear interpolation between two points
  */
-function lerp(x: number, x0: number, x1: number, y0: number, y1: number): number {
+function lerp(
+  x: number,
+  x0: number,
+  x1: number,
+  y0: number,
+  y1: number
+): number {
   if (x1 === x0) return y0;
   return y0 + ((x - x0) * (y1 - y0)) / (x1 - x0);
 }
@@ -120,7 +189,10 @@ function lerp(x: number, x0: number, x1: number, y0: number, y1: number): number
  * Find plays-as distance using linear interpolation on empirical data.
  * For values outside the measured range, extrapolates using the nearest segment.
  */
-function interpolatePlaysAs(targetCarry: number, data: [number, number][]): number {
+function interpolatePlaysAs(
+  targetCarry: number,
+  data: [number, number][]
+): number {
   if (data.length === 0) return targetCarry;
   if (data.length === 1) return data[0][1];
 
@@ -182,11 +254,14 @@ function findBracketingIndices(value: number, arr: number[]): [number, number] {
  * @param slopeAngle - The side slope angle in degrees (absolute value)
  * @returns The aim offset in meters
  */
-export function calculateAimOffset(playsAsMeters: number, slopeAngle: number): number {
+export function calculateAimOffset(
+  playsAsMeters: number,
+  slopeAngle: number
+): number {
   const absAngle = Math.abs(slopeAngle);
   if (absAngle === 0) return 0;
 
-  const distances = SIDE_SLOPE_DATA.map(d => d.distance);
+  const distances = SIDE_SLOPE_DATA.map((d) => d.distance);
   const angles = SIDE_SLOPE_ANGLES;
 
   // Find bracketing distance indices
@@ -200,7 +275,7 @@ export function calculateAimOffset(playsAsMeters: number, slopeAngle: number): n
   const a1 = angles[aHigh];
 
   // Get the four corner values
-  const q00 = SIDE_SLOPE_DATA[dLow].offsets[aLow];  // (d0, a0)
+  const q00 = SIDE_SLOPE_DATA[dLow].offsets[aLow]; // (d0, a0)
   const q01 = SIDE_SLOPE_DATA[dLow].offsets[aHigh]; // (d0, a1)
   const q10 = SIDE_SLOPE_DATA[dHigh].offsets[aLow]; // (d1, a0)
   const q11 = SIDE_SLOPE_DATA[dHigh].offsets[aHigh]; // (d1, a1)
@@ -221,9 +296,9 @@ export function calculateAimOffset(playsAsMeters: number, slopeAngle: number): n
  */
 function interpolateWindValue(
   targetCarryMeters: number,
-  getValue: (data: typeof WIND_4MS_DATA[0]) => number
+  getValue: (data: (typeof WIND_4MS_DATA)[0]) => number
 ): number {
-  const distances = WIND_4MS_DATA.map(d => d.distance);
+  const distances = WIND_4MS_DATA.map((d) => d.distance);
   const [low, high] = findBracketingIndices(targetCarryMeters, distances);
 
   const d0 = distances[low];
@@ -235,7 +310,7 @@ function interpolateWindValue(
 }
 
 export interface WindEffect {
-  carryAdjustment: number;  // meters to add/subtract from plays-as (negative = shorter)
+  carryAdjustment: number; // meters to add/subtract from plays-as (negative = shorter)
   offlineAdjustment: number; // meters to aim left (negative) or right (positive)
 }
 
@@ -264,13 +339,22 @@ export function calculateWindEffect(
   // Decompose wind into components
   // cos(0°) = 1 = full headwind, cos(180°) = -1 = full tailwind
   // sin(90°) = 1 = full crosswind from right, sin(270°) = -1 = full crosswind from left
-  const headwindComponent = Math.cos(dirRad);  // positive = headwind, negative = tailwind
+  const headwindComponent = Math.cos(dirRad); // positive = headwind, negative = tailwind
   const crosswindComponent = Math.sin(dirRad); // positive = from right, negative = from left
 
   // Get base effects at 4m/s for this distance
-  const baseCrosswind = interpolateWindValue(targetCarryMeters, d => d.crosswind);
-  const baseHeadwind = interpolateWindValue(targetCarryMeters, d => d.headwind);
-  const baseTailwind = interpolateWindValue(targetCarryMeters, d => d.tailwind);
+  const baseCrosswind = interpolateWindValue(
+    targetCarryMeters,
+    (d) => d.crosswind
+  );
+  const baseHeadwind = interpolateWindValue(
+    targetCarryMeters,
+    (d) => d.headwind
+  );
+  const baseTailwind = interpolateWindValue(
+    targetCarryMeters,
+    (d) => d.tailwind
+  );
 
   // Scale by wind speed (data is at 4m/s)
   const windScale = windSpeedMs / 4;
@@ -282,7 +366,7 @@ export function calculateWindEffect(
     carryAdjustment = -baseHeadwind * headwindComponent * windScale;
   } else {
     // Tailwind - increases carry
-    carryAdjustment = baseTailwind * (-headwindComponent) * windScale;
+    carryAdjustment = baseTailwind * -headwindComponent * windScale;
   }
 
   // Calculate offline adjustment (crosswind pushes ball in wind direction)
@@ -304,15 +388,17 @@ export function calculateWindEffect(
  * @param material - The lie/material type
  * @returns The distance you need to swing for (plays-as) in meters
  */
-export function calculatePlaysAs(targetCarryMeters: number, material: string): number {
+export function calculatePlaysAs(
+  targetCarryMeters: number,
+  material: string
+): number {
   switch (material) {
     case "sand":
       return interpolatePlaysAs(targetCarryMeters, SAND_DATA);
     case "deep_rough":
       return interpolatePlaysAs(targetCarryMeters, DEEP_ROUGH_DATA);
     case "rough":
-      // Linear 5% penalty
-      return targetCarryMeters * 1.05;
+      return interpolatePlaysAs(targetCarryMeters, ROUGH_DATA);
     case "fairway":
     case "tee":
     default:

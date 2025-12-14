@@ -76,13 +76,16 @@ function MobileSlider({
         max={max}
         step={step}
         disabled={disabled}
-        className="relative flex w-full select-none items-center py-2"
-        style={{ touchAction: "pan-y" }}
+        className="relative flex w-full select-none items-center py-4"
+        style={{ touchAction: "none" }}
       >
-        <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full bg-slate-700/50">
+        {/* Larger invisible touch target behind the track */}
+        <div className="absolute inset-x-0 h-12 -top-4" />
+        <SliderPrimitive.Track className="relative h-4 w-full grow overflow-hidden rounded-full bg-slate-700/50 cursor-pointer">
           <SliderPrimitive.Range className="absolute h-full bg-emerald-700/70" />
         </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb className="block h-8 w-8 rounded-full border-2 border-emerald-600 bg-slate-800 shadow-lg ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:pointer-events-none disabled:opacity-50" />
+        {/* Larger thumb with pseudo-element for extended touch area */}
+        <SliderPrimitive.Thumb className="block h-10 w-10 rounded-full border-2 border-emerald-600 bg-slate-800 shadow-lg ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:pointer-events-none disabled:opacity-50 before:absolute before:inset-[-12px] before:content-['']" />
       </SliderPrimitive.Root>
       <div className="flex justify-between text-xs text-amber-100/40">
         <span>{formatValue ? formatValue(min) : min}</span>
