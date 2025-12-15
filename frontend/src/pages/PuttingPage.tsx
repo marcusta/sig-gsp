@@ -97,7 +97,8 @@ function MobileSlider({
 
 export default function PuttingPage() {
   const { unitSystem } = useUnits();
-  const { currentCourse, setCurrentCourse, putting, updatePutting } = useCalculator();
+  const { currentCourse, setCurrentCourse, putting, updatePutting } =
+    useCalculator();
   const [searchParams, setSearchParams] = useSearchParams();
   const stimpValues = getAvailableStimps();
 
@@ -109,15 +110,17 @@ export default function PuttingPage() {
     if (!currentCourse && courseIdParam) {
       const courseId = parseInt(courseIdParam, 10);
       if (!isNaN(courseId)) {
-        fetchCourseById(courseId).then((course) => {
-          setCurrentCourse({
-            courseId: course.id,
-            courseName: course.name,
-            altitude: course.altitude,
+        fetchCourseById(courseId)
+          .then((course) => {
+            setCurrentCourse({
+              courseId: course.id,
+              courseName: course.name,
+              altitude: course.altitude,
+            });
+          })
+          .catch(() => {
+            // Course not found, ignore
           });
-        }).catch(() => {
-          // Course not found, ignore
-        });
       }
     }
   }, [currentCourse, searchParams, setCurrentCourse]);
@@ -136,11 +139,14 @@ export default function PuttingPage() {
   // Update URL when stimp changes
   const handleStimpChange = (newStimp: number) => {
     updatePutting({ stimp: newStimp });
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set("stimp", newStimp.toString());
-      return newParams;
-    }, { replace: true });
+    setSearchParams(
+      (prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set("stimp", newStimp.toString());
+        return newParams;
+      },
+      { replace: true }
+    );
   };
 
   // Build URL params for navigation links
@@ -168,17 +174,25 @@ export default function PuttingPage() {
   // Slope adjustment with damping for steep slopes
   // Base: 1 meter per 8 cm of height difference
   // Damping: reduce effect when slope gradient is steep (lots of elevation / short distance)
-  const getSlopeAdjustment = (slopeCm: number, puttDistanceMeters: number): number => {
+  // Uphill (positive): slightly more damping (ball fights gravity, loses momentum faster)
+  // Downhill (negative): slightly less damping (gravity keeps ball rolling)
+  const getSlopeAdjustment = (
+    slopeCm: number,
+    puttDistanceMeters: number
+  ): number => {
     if (slopeCm === 0 || puttDistanceMeters <= 0) return 0;
 
-    const sign = slopeCm > 0 ? 1 : -1;
+    const isUphill = slopeCm > 0;
+    const sign = isUphill ? 1 : -1;
     const absSlope = Math.abs(slopeCm);
 
     // Calculate gradient (cm per meter of putt)
     const gradient = absSlope / puttDistanceMeters;
 
     // Threshold where damping kicks in (cm per meter)
-    const steepThreshold = 4; // cm per meter
+    // Uphill: lower threshold (damping starts earlier)
+    // Downhill: higher threshold (stays linear longer)
+    const steepThreshold = isUphill ? 1.8 : 3.8;
 
     if (gradient <= steepThreshold) {
       // Linear model: 8cm = 1m
@@ -186,15 +200,15 @@ export default function PuttingPage() {
     }
 
     // For steep slopes, use logarithmic damping
-    // This ensures smooth transition: derivative matches at threshold
-    // ln(1) = 0 at threshold, and derivative of ln(x)/8 at x=1 is 1/8 (matches linear)
+    // ln(1) = 0 at threshold, smooth transition from linear
     const gradientRatio = gradient / steepThreshold; // 1.0 at threshold, grows beyond
     const thresholdAdjustment = (steepThreshold * puttDistanceMeters) / 8;
 
-    // log curve: at ratio=1, log(1)=0, so we get thresholdAdjustment
-    // as ratio grows, log grows but slower than linear
-    // Scale factor of 2.5 tuned for reasonable feel
-    const dampedExtra = Math.log(gradientRatio) * 2.5;
+    // Different scale factors for uphill vs downhill
+    // Uphill: more damping (lower scale = less extra adjustment)
+    // Downhill: less damping (higher scale = more extra adjustment)
+    const logScale = isUphill ? 2.3 : 3.2;
+    const dampedExtra = Math.log(gradientRatio) * logScale;
 
     return sign * (thresholdAdjustment + dampedExtra);
   };
@@ -247,8 +261,10 @@ export default function PuttingPage() {
   const distanceUnit = unitSystem === "imperial" ? "ft" : "m";
 
   // Convert distance range if imperial
-  const displayDistanceMin = unitSystem === "imperial" ? distanceMin * 3.28084 : distanceMin;
-  const displayDistanceMax = unitSystem === "imperial" ? distanceMax * 3.28084 : distanceMax;
+  const displayDistanceMin =
+    unitSystem === "imperial" ? distanceMin * 3.28084 : distanceMin;
+  const displayDistanceMax =
+    unitSystem === "imperial" ? distanceMax * 3.28084 : distanceMax;
 
   // Parse current values for sliders
   const speedValue = parseFloat(speed) || speedMin;
@@ -285,7 +301,10 @@ export default function PuttingPage() {
           size="sm"
           className="text-amber-100/70 hover:text-amber-50 hover:bg-emerald-900/30 h-8 px-2"
         >
-          <Link to={`/suggester${buildLinkParams()}`} className="flex items-center gap-1">
+          <Link
+            to={`/suggester${buildLinkParams()}`}
+            className="flex items-center gap-1"
+          >
             <Target className="h-4 w-4" />
             <span className="text-sm">Shot Suggester</span>
           </Link>
@@ -321,7 +340,9 @@ export default function PuttingPage() {
 
           {/* Stimp Selection */}
           <div className="space-y-2">
-            <Label className="text-amber-100/80 text-sm">Green Speed (Stimp)</Label>
+            <Label className="text-amber-100/80 text-sm">
+              Green Speed (Stimp)
+            </Label>
             <div className="flex gap-2">
               {stimpValues.map((stimpValue) => (
                 <Button
@@ -395,7 +416,13 @@ export default function PuttingPage() {
           {/* Slope Adjustment */}
           <div className="space-y-2">
             <Label className="text-amber-100/80 text-sm">
-              Slope ({(slopeCm ?? 0) > 0 ? "uphill" : (slopeCm ?? 0) < 0 ? "downhill" : "flat"})
+              Slope (
+              {(slopeCm ?? 0) > 0
+                ? "uphill"
+                : (slopeCm ?? 0) < 0
+                ? "downhill"
+                : "flat"}
+              )
             </Label>
             <MobileSlider
               value={slopeCm ?? 0}
@@ -407,17 +434,28 @@ export default function PuttingPage() {
                 if (v === 0) return "0 cm (flat)";
                 const sign = v > 0 ? "+" : "";
                 // Get current putt distance for damping calculation
-                const currentDistanceMeters = mode === "distanceToSpeed" && distance
-                  ? (unitSystem === "imperial" ? Number(distance) / 3.28084 : Number(distance))
-                  : (speed ? getDistanceForSpeed(Number(speed), stimp) : 10);
-                const dampedAdj = Math.abs(getSlopeAdjustment(v, currentDistanceMeters));
+                const currentDistanceMeters =
+                  mode === "distanceToSpeed" && distance
+                    ? unitSystem === "imperial"
+                      ? Number(distance) / 3.28084
+                      : Number(distance)
+                    : speed
+                    ? getDistanceForSpeed(Number(speed), stimp)
+                    : 10;
+                const dampedAdj = Math.abs(
+                  getSlopeAdjustment(v, currentDistanceMeters)
+                );
                 const linearAdj = Math.abs(v / 8);
                 // Show damped value, and linear in parentheses if different
                 const isDamped = Math.abs(dampedAdj - linearAdj) > 0.05;
                 if (isDamped) {
-                  return `${sign}${v} cm (${v > 0 ? "+" : "-"}${dampedAdj.toFixed(1)}m)`;
+                  return `${sign}${v} cm (${
+                    v > 0 ? "+" : "-"
+                  }${dampedAdj.toFixed(1)}m)`;
                 }
-                return `${sign}${v} cm (${v > 0 ? "+" : "-"}${linearAdj.toFixed(1)}m)`;
+                return `${sign}${v} cm (${v > 0 ? "+" : "-"}${linearAdj.toFixed(
+                  1
+                )}m)`;
               }}
             />
           </div>
@@ -428,13 +466,21 @@ export default function PuttingPage() {
             <div className="p-5 rounded-lg bg-emerald-900/30 border border-emerald-800/40">
               <div className="text-center">
                 <p className="text-amber-100/60 text-xs uppercase tracking-wider mb-1">
-                  {mode === "distanceToSpeed" ? "Required Speed" : "Putt Distance"}
+                  {mode === "distanceToSpeed"
+                    ? "Required Speed"
+                    : "Putt Distance"}
                 </p>
                 <p className="text-3xl font-semibold text-amber-50">
                   {mode === "distanceToSpeed"
                     ? `${parseFloat(speed).toFixed(1)} mph`
                     : `${parseFloat(distance).toFixed(1)} ${distanceUnit}`}
                 </p>
+                {mode === "distanceToSpeed" && speed && (
+                  <p className="text-sm text-amber-100/50 mt-2">
+                    ≈ {getDistanceForSpeed(parseFloat(speed), 11).toFixed(1)}m
+                    on stimp 11 flat
+                  </p>
+                )}
               </div>
             </div>
           )}
