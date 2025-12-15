@@ -165,15 +165,46 @@ export default function PuttingPage() {
     return 0.2; // stimp 12 and 13
   };
 
-  // Slope adjustment: 1 meter per 8 cm of height difference
-  // Uphill (+) = putt plays longer, downhill (-) = putt plays shorter
-  const getSlopeAdjustment = (slope: number): number => slope / 8;
+  // Slope adjustment with damping for steep slopes
+  // Base: 1 meter per 8 cm of height difference
+  // Damping: reduce effect when slope gradient is steep (lots of elevation / short distance)
+  const getSlopeAdjustment = (slopeCm: number, puttDistanceMeters: number): number => {
+    if (slopeCm === 0 || puttDistanceMeters <= 0) return 0;
+
+    const sign = slopeCm > 0 ? 1 : -1;
+    const absSlope = Math.abs(slopeCm);
+
+    // Calculate gradient (cm per meter of putt)
+    const gradient = absSlope / puttDistanceMeters;
+
+    // Threshold where damping kicks in (cm per meter)
+    const steepThreshold = 4; // cm per meter
+
+    if (gradient <= steepThreshold) {
+      // Linear model: 8cm = 1m
+      return slopeCm / 8;
+    }
+
+    // For steep slopes, use logarithmic damping
+    // This ensures smooth transition: derivative matches at threshold
+    // ln(1) = 0 at threshold, and derivative of ln(x)/8 at x=1 is 1/8 (matches linear)
+    const gradientRatio = gradient / steepThreshold; // 1.0 at threshold, grows beyond
+    const thresholdAdjustment = (steepThreshold * puttDistanceMeters) / 8;
+
+    // log curve: at ratio=1, log(1)=0, so we get thresholdAdjustment
+    // as ratio grows, log grows but slower than linear
+    // Scale factor of 2.5 tuned for reasonable feel
+    const dampedExtra = Math.log(gradientRatio) * 2.5;
+
+    return sign * (thresholdAdjustment + dampedExtra);
+  };
 
   const calculate = useCallback(() => {
     if (mode === "speedToDistance" && speed) {
-      let result = getDistanceForSpeed(Number(speed), stimp);
-      // Apply slope adjustment (subtract for uphill since speed gives shorter effective distance)
-      result = result - getSlopeAdjustment(slopeCm);
+      const baseDistance = getDistanceForSpeed(Number(speed), stimp);
+      // Apply slope adjustment with damping based on putt distance
+      const slopeAdj = getSlopeAdjustment(slopeCm, baseDistance);
+      let result = baseDistance - slopeAdj;
       if (unitSystem === "imperial") {
         result = result * 3.28084;
       }
@@ -183,8 +214,9 @@ export default function PuttingPage() {
         unitSystem === "imperial"
           ? Number(distance) / 3.28084
           : Number(distance);
-      // Add slope adjustment (uphill needs more speed, so effective distance is longer)
-      const effectiveDistance = distanceInMeters + getSlopeAdjustment(slopeCm);
+      // Add slope adjustment with damping (uphill needs more speed)
+      const slopeAdj = getSlopeAdjustment(slopeCm, distanceInMeters);
+      const effectiveDistance = distanceInMeters + slopeAdj;
       // Add overshoot to ensure ball passes the hole
       const targetDistance = effectiveDistance + getOvershoot(stimp);
       const result = getSpeedForDistance(targetDistance, stimp);
@@ -374,8 +406,18 @@ export default function PuttingPage() {
               formatValue={(v) => {
                 if (v === 0) return "0 cm (flat)";
                 const sign = v > 0 ? "+" : "";
-                const adjustment = Math.abs(v / 8).toFixed(1);
-                return `${sign}${v} cm (${v > 0 ? "+" : "-"}${adjustment}m)`;
+                // Get current putt distance for damping calculation
+                const currentDistanceMeters = mode === "distanceToSpeed" && distance
+                  ? (unitSystem === "imperial" ? Number(distance) / 3.28084 : Number(distance))
+                  : (speed ? getDistanceForSpeed(Number(speed), stimp) : 10);
+                const dampedAdj = Math.abs(getSlopeAdjustment(v, currentDistanceMeters));
+                const linearAdj = Math.abs(v / 8);
+                // Show damped value, and linear in parentheses if different
+                const isDamped = Math.abs(dampedAdj - linearAdj) > 0.05;
+                if (isDamped) {
+                  return `${sign}${v} cm (${v > 0 ? "+" : "-"}${dampedAdj.toFixed(1)}m)`;
+                }
+                return `${sign}${v} cm (${v > 0 ? "+" : "-"}${linearAdj.toFixed(1)}m)`;
               }}
             />
           </div>
