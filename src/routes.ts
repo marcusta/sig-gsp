@@ -19,7 +19,7 @@ import {
   type CourseRecord,
   type Player,
 } from "db/schema";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { readFile } from "fs/promises";
 import logger from "logger";
@@ -43,6 +43,111 @@ const routes = new Elysia()
     });
     const courseListWithTags = await addTagsToCourses(courseList as any);
     return courseListWithTags;
+  })
+
+  .get("/api/courses/paginated", async ({ query }) => {
+    const page = Math.max(Number(query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(query.limit) || 24, 1), 200);
+    const offset = (page - 1) * limit;
+    const thin = query.thin === "true" || query.thin === true;
+    const enabledOnly = query.enabled !== "false";
+    const search =
+      typeof query.search === "string" ? query.search.trim().toLowerCase() : "";
+
+    const enabledCondition = enabledOnly ? eq(courses.enabled, true) : undefined;
+    const searchCondition = search
+      ? sql`(
+          lower(${courses.name}) LIKE ${`%${search}%`}
+          OR lower(${courses.location}) LIKE ${`%${search}%`}
+          OR lower(${courses.designer}) LIKE ${`%${search}%`}
+          OR CAST(${courses.holes} AS TEXT) LIKE ${`%${search}%`}
+        )`
+      : undefined;
+
+    const whereClause =
+      enabledCondition && searchCondition
+        ? and(enabledCondition, searchCondition)
+        : enabledCondition ?? searchCondition;
+
+    const totalResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(courses)
+      .where(whereClause);
+    const total = Number(totalResult[0]?.count ?? 0);
+
+    if (thin) {
+      const thinCourses = await db
+        .select({
+          id: courses.id,
+          name: courses.name,
+          alternateName: courses.alternateName,
+          location: courses.location,
+          country: courses.country,
+          holes: courses.holes,
+          altitude: courses.altitude,
+          grade: courses.grade,
+          designer: courses.designer,
+          difficulty: courses.difficulty,
+          graphics: courses.graphics,
+          golfQuality: courses.golfQuality,
+          description: courses.description,
+          opcdName: courses.opcdName,
+          opcdVersion: courses.opcdVersion,
+          addedDate: courses.addedDate,
+          updatedDate: courses.updatedDate,
+          sgtId: courses.sgtId,
+          sgtSplashUrl: courses.sgtSplashUrl,
+          sgtYoutubeUrl: courses.sgtYoutubeUrl,
+          par: courses.par,
+          isPar3: courses.isPar3,
+          largestElevationDrop: courses.largestElevationDrop,
+          averageElevationDifference: courses.averageElevationDifference,
+          totalHazards: courses.totalHazards,
+          islandGreens: courses.islandGreens,
+          totalWaterHazards: courses.totalWaterHazards,
+          totalInnerOOB: courses.totalInnerOOB,
+          rangeEnabled: courses.rangeEnabled,
+        })
+        .from(courses)
+        .where(whereClause)
+        .orderBy(asc(courses.name))
+        .limit(limit)
+        .offset(offset);
+
+      const mappedCourses = thinCourses.map((course) => ({
+        ...course,
+        teeBoxes: [],
+        tags: [],
+        attributes: [],
+      }));
+
+      return {
+        courses: mappedCourses,
+        page,
+        limit,
+        total,
+        hasMore: offset + mappedCourses.length < total,
+        thin: true,
+      };
+    }
+
+    const courseList = await db.query.courses.findMany({
+      with: { teeBoxes: true, tags: true },
+      where: whereClause,
+      limit,
+      offset,
+      orderBy: (course, { asc }) => [asc(course.name)],
+    });
+    const courseListWithTags = await addTagsToCourses(courseList as any);
+
+    return {
+      courses: courseListWithTags,
+      page,
+      limit,
+      total,
+      hasMore: offset + courseListWithTags.length < total,
+      thin: false,
+    };
   })
 
   .get("/api/courses/:id", async ({ params: { id } }) => {

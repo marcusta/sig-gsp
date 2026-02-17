@@ -190,4 +190,5 @@ Since snapshot generation is decoupled from scraping, you need to set up a sched
 - Server runs on port 3000 by default
 - Frontend build output is copied to `public/gsp/` and served by backend
 - The app is designed for Linux/Mac but should work on Windows (PowerShell or WSL)
-- Database file: `data/gspro.db` (SQLite)
+- Local database file: `data/gspro.db` (SQLite)
+- Production database file: `/srv/sig-gsp/gspro.db` on `marcus@app.swedenindoorgolf.se`

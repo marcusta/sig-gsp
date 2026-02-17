@@ -10,6 +10,7 @@ import type {
   LeaderboardResponse,
   LeaderboardWithChangesResponse,
   LeaderboardWithPeriodResponse,
+  PaginatedCoursesResponse,
   PlayerProfileResponse,
   PlayerRankHistoryResponse,
   PlayerRecordChangesResponse,
@@ -39,6 +40,18 @@ export const uploadJsonContent = (jsonContent: string) =>
 // New function to fetch the list of courses
 export const fetchCourses = () =>
   api.get<Course[]>("/courses").then((res) => res.data);
+
+export const fetchCoursesPaginated = (
+  page: number = 1,
+  limit: number = 24,
+  search: string = "",
+  thin: boolean = true
+) =>
+  api
+    .get<PaginatedCoursesResponse>("/courses/paginated", {
+      params: { page, limit, search, thin },
+    })
+    .then((res) => res.data);
 
 // New function to fetch a course by ID
 export const fetchCourseById = (id: number) =>

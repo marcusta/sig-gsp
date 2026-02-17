@@ -254,6 +254,15 @@ export interface CourseRecordsResponse {
   lastScrapedAt: string | null;
 }
 
+export interface PaginatedCoursesResponse {
+  courses: Course[];
+  page: number;
+  limit: number;
+  total: number;
+  hasMore: boolean;
+  thin: boolean;
+}
+
 export interface LeaderboardEntry {
   rank: number;
   player: Player;

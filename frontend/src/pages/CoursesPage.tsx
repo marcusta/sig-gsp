@@ -1,6 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCourses, fetchCourseAttributes } from "@/api/useApi";
+import {
+  fetchCourses,
+  fetchCourseAttributes,
+  fetchCoursesPaginated,
+} from "@/api/useApi";
 import CourseCardView from "@/components/CourseCardView";
 import AdvancedFilterPopup, {
   DEFAULT_ADVANCED_FILTERS,
@@ -21,6 +25,41 @@ import { AdvancedFilters, type Course, type TeeBox } from "@/types";
 import { gradeTeeBox } from "@/components/course-data";
 import { useSearchParams } from "react-router-dom";
 
+type SortOption =
+  | "alphabetical"
+  | "updatedDate"
+  | "longestTee"
+  | "par3Tee"
+  | "altitude"
+  | "difficulty"
+  | "rating"
+  | "par"
+  | "largestElevationDrop"
+  | "elevationDifference"
+  | "waterHazards"
+  | "innerOOB"
+  | "islandGreens";
+
+const SORT_OPTIONS: SortOption[] = [
+  "alphabetical",
+  "updatedDate",
+  "longestTee",
+  "par3Tee",
+  "altitude",
+  "difficulty",
+  "rating",
+  "par",
+  "largestElevationDrop",
+  "elevationDifference",
+  "waterHazards",
+  "innerOOB",
+  "islandGreens",
+];
+
+function isSortOption(value: string | null): value is SortOption {
+  return value !== null && SORT_OPTIONS.includes(value as SortOption);
+}
+
 const CoursesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -28,21 +67,10 @@ const CoursesPage: React.FC = () => {
     searchParams.get("search") || ""
   );
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
-  const [sortOption, setSortOption] = useState<
-    | "alphabetical"
-    | "updatedDate"
-    | "longestTee"
-    | "par3Tee"
-    | "altitude"
-    | "difficulty"
-    | "rating"
-    | "par"
-    | "largestElevationDrop"
-    | "elevationDifference"
-    | "waterHazards"
-    | "innerOOB"
-    | "islandGreens"
-  >((searchParams.get("sort") as any) || "alphabetical");
+  const [sortOption, setSortOption] = useState<SortOption>(() => {
+    const sortParam = searchParams.get("sort");
+    return isSortOption(sortParam) ? sortParam : "alphabetical";
+  });
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     (searchParams.get("order") as "asc" | "desc") || "asc"
   );
@@ -77,20 +105,61 @@ const CoursesPage: React.FC = () => {
     setSearchParams(params);
   }, [filterText, sortOption, sortOrder, advancedFilters, setSearchParams]);
 
+  const [startBackgroundFullLoad, setStartBackgroundFullLoad] = useState(false);
+  const [fullCatalogReady, setFullCatalogReady] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState(filterText.trim());
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filterText.trim());
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [filterText]);
+
   const {
-    data: courses,
-    isLoading,
-    error,
+    data: pagedCoursesData,
+    isLoading: isPagedLoading,
+    error: pagedError,
   } = useQuery({
-    queryKey: ["courses"],
+    queryKey: ["courses-paginated-thin", debouncedSearch],
+    queryFn: () => fetchCoursesPaginated(1, 24, debouncedSearch, true),
+    staleTime: 60 * 1000,
+    enabled: !fullCatalogReady,
+  });
+
+  useEffect(() => {
+    if (pagedCoursesData && !startBackgroundFullLoad) {
+      setStartBackgroundFullLoad(true);
+    }
+  }, [pagedCoursesData, startBackgroundFullLoad]);
+
+  const {
+    data: fullCourses,
+    isFetching: isBackgroundLoading,
+  } = useQuery({
+    queryKey: ["courses-full"],
     queryFn: fetchCourses,
     staleTime: 5 * 60 * 1000,
+    enabled: startBackgroundFullLoad,
   });
+
+  useEffect(() => {
+    if (fullCourses && !fullCatalogReady) {
+      setFullCatalogReady(true);
+    }
+  }, [fullCourses, fullCatalogReady]);
 
   const { data: attributes = [] } = useQuery({
     queryKey: ["courseAttributes"],
     queryFn: fetchCourseAttributes,
   });
+
+  const isUsingFullCatalog = fullCatalogReady && Boolean(fullCourses);
+  const courses = useMemo(
+    () => (isUsingFullCatalog ? fullCourses : pagedCoursesData?.courses ?? []),
+    [isUsingFullCatalog, fullCourses, pagedCoursesData]
+  );
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value);
@@ -145,7 +214,7 @@ const CoursesPage: React.FC = () => {
     });
   };
 
-  const filteredCourses = courses?.filter((course) => {
+  const filteredCourses = courses.filter((course) => {
     const textFilter =
       course.name.toLowerCase().includes(filterText.toLowerCase()) ||
       course.location.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -190,11 +259,7 @@ const CoursesPage: React.FC = () => {
     return textFilter && advancedFilter;
   });
 
-  const sortedCourses = sortCourses(
-    filteredCourses || [],
-    sortOption,
-    sortOrder
-  );
+  const sortedCourses = sortCourses(filteredCourses, sortOption, sortOrder);
 
   // Configurable batch size for lazy loading (you can change the value here)
   const BATCH_SIZE = 10;
@@ -231,11 +296,20 @@ const CoursesPage: React.FC = () => {
     };
   }, [sortedCourses]);
 
+  useEffect(() => {
+    setVisibleCoursesCount(BATCH_SIZE);
+  }, [filterText, sortOption, sortOrder, advancedFilters, isUsingFullCatalog]);
+
   const activeFilterCount = countActiveFilters(advancedFilters);
   const hasActiveFilters = activeFilterCount > 0;
 
-  if (isLoading) return <div className="text-amber-100/80">Loading...</div>;
-  if (error) return <div className="text-red-400/80">Error loading courses</div>;
+  if (isPagedLoading && courses.length === 0) {
+    return <div className="text-amber-100/80">Loading...</div>;
+  }
+
+  if (pagedError && courses.length === 0) {
+    return <div className="text-red-400/80">Error loading courses</div>;
+  }
 
   return (
     <div className="space-y-4">
@@ -243,8 +317,13 @@ const CoursesPage: React.FC = () => {
         <div>
           <h1 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-wide text-amber-50">Golf Courses</h1>
           <p className="text-xs tracking-wider uppercase text-amber-200/50">
-            {filteredCourses?.length || 0} courses available
+            {filteredCourses.length} courses available
           </p>
+          {!isUsingFullCatalog && isBackgroundLoading && (
+            <p className="text-[10px] tracking-wider uppercase text-amber-300/50 mt-1">
+              Loading full catalog in background...
+            </p>
+          )}
         </div>
         <Button
           variant={hasActiveFilters ? "default" : "outline"}
@@ -441,20 +520,38 @@ const CoursesPage: React.FC = () => {
 export default CoursesPage;
 
 function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
+  const getSortedTeeBoxes = (course: Course) =>
+    [...(course.teeBoxes || [])].sort((a, b) => b.length - a.length);
+
+  const getLongestTeeLength = (course: Course) => {
+    const teeBoxes = course.teeBoxes || [];
+    if (teeBoxes.length === 0) return 0;
+    return Math.max(...teeBoxes.map((t: TeeBox) => t.length));
+  };
+
+  const getPrimaryTeeBox = (course: Course): TeeBox | null => {
+    const teeBoxes = getSortedTeeBoxes(course);
+    return teeBoxes[0] || null;
+  };
+
   const sortFunctions: Record<string, (a: Course, b: Course) => number> = {
     rating: (a: Course, b: Course) => {
-      const aTeeBox = a.teeBoxes.sort((a, b) => b.length - a.length)[0];
-      const bTeeBox = b.teeBoxes.sort((a, b) => b.length - a.length)[0];
+      const aTeeBox = getPrimaryTeeBox(a);
+      const bTeeBox = getPrimaryTeeBox(b);
 
       // Check for invalid rating or slope for aTeeBox and set default values if broken
       const aRating =
-        aTeeBox.rating > 160 || aTeeBox.slope > 83
+        !aTeeBox
+          ? 0
+          : aTeeBox.rating > 160 || aTeeBox.slope > 83
           ? 90 + 30 // default values for broken data
           : aTeeBox.rating + aTeeBox.slope;
 
       // Check for invalid rating or slope for bTeeBox and set default values if broken
       const bRating =
-        bTeeBox.rating > 160 || bTeeBox.slope > 83
+        !bTeeBox
+          ? 0
+          : bTeeBox.rating > 160 || bTeeBox.slope > 83
           ? 90 + 30 // default values for broken data
           : bTeeBox.rating + bTeeBox.slope;
 
@@ -466,26 +563,25 @@ function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
       );
     },
     longestTee: (a: Course, b: Course) => {
-      return (
-        Math.max(...a.teeBoxes.map((t: TeeBox) => t.length)) -
-        Math.max(...b.teeBoxes.map((t: TeeBox) => t.length))
-      );
+      return getLongestTeeLength(a) - getLongestTeeLength(b);
     },
     par3Tee: (a: Course, b: Course) => {
       const aPar3 =
         a.teeBoxes.find((t: TeeBox) => t.name === "Par3")?.length ||
-        Math.max(...a.teeBoxes.map((t: TeeBox) => t.length));
+        getLongestTeeLength(a);
       const bPar3 =
         b.teeBoxes.find((t: TeeBox) => t.name === "Par3")?.length ||
-        Math.max(...b.teeBoxes.map((t: TeeBox) => t.length));
+        getLongestTeeLength(b);
       return aPar3 - bPar3;
     },
     altitude: (a: Course, b: Course) => {
       return a.altitude - b.altitude;
     },
     difficulty: (a: Course, b: Course) => {
-      const aGrade = gradeTeeBox(a.teeBoxes[0], a.altitude, a.par); // Grading the longest teebox
-      const bGrade = gradeTeeBox(b.teeBoxes[0], b.altitude, b.par);
+      const aPrimaryTee = getPrimaryTeeBox(a);
+      const bPrimaryTee = getPrimaryTeeBox(b);
+      const aGrade = aPrimaryTee ? gradeTeeBox(aPrimaryTee, a.altitude, a.par) : 0;
+      const bGrade = bPrimaryTee ? gradeTeeBox(bPrimaryTee, b.altitude, b.par) : 0;
       return aGrade - bGrade;
     },
     alphabetical: (a: Course, b: Course) => {
