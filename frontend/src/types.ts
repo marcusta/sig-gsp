@@ -106,6 +106,12 @@ export interface Course extends BaseCourse {
   id: number;
   attributes: CourseAttribute[];
   teeBoxes: TeeBox[];
+  hasTipsRecord?: boolean;
+  hasSgtRecord?: boolean;
+  tipsRecordScore?: string | null;
+  tipsRecordPlayer?: string | null;
+  sgtRecordScore?: string | null;
+  sgtRecordPlayer?: string | null;
   largestElevationDrop: number;
   averageElevationDifference: number;
   totalWaterHazards: number;

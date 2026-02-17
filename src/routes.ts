@@ -19,7 +19,7 @@ import {
   type CourseRecord,
   type Player,
 } from "db/schema";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { readFile } from "fs/promises";
 import logger from "logger";
@@ -42,7 +42,7 @@ const routes = new Elysia()
       where: eq(courses.enabled, true),
     });
     const courseListWithTags = await addTagsToCourses(courseList as any);
-    return courseListWithTags;
+    return addRecordFlagsToCourses(courseListWithTags as any);
   })
 
   .get("/api/courses/paginated", async ({ query }) => {
@@ -121,12 +121,16 @@ const routes = new Elysia()
         attributes: [],
       }));
 
+      const coursesWithRecordFlags = await addRecordFlagsToCourses(
+        mappedCourses as any
+      );
+
       return {
-        courses: mappedCourses,
+        courses: coursesWithRecordFlags,
         page,
         limit,
         total,
-        hasMore: offset + mappedCourses.length < total,
+        hasMore: offset + coursesWithRecordFlags.length < total,
         thin: true,
       };
     }
@@ -140,12 +144,16 @@ const routes = new Elysia()
     });
     const courseListWithTags = await addTagsToCourses(courseList as any);
 
+    const coursesWithRecordFlags = await addRecordFlagsToCourses(
+      courseListWithTags as any
+    );
+
     return {
-      courses: courseListWithTags,
+      courses: coursesWithRecordFlags,
       page,
       limit,
       total,
-      hasMore: offset + courseListWithTags.length < total,
+      hasMore: offset + coursesWithRecordFlags.length < total,
       thin: false,
     };
   })
@@ -1030,6 +1038,128 @@ async function addTagsToCourses(
     courseListWithTags.push(courseWithTags);
   }
   return courseListWithTags;
+}
+
+async function addRecordFlagsToCourses<
+  T extends {
+    id: number;
+    hasTipsRecord?: boolean;
+    hasSgtRecord?: boolean;
+    tipsRecordScore?: string | null;
+    tipsRecordPlayer?: string | null;
+    sgtRecordScore?: string | null;
+    sgtRecordPlayer?: string | null;
+  }
+>(courseList: T[]) {
+  if (courseList.length === 0) {
+    return courseList;
+  }
+
+  const recordFlags = await getCourseRecordFlags(courseList.map((c) => c.id));
+  return courseList.map((course) => {
+    const flags = recordFlags.get(course.id) ?? {
+      hasTipsRecord: false,
+      hasSgtRecord: false,
+      tipsRecordScore: null,
+      tipsRecordPlayer: null,
+      sgtRecordScore: null,
+      sgtRecordPlayer: null,
+    };
+    return {
+      ...course,
+      hasTipsRecord: flags.hasTipsRecord,
+      hasSgtRecord: flags.hasSgtRecord,
+      tipsRecordScore: flags.tipsRecordScore,
+      tipsRecordPlayer: flags.tipsRecordPlayer,
+      sgtRecordScore: flags.sgtRecordScore,
+      sgtRecordPlayer: flags.sgtRecordPlayer,
+    };
+  });
+}
+
+async function getCourseRecordFlags(courseIds: number[]) {
+  const uniqueCourseIds = Array.from(new Set(courseIds));
+  const flags = new Map<
+    number,
+    {
+      hasTipsRecord: boolean;
+      hasSgtRecord: boolean;
+      tipsRecordScore: string | null;
+      tipsRecordPlayer: string | null;
+      sgtRecordScore: string | null;
+      sgtRecordPlayer: string | null;
+    }
+  >();
+
+  for (const courseId of uniqueCourseIds) {
+    flags.set(courseId, {
+      hasTipsRecord: false,
+      hasSgtRecord: false,
+      tipsRecordScore: null,
+      tipsRecordPlayer: null,
+      sgtRecordScore: null,
+      sgtRecordPlayer: null,
+    });
+  }
+
+  if (uniqueCourseIds.length === 0) {
+    return flags;
+  }
+
+  const [tipsMode, sgtMode] = await Promise.all([
+    getRecordModeByCode("tips", "single", "putting"),
+    getRecordModeByCode("sgt", "single", "putting"),
+  ]);
+
+  const modeIds: number[] = [];
+  if (tipsMode) modeIds.push(tipsMode.id);
+  if (sgtMode) modeIds.push(sgtMode.id);
+
+  if (modeIds.length === 0) {
+    return flags;
+  }
+
+  const records = await db
+    .select({
+      courseId: courseRecords.courseId,
+      recordModeId: courseRecords.recordModeId,
+      score: courseRecords.score,
+      playerDisplayName: players.displayName,
+      playerUsername: players.sgtUsername,
+    })
+    .from(courseRecords)
+    .leftJoin(players, eq(players.id, courseRecords.playerId))
+    .where(
+      and(
+        inArray(courseRecords.courseId, uniqueCourseIds),
+        inArray(courseRecords.recordModeId, modeIds)
+      )
+    );
+
+  for (const record of records) {
+    const entry = flags.get(record.courseId) ?? {
+      hasTipsRecord: false,
+      hasSgtRecord: false,
+      tipsRecordScore: null,
+      tipsRecordPlayer: null,
+      sgtRecordScore: null,
+      sgtRecordPlayer: null,
+    };
+    const recordPlayer = record.playerDisplayName || record.playerUsername || null;
+    if (tipsMode && record.recordModeId === tipsMode.id) {
+      entry.hasTipsRecord = true;
+      entry.tipsRecordScore = record.score;
+      entry.tipsRecordPlayer = recordPlayer;
+    }
+    if (sgtMode && record.recordModeId === sgtMode.id) {
+      entry.hasSgtRecord = true;
+      entry.sgtRecordScore = record.score;
+      entry.sgtRecordPlayer = recordPlayer;
+    }
+    flags.set(record.courseId, entry);
+  }
+
+  return flags;
 }
 
 // ============================================================================

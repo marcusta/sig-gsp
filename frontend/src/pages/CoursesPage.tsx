@@ -30,6 +30,8 @@ type SortOption =
   | "updatedDate"
   | "longestTee"
   | "par3Tee"
+  | "tipsRecord"
+  | "sgtRecord"
   | "altitude"
   | "difficulty"
   | "rating"
@@ -45,6 +47,8 @@ const SORT_OPTIONS: SortOption[] = [
   "updatedDate",
   "longestTee",
   "par3Tee",
+  "tipsRecord",
+  "sgtRecord",
   "altitude",
   "difficulty",
   "rating",
@@ -74,6 +78,18 @@ const CoursesPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     (searchParams.get("order") as "asc" | "desc") || "asc"
   );
+  const [requireTipsRecord, setRequireTipsRecord] = useState(
+    searchParams.get("tipsRecord") === "1"
+  );
+  const [requireSgtRecord, setRequireSgtRecord] = useState(
+    searchParams.get("sgtRecord") === "1"
+  );
+  const [requireTipsHolderMatch, setRequireTipsHolderMatch] = useState(
+    searchParams.get("tipsHolderMatch") === "1"
+  );
+  const [requireSgtHolderMatch, setRequireSgtHolderMatch] = useState(
+    searchParams.get("sgtHolderMatch") === "1"
+  );
 
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(
     () => {
@@ -94,6 +110,10 @@ const CoursesPage: React.FC = () => {
     if (filterText) params.search = filterText;
     if (sortOption !== "alphabetical") params.sort = sortOption;
     if (sortOrder !== "asc") params.order = sortOrder;
+    if (requireTipsRecord) params.tipsRecord = "1";
+    if (requireSgtRecord) params.sgtRecord = "1";
+    if (requireTipsHolderMatch) params.tipsHolderMatch = "1";
+    if (requireSgtHolderMatch) params.sgtHolderMatch = "1";
 
     if (
       JSON.stringify(advancedFilters) !==
@@ -103,7 +123,39 @@ const CoursesPage: React.FC = () => {
     }
 
     setSearchParams(params);
-  }, [filterText, sortOption, sortOrder, advancedFilters, setSearchParams]);
+  }, [
+    filterText,
+    sortOption,
+    sortOrder,
+    advancedFilters,
+    requireTipsRecord,
+    requireSgtRecord,
+    requireTipsHolderMatch,
+    requireSgtHolderMatch,
+    setSearchParams,
+  ]);
+
+  useEffect(() => {
+    const hasSearch = filterText.trim().length > 0;
+    if (!hasSearch) {
+      if (requireTipsHolderMatch) setRequireTipsHolderMatch(false);
+      if (requireSgtHolderMatch) setRequireSgtHolderMatch(false);
+      return;
+    }
+
+    if (sortOption === "tipsRecord") {
+      if (!requireTipsHolderMatch) setRequireTipsHolderMatch(true);
+      if (requireSgtHolderMatch) setRequireSgtHolderMatch(false);
+    } else if (sortOption === "sgtRecord") {
+      if (!requireSgtHolderMatch) setRequireSgtHolderMatch(true);
+      if (requireTipsHolderMatch) setRequireTipsHolderMatch(false);
+    }
+  }, [
+    filterText,
+    sortOption,
+    requireTipsHolderMatch,
+    requireSgtHolderMatch,
+  ]);
 
   const [startBackgroundFullLoad, setStartBackgroundFullLoad] = useState(false);
   const [fullCatalogReady, setFullCatalogReady] = useState(false);
@@ -156,8 +208,11 @@ const CoursesPage: React.FC = () => {
   });
 
   const isUsingFullCatalog = fullCatalogReady && Boolean(fullCourses);
-  const courses = useMemo(
-    () => (isUsingFullCatalog ? fullCourses : pagedCoursesData?.courses ?? []),
+  const courses = useMemo<Course[]>(
+    () =>
+      isUsingFullCatalog
+        ? fullCourses ?? []
+        : pagedCoursesData?.courses ?? [],
     [isUsingFullCatalog, fullCourses, pagedCoursesData]
   );
 
@@ -175,6 +230,29 @@ const CoursesPage: React.FC = () => {
 
   const handleAdvancedFilterChange = (newFilters: AdvancedFilters) => {
     setAdvancedFilters(newFilters);
+  };
+
+  const toggleQuickPar3Filter = () => {
+    setAdvancedFilters((prev) => ({
+      ...prev,
+      isPar3: prev.isPar3 === true ? undefined : true,
+    }));
+  };
+
+  const toggleTipsHolderMatch = () => {
+    setRequireTipsHolderMatch((v) => {
+      const next = !v;
+      if (next) setRequireSgtHolderMatch(false);
+      return next;
+    });
+  };
+
+  const toggleSgtHolderMatch = () => {
+    setRequireSgtHolderMatch((v) => {
+      const next = !v;
+      if (next) setRequireTipsHolderMatch(false);
+      return next;
+    });
   };
 
   const clearFilter = (filterKey: string, attributeId?: number) => {
@@ -215,11 +293,27 @@ const CoursesPage: React.FC = () => {
   };
 
   const filteredCourses = courses.filter((course) => {
+    const normalizedFilter = filterText.toLowerCase();
+    const tipsRecordPlayer = (course.tipsRecordPlayer || "").toLowerCase();
+    const sgtRecordPlayer = (course.sgtRecordPlayer || "").toLowerCase();
+    const tipsHolderMatches =
+      normalizedFilter.length > 0 && tipsRecordPlayer.includes(normalizedFilter);
+    const sgtHolderMatches =
+      normalizedFilter.length > 0 && sgtRecordPlayer.includes(normalizedFilter);
+
     const textFilter =
-      course.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      course.location.toLowerCase().includes(filterText.toLowerCase()) ||
+      course.name.toLowerCase().includes(normalizedFilter) ||
+      course.location.toLowerCase().includes(normalizedFilter) ||
       course.holes.toString().includes(filterText) ||
-      course.designer.toLowerCase().includes(filterText.toLowerCase());
+      course.designer.toLowerCase().includes(normalizedFilter) ||
+      tipsRecordPlayer.includes(normalizedFilter) ||
+      sgtRecordPlayer.includes(normalizedFilter);
+
+    const holderMatchFilter =
+      normalizedFilter.length === 0 ||
+      (!requireTipsHolderMatch && !requireSgtHolderMatch) ||
+      (requireTipsHolderMatch && tipsHolderMatches) ||
+      (requireSgtHolderMatch && sgtHolderMatches);
 
     const firstTeeLength =
       course.teeBoxes?.find((tee) => tee?.length > 0)?.length || 0;
@@ -254,12 +348,19 @@ const CoursesPage: React.FC = () => {
         advancedFilters.selectedAttributes.length === 0 ||
         advancedFilters.selectedAttributes.every((attrId) =>
           course.attributes.some((attr) => attr.id === attrId)
-        ));
+        )) &&
+      (!requireTipsRecord || Boolean(course.hasTipsRecord)) &&
+      (!requireSgtRecord || Boolean(course.hasSgtRecord));
 
-    return textFilter && advancedFilter;
+    return textFilter && holderMatchFilter && advancedFilter;
   });
 
-  const sortedCourses = sortCourses(filteredCourses, sortOption, sortOrder);
+  const sortedCourses = sortCourses(
+    filteredCourses,
+    sortOption,
+    sortOrder,
+    filterText
+  );
 
   // Configurable batch size for lazy loading (you can change the value here)
   const BATCH_SIZE = 10;
@@ -301,7 +402,13 @@ const CoursesPage: React.FC = () => {
   }, [filterText, sortOption, sortOrder, advancedFilters, isUsingFullCatalog]);
 
   const activeFilterCount = countActiveFilters(advancedFilters);
-  const hasActiveFilters = activeFilterCount > 0;
+  const quickFilterCount =
+    (requireTipsRecord ? 1 : 0) +
+    (requireSgtRecord ? 1 : 0) +
+    (requireTipsHolderMatch ? 1 : 0) +
+    (requireSgtHolderMatch ? 1 : 0);
+  const totalActiveFilterCount = activeFilterCount + quickFilterCount;
+  const hasActiveFilters = totalActiveFilterCount > 0;
 
   if (isPagedLoading && courses.length === 0) {
     return <div className="text-amber-100/80">Loading...</div>;
@@ -336,7 +443,7 @@ const CoursesPage: React.FC = () => {
           Filters
           {hasActiveFilters && (
             <Badge variant="secondary" className="ml-2 px-1.5 py-0.5 text-xs bg-amber-700/60 text-amber-50 border-none">
-              {activeFilterCount}
+              {totalActiveFilterCount}
             </Badge>
           )}
         </Button>
@@ -366,6 +473,8 @@ const CoursesPage: React.FC = () => {
             <option value="difficulty">Difficulty</option>
             <option value="longestTee">Longest Tee Length</option>
             <option value="par3Tee">Par 3 Tee Length</option>
+            <option value="tipsRecord">Tips Record</option>
+            <option value="sgtRecord">SGT Record</option>
             <option value="altitude">Altitude</option>
             <option value="rating">Course Rating</option>
             <option value="largestElevationDrop">Largest Elevation Drop</option>
@@ -390,6 +499,71 @@ const CoursesPage: React.FC = () => {
             )}
           </Button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant={advancedFilters.isPar3 === true ? "default" : "outline"}
+          size="sm"
+          onClick={toggleQuickPar3Filter}
+          className={
+            advancedFilters.isPar3 === true
+              ? "bg-emerald-800/70 hover:bg-emerald-700/70 border-emerald-700/50 text-amber-50"
+              : "bg-transparent border-amber-900/20 text-amber-100/80 hover:bg-slate-900/30 hover:text-amber-50"
+          }
+        >
+          Par 3
+        </Button>
+        <Button
+          variant={requireTipsRecord ? "default" : "outline"}
+          size="sm"
+          onClick={() => setRequireTipsRecord((v) => !v)}
+          className={
+            requireTipsRecord
+              ? "bg-emerald-800/70 hover:bg-emerald-700/70 border-emerald-700/50 text-amber-50"
+              : "bg-transparent border-amber-900/20 text-amber-100/80 hover:bg-slate-900/30 hover:text-amber-50"
+          }
+        >
+          Has Tips Record
+        </Button>
+        <Button
+          variant={requireSgtRecord ? "default" : "outline"}
+          size="sm"
+          onClick={() => setRequireSgtRecord((v) => !v)}
+          className={
+            requireSgtRecord
+              ? "bg-emerald-800/70 hover:bg-emerald-700/70 border-emerald-700/50 text-amber-50"
+              : "bg-transparent border-amber-900/20 text-amber-100/80 hover:bg-slate-900/30 hover:text-amber-50"
+          }
+        >
+          Has SGT Record
+        </Button>
+        <Button
+          variant={requireTipsHolderMatch ? "default" : "outline"}
+          size="sm"
+          onClick={toggleTipsHolderMatch}
+          disabled={filterText.trim().length === 0}
+          className={
+            requireTipsHolderMatch
+              ? "bg-emerald-800/70 hover:bg-emerald-700/70 border-emerald-700/50 text-amber-50"
+              : "bg-transparent border-amber-900/20 text-amber-100/80 hover:bg-slate-900/30 hover:text-amber-50 disabled:opacity-50"
+          }
+        >
+          Tips Holder Match
+        </Button>
+        <Button
+          variant={requireSgtHolderMatch ? "default" : "outline"}
+          size="sm"
+          onClick={toggleSgtHolderMatch}
+          disabled={filterText.trim().length === 0}
+          className={
+            requireSgtHolderMatch
+              ? "bg-emerald-800/70 hover:bg-emerald-700/70 border-emerald-700/50 text-amber-50"
+              : "bg-transparent border-amber-900/20 text-amber-100/80 hover:bg-slate-900/30 hover:text-amber-50 disabled:opacity-50"
+          }
+        >
+          SGT Holder Match
+        </Button>
       </div>
 
       {/* Active filter chips */}
@@ -476,6 +650,50 @@ const CoursesPage: React.FC = () => {
               </button>
             </Badge>
           )}
+          {requireTipsRecord && (
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
+              Has Tips Record
+              <button
+                onClick={() => setRequireTipsRecord(false)}
+                className="ml-1 hover:text-red-400"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {requireSgtRecord && (
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
+              Has SGT Record
+              <button
+                onClick={() => setRequireSgtRecord(false)}
+                className="ml-1 hover:text-red-400"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {requireTipsHolderMatch && (
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
+              Tips Holder Match
+              <button
+                onClick={() => setRequireTipsHolderMatch(false)}
+                className="ml-1 hover:text-red-400"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {requireSgtHolderMatch && (
+            <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
+              SGT Holder Match
+              <button
+                onClick={() => setRequireSgtHolderMatch(false)}
+                className="ml-1 hover:text-red-400"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
           {advancedFilters.selectedAttributes.map((attrId) => {
             const attr = attributes.find((a) => a.id === attrId);
             if (!attr) return null;
@@ -492,7 +710,13 @@ const CoursesPage: React.FC = () => {
             );
           })}
           <button
-            onClick={() => setAdvancedFilters(DEFAULT_ADVANCED_FILTERS)}
+            onClick={() => {
+              setAdvancedFilters(DEFAULT_ADVANCED_FILTERS);
+              setRequireTipsRecord(false);
+              setRequireSgtRecord(false);
+              setRequireTipsHolderMatch(false);
+              setRequireSgtHolderMatch(false);
+            }}
             className="text-sm text-amber-200/50 hover:text-amber-100 underline"
           >
             Clear all
@@ -519,7 +743,12 @@ const CoursesPage: React.FC = () => {
 
 export default CoursesPage;
 
-function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
+function sortCourses(
+  courses: Course[],
+  sortOption: string,
+  sortOrder: string,
+  searchText: string
+) {
   const getSortedTeeBoxes = (course: Course) =>
     [...(course.teeBoxes || [])].sort((a, b) => b.length - a.length);
 
@@ -533,6 +762,21 @@ function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
     const teeBoxes = getSortedTeeBoxes(course);
     return teeBoxes[0] || null;
   };
+
+  const parseRecordScore = (score?: string | null): number | null => {
+    if (!score || score.trim() === "") return null;
+    const normalized = score.trim().toUpperCase();
+    if (normalized === "E") return 0;
+    const parsed = Number.parseInt(normalized, 10);
+    return Number.isNaN(parsed) ? null : parsed;
+  };
+
+  const getComparableRecordScore = (score?: string | null) => {
+    const parsed = parseRecordScore(score);
+    return parsed === null ? 999 : parsed;
+  };
+  const normalizedSearch = searchText.trim().toLowerCase();
+  const hasSearch = normalizedSearch.length > 0;
 
   const sortFunctions: Record<string, (a: Course, b: Course) => number> = {
     rating: (a: Course, b: Course) => {
@@ -574,6 +818,18 @@ function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
         getLongestTeeLength(b);
       return aPar3 - bPar3;
     },
+    tipsRecord: (a: Course, b: Course) => {
+      return (
+        getComparableRecordScore(a.tipsRecordScore) -
+        getComparableRecordScore(b.tipsRecordScore)
+      );
+    },
+    sgtRecord: (a: Course, b: Course) => {
+      return (
+        getComparableRecordScore(a.sgtRecordScore) -
+        getComparableRecordScore(b.sgtRecordScore)
+      );
+    },
     altitude: (a: Course, b: Course) => {
       return a.altitude - b.altitude;
     },
@@ -606,6 +862,28 @@ function sortCourses(courses: Course[], sortOption: string, sortOrder: string) {
 
   const sortFunc = sortFunctions[sortOption];
   const multiplier = sortOrder === "asc" ? 1 : -1;
-  const fixAscDesc = (a: Course, b: Course) => sortFunc(a, b) * multiplier;
+  const fixAscDesc = (a: Course, b: Course) => {
+    if (hasSearch && sortOption === "tipsRecord") {
+      const aMatch = (a.tipsRecordPlayer || "")
+        .toLowerCase()
+        .includes(normalizedSearch);
+      const bMatch = (b.tipsRecordPlayer || "")
+        .toLowerCase()
+        .includes(normalizedSearch);
+      if (aMatch !== bMatch) return aMatch ? -1 : 1;
+    }
+
+    if (hasSearch && sortOption === "sgtRecord") {
+      const aMatch = (a.sgtRecordPlayer || "")
+        .toLowerCase()
+        .includes(normalizedSearch);
+      const bMatch = (b.sgtRecordPlayer || "")
+        .toLowerCase()
+        .includes(normalizedSearch);
+      if (aMatch !== bMatch) return aMatch ? -1 : 1;
+    }
+
+    return sortFunc(a, b) * multiplier;
+  };
   return [...courses].sort(fixAscDesc);
 }

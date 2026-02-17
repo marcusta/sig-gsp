@@ -263,6 +263,20 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
                   </div>
                 ))}
           </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <RecordStripPill
+              label="Tips"
+              hasRecord={Boolean(course.hasTipsRecord)}
+              score={course.tipsRecordScore}
+              player={course.tipsRecordPlayer}
+            />
+            <RecordStripPill
+              label="SGT"
+              hasRecord={Boolean(course.hasSgtRecord)}
+              score={course.sgtRecordScore}
+              player={course.sgtRecordPlayer}
+            />
+          </div>
         </div>
       </div>
 
@@ -284,6 +298,35 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
         </div>
       )}
     </>
+  );
+};
+
+const RecordStripPill: React.FC<{
+  label: "Tips" | "SGT";
+  hasRecord: boolean;
+  score?: string | null;
+  player?: string | null;
+}> = ({ label, hasRecord, score, player }) => {
+  if (!hasRecord) {
+    return (
+      <div className="text-[10px] px-2 py-1 rounded-md bg-slate-700/30 text-amber-100/50 border border-slate-600/30">
+        {label}: no record
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-[10px] px-2 py-1 rounded-md bg-emerald-900/40 text-amber-50/90 border border-emerald-800/40">
+      <span className="font-semibold">{label}</span>
+      <span className="mx-1 text-amber-200/70">•</span>
+      <span>{score ?? "E"}</span>
+      {player ? (
+        <>
+          <span className="mx-1 text-amber-200/70">•</span>
+          <span className="opacity-90">{player}</span>
+        </>
+      ) : null}
+    </div>
   );
 };
 
