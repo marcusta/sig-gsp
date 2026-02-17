@@ -22,6 +22,8 @@ import {
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { readFile } from "fs/promises";
+import { createHash } from "node:crypto";
+import { gzipSync } from "node:zlib";
 import logger from "logger";
 import {
   teeBoxesFromCourseData,
@@ -30,19 +32,87 @@ import {
 } from "teebox-data";
 import { scrapeLeaderboard } from "./sgt-scraper";
 
+const COURSES_CACHE_TTL_MS = 3 * 60 * 60 * 1000;
+const COURSES_CACHE_CONTROL = "public, max-age=300, stale-while-revalidate=3600";
+
+type CoursesApiCache = {
+  body: string;
+  gzippedBody: Buffer;
+  etag: string;
+  lastModified: string;
+  expiresAt: number;
+};
+
+let coursesApiCache: CoursesApiCache | null = null;
+
+function invalidateCoursesApiCache() {
+  coursesApiCache = null;
+}
+
+async function buildCoursesApiCache(): Promise<CoursesApiCache> {
+  const courseList = await db.query.courses.findMany({
+    with: { teeBoxes: true, tags: true },
+    where: eq(courses.enabled, true),
+  });
+  const courseListWithTags = await addTagsToCourses(courseList as any);
+  const coursesWithRecordFlags = await addRecordFlagsToCourses(
+    courseListWithTags as any
+  );
+
+  const body = JSON.stringify(coursesWithRecordFlags);
+  const gzippedBody = gzipSync(body);
+  const etag = `"${createHash("sha1").update(body).digest("base64url")}"`;
+  const now = Date.now();
+
+  return {
+    body,
+    gzippedBody,
+    etag,
+    lastModified: new Date(now).toUTCString(),
+    expiresAt: now + COURSES_CACHE_TTL_MS,
+  };
+}
+
+async function getCoursesApiCache(): Promise<CoursesApiCache> {
+  if (!coursesApiCache || Date.now() > coursesApiCache.expiresAt) {
+    coursesApiCache = await buildCoursesApiCache();
+  }
+  return coursesApiCache;
+}
+
 const routes = new Elysia()
   // Home route
   .get("/gsp-welcome", () => ({
     message: "Welcome to the Bun server with Elysia!",
   }))
 
-  .get("/api/courses", async () => {
-    const courseList = await db.query.courses.findMany({
-      with: { teeBoxes: true, tags: true },
-      where: eq(courses.enabled, true),
+  .get("/api/courses", async ({ request }) => {
+    const cached = await getCoursesApiCache();
+    const requestEtag = request.headers.get("if-none-match");
+    const acceptsGzip = /\bgzip\b/i.test(
+      request.headers.get("accept-encoding") ?? ""
+    );
+
+    const headers = new Headers({
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": COURSES_CACHE_CONTROL,
+      ETag: cached.etag,
+      "Last-Modified": cached.lastModified,
+      Vary: "Accept-Encoding",
     });
-    const courseListWithTags = await addTagsToCourses(courseList as any);
-    return addRecordFlagsToCourses(courseListWithTags as any);
+
+    if (requestEtag && requestEtag === cached.etag) {
+      return new Response(null, { status: 304, headers });
+    }
+
+    if (acceptsGzip) {
+      headers.set("Content-Encoding", "gzip");
+      headers.set("Content-Length", String(cached.gzippedBody.byteLength));
+      return new Response(cached.gzippedBody, { status: 200, headers });
+    }
+
+    headers.set("Content-Length", String(Buffer.byteLength(cached.body, "utf8")));
+    return new Response(cached.body, { status: 200, headers });
   })
 
   .get("/api/courses/paginated", async ({ query }) => {
@@ -209,6 +279,7 @@ const routes = new Elysia()
     const [failedCourses, successCourses] = await updateParOnCourses(
       courseList
     );
+    invalidateCoursesApiCache();
     return {
       failedCourses,
       successCourses,
@@ -264,6 +335,7 @@ const routes = new Elysia()
         courseFromDb.id,
         courseChangeRequest.gkdFileContents
       );
+      invalidateCoursesApiCache();
       let missingSgtInfo = "";
       if (!courseChangeRequest.sgtInfo) {
         missingSgtInfo = " !!! Missing sgt info";
@@ -369,6 +441,7 @@ const routes = new Elysia()
       await updateCourseFromCourseData(course.id, gkData);
       await updateCourseTags(course.id, gkData);
     }
+    invalidateCoursesApiCache();
     return { success: "Course data updated" };
   })
 
@@ -388,6 +461,7 @@ const routes = new Elysia()
       return { error: "Course gkdata not found" };
     }
     await updateTeeBoxesFromCourseData(course.id, gkData);
+    invalidateCoursesApiCache();
     return { success: "Tee boxes updated" };
   })
 
@@ -405,6 +479,7 @@ const routes = new Elysia()
         .set({ enabled })
         .where(eq(courses.id, course.id));
     }
+    invalidateCoursesApiCache();
     return { success: "Courses synced with sgt" };
   })
 
@@ -657,6 +732,7 @@ const routes = new Elysia()
       const { runRecordsScrape } = await import("./scraper");
       console.log("Running records scrape");
       const result = await runRecordsScrape();
+      invalidateCoursesApiCache();
       return result;
     } catch (error) {
       logger.error("Scrape endpoint error:", error);
@@ -960,6 +1036,7 @@ const routes = new Elysia()
     try {
       const { generatePlayerRankSnapshot } = await import("./scraper");
       const result = await generatePlayerRankSnapshot();
+      invalidateCoursesApiCache();
       return result;
     } catch (error) {
       logger.error("Snapshot generation error:", error);
