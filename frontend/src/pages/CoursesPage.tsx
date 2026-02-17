@@ -6,6 +6,7 @@ import {
   fetchCoursesPaginated,
 } from "@/api/useApi";
 import CourseCardView from "@/components/CourseCardView";
+import CourseListView from "@/components/CourseListView";
 import AdvancedFilterPopup, {
   DEFAULT_ADVANCED_FILTERS,
   countActiveFilters,
@@ -66,6 +67,7 @@ function isSortOption(value: string | null): value is SortOption {
 
 const CoursesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const initialView = searchParams.get("view") === "list" ? "list" : "grid";
 
   const [filterText, setFilterText] = useState(
     searchParams.get("search") || ""
@@ -78,6 +80,7 @@ const CoursesPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     (searchParams.get("order") as "asc" | "desc") || "asc"
   );
+  const [viewMode, setViewMode] = useState<"grid" | "list">(initialView);
   const [requireTipsRecord, setRequireTipsRecord] = useState(
     searchParams.get("tipsRecord") === "1"
   );
@@ -110,6 +113,7 @@ const CoursesPage: React.FC = () => {
     if (filterText) params.search = filterText;
     if (sortOption !== "alphabetical") params.sort = sortOption;
     if (sortOrder !== "asc") params.order = sortOrder;
+    if (viewMode === "list") params.view = "list";
     if (requireTipsRecord) params.tipsRecord = "1";
     if (requireSgtRecord) params.sgtRecord = "1";
     if (requireTipsHolderMatch) params.tipsHolderMatch = "1";
@@ -127,6 +131,7 @@ const CoursesPage: React.FC = () => {
     filterText,
     sortOption,
     sortOrder,
+    viewMode,
     advancedFilters,
     requireTipsRecord,
     requireSgtRecord,
@@ -498,6 +503,24 @@ const CoursesPage: React.FC = () => {
               <ArrowDownWideNarrow className="h-4 w-4" />
             )}
           </Button>
+          <div className="flex items-center rounded-lg border border-amber-900/20 p-0.5">
+            <Button
+              variant={viewMode === "grid" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-3"
+              onClick={() => setViewMode("grid")}
+            >
+              Grid
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "ghost"}
+              size="sm"
+              className="h-8 px-3"
+              onClick={() => setViewMode("list")}
+            >
+              List
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -724,8 +747,11 @@ const CoursesPage: React.FC = () => {
         </div>
       )}
 
-      {/* Pass only the first "visibleCoursesCount" courses to the CourseCardView */}
-      <CourseCardView courses={sortedCourses.slice(0, visibleCoursesCount)} />
+      {viewMode === "grid" ? (
+        <CourseCardView courses={sortedCourses.slice(0, visibleCoursesCount)} />
+      ) : (
+        <CourseListView courses={sortedCourses.slice(0, visibleCoursesCount)} />
+      )}
 
       {showAdvancedFilter && (
         <AdvancedFilterPopup
