@@ -18,6 +18,8 @@ import AdvancedFilterPopup, {
   MAX_DIFFICULTY,
   MIN_PAR,
   MAX_PAR,
+  MIN_HOLES,
+  MAX_HOLES,
 } from "@/components/AdvancedFilterPopup";
 import { Button } from "@/components/ui/button";
 import { FilterIcon, Search, ArrowUpNarrowWide, ArrowDownWideNarrow, X } from "lucide-react";
@@ -276,8 +278,8 @@ const CoursesPage: React.FC = () => {
         case "par":
           updated.par = [MIN_PAR, MAX_PAR];
           break;
-        case "onlyEighteenHoles":
-          updated.onlyEighteenHoles = false;
+        case "holes":
+          updated.holes = [MIN_HOLES, MAX_HOLES];
           break;
         case "isPar3":
           updated.isPar3 = undefined;
@@ -344,7 +346,8 @@ const CoursesPage: React.FC = () => {
         advancedFilters.par[1] === DEFAULT_ADVANCED_FILTERS.par[1]) ||
         (course.par >= advancedFilters.par[0] &&
           course.par <= advancedFilters.par[1])) &&
-      (!advancedFilters.onlyEighteenHoles || course.holes === 18) &&
+      (course.holes >= advancedFilters.holes[0] &&
+        course.holes <= advancedFilters.holes[1]) &&
       (advancedFilters.isPar3 === undefined ||
         course.isPar3 === advancedFilters.isPar3) &&
       (advancedFilters.rangeEnabled === undefined ||
@@ -640,17 +643,17 @@ const CoursesPage: React.FC = () => {
               </button>
             </Badge>
           ) : null}
-          {advancedFilters.onlyEighteenHoles && (
+          {(advancedFilters.holes[0] !== MIN_HOLES || advancedFilters.holes[1] !== MAX_HOLES) ? (
             <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
-              18 holes only
+              Holes: {advancedFilters.holes[0]}-{advancedFilters.holes[1]}
               <button
-                onClick={() => clearFilter("onlyEighteenHoles")}
+                onClick={() => clearFilter("holes")}
                 className="ml-1 hover:text-red-400"
               >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
-          )}
+          ) : null}
           {advancedFilters.isPar3 !== undefined && (
             <Badge variant="secondary" className="flex items-center gap-1 text-[10px] py-0.5 px-2 bg-emerald-900/50 text-amber-100/80 border border-emerald-800/30">
               Par 3 courses

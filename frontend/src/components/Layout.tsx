@@ -38,16 +38,33 @@ const Layout: React.FC = () => {
         }}
       />
 
-      <header className="relative z-10 border-b border-amber-900/15">
+      <header
+        className="relative z-10 border-b border-amber-900/15"
+        style={{
+          background:
+            "linear-gradient(180deg, hsl(150, 35%, 7%) 0%, hsl(150, 33%, 8%) 60%, transparent 100%)",
+        }}
+      >
         <div className="container mx-auto px-4 py-4 sm:py-6">
           <nav className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
             {/* Top row on mobile: Logo and unit toggle */}
             <div className="flex justify-between items-center">
-              <Link to="/courses" className="flex items-center gap-2">
-                <img src={sigLogo} alt="SIG" className="h-8 sm:h-10" />
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-50 tracking-tight italic">
-                  SIG Courses
-                </h1>
+              <Link to="/courses" className="flex items-center gap-1.5">
+                <div className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/[0.07] shrink-0">
+                  <img
+                    src={sigLogo}
+                    alt="SIG"
+                    className="h-8 sm:h-[2.6rem] brightness-110"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-50 tracking-tight italic leading-none">
+                    SIG Courses
+                  </h1>
+                  <span className="text-[9px] sm:text-[10px] text-amber-100/40 tracking-wide leading-tight">
+                    Course browser, records &amp; rankings
+                  </span>
+                </div>
               </Link>
               {/* Unit toggle - visible on mobile in top row */}
               <div className="flex items-center space-x-2 sm:hidden">

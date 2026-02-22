@@ -25,13 +25,15 @@ export const MIN_ALTITUDE = 0;
 export const MAX_ALTITUDE = 10000;
 export const MIN_DIFFICULTY = 0;
 export const MAX_DIFFICULTY = 20;
+export const MIN_HOLES = 1;
+export const MAX_HOLES = 18;
 
 export const DEFAULT_ADVANCED_FILTERS: AdvancedFilters = {
   teeboxLength: [MIN_TEEBOX_LENGTH, MAX_TEEBOX_LENGTH],
   altitude: [MIN_ALTITUDE, MAX_ALTITUDE],
   difficulty: [MIN_DIFFICULTY, MAX_DIFFICULTY],
   par: [MIN_PAR, MAX_PAR],
-  onlyEighteenHoles: false,
+  holes: [MIN_HOLES, MAX_HOLES],
   isPar3: undefined,
   rangeEnabled: undefined,
   selectedAttributes: [],
@@ -44,7 +46,7 @@ export function countActiveFilters(filters: AdvancedFilters): number {
   if (filters.altitude[0] !== MIN_ALTITUDE || filters.altitude[1] !== MAX_ALTITUDE) count++;
   if (filters.difficulty[0] !== MIN_DIFFICULTY || filters.difficulty[1] !== MAX_DIFFICULTY) count++;
   if (filters.par[0] !== MIN_PAR || filters.par[1] !== MAX_PAR) count++;
-  if (filters.onlyEighteenHoles) count++;
+  if (filters.holes[0] !== MIN_HOLES || filters.holes[1] !== MAX_HOLES) count++;
   if (filters.isPar3 !== undefined) count++;
   if (filters.rangeEnabled !== undefined) count++;
   if (filters.selectedAttributes && filters.selectedAttributes.length > 0) count += filters.selectedAttributes.length;
@@ -75,10 +77,6 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
 
   const handleSliderChange = (key: keyof AdvancedFilters, value: number[]) => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSwitchChange = (checked: boolean) => {
-    setLocalFilters((prev) => ({ ...prev, onlyEighteenHoles: checked }));
   };
 
   const handlePar3SwitchChange = (checked: boolean) => {
@@ -211,13 +209,19 @@ const AdvancedFilterPopup: React.FC<AdvancedFilterPopupProps> = ({
               {localFilters.par[0]} - {localFilters.par[1]}
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="only-eighteen-holes"
-              checked={localFilters.onlyEighteenHoles}
-              onCheckedChange={handleSwitchChange}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="col-span-4 text-amber-100/80">Holes</Label>
+            <RangeSlider
+              className="col-span-3"
+              min={MIN_HOLES}
+              max={MAX_HOLES}
+              step={1}
+              value={localFilters.holes}
+              onValueChange={(value) => handleSliderChange("holes", value)}
             />
-            <Label htmlFor="only-eighteen-holes" className="text-amber-100/80">Only 18-hole courses</Label>
+            <div className="col-span-1 text-right text-amber-100/60 text-sm">
+              {localFilters.holes[0]} - {localFilters.holes[1]}
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             <Switch

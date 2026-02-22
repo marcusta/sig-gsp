@@ -176,7 +176,7 @@ export interface AdvancedFilters {
   altitude: [number, number];
   difficulty: [number, number];
   par: [number, number];
-  onlyEighteenHoles: boolean;
+  holes: [number, number];
   isPar3: boolean | undefined;
   rangeEnabled: boolean | undefined;
   selectedAttributes: number[];
