@@ -176,6 +176,9 @@ dist
 
 data/gspro.db
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # Deployment artifacts
 deploy-tmp/
 *.local-backup
