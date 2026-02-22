@@ -42,9 +42,10 @@ const Layout: React.FC = () => {
           <nav className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
             {/* Top row on mobile: Logo and unit toggle */}
             <div className="flex justify-between items-center">
-              <Link to="/courses">
+              <Link to="/courses" className="flex items-center gap-2">
+                <img src="/sig-logo.png" alt="SIG" className="h-8 sm:h-10" />
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-50 tracking-tight italic">
-                  GSPro Courses
+                  SIG Courses
                 </h1>
               </Link>
               {/* Unit toggle - visible on mobile in top row */}
