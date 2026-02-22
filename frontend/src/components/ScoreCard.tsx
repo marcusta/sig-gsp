@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCourseRecords } from "@/api/useApi";
 import { CourseRecordsView } from "./CourseRecordsView";
 import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { getSgtSplashUrl } from "@/lib/sgt-assets";
 
 interface ScoreCardProps {
   data: ScoreCardData;
@@ -294,7 +295,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ data, onClose }) => {
               {data.sgtSplashUrl && (
                 <div className="rounded-lg overflow-hidden shadow-lg border border-amber-900/30">
                   <img
-                    src={`https://simulatorgolftour.com${data.sgtSplashUrl}`}
+                    src={getSgtSplashUrl(data.sgtSplashUrl)}
                     alt={data.courseName}
                     className="w-full h-32 object-cover"
                   />

@@ -16,6 +16,7 @@ import { ScoreCard } from "./ScoreCard";
 import { useQuery } from "@tanstack/react-query";
 import { YouTubeEmbed } from "./YouTubeEmbed";
 import { fetchCourseById } from "@/api/useApi";
+import { getSgtSplashUrl } from "@/lib/sgt-assets";
 
 interface CardViewProps {
   courses: Course[];
@@ -110,13 +111,6 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
   const scoreCardData = courseData
     ? transformToScoreCardData(courseData)
     : null;
-
-  const getImageUrl = (sgtSplashUrl: string | null | undefined): string => {
-    const baseUrl = "https://simulatorgolftour.com";
-    return sgtSplashUrl
-      ? `${baseUrl}${sgtSplashUrl}`
-      : `${baseUrl}/public/home/tour-bg.jpg`;
-  };
 
   const handleScoreCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -231,7 +225,7 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
             </div>
           )}
           <img
-            src={getImageUrl(course.sgtSplashUrl)}
+            src={getSgtSplashUrl(course.sgtSplashUrl)}
             alt={`${course.name} splash`}
             className={`w-full h-full object-cover transition-opacity duration-300 ${
               imageLoaded ? "opacity-100" : "opacity-0"
