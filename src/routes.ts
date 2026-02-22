@@ -1045,9 +1045,35 @@ const routes = new Elysia()
     }
   })
 
-  // Catch-all route to serve index.html
-  .all("*", async ({ set }) => {
+  // Catch-all route: try static file first, then serve index.html for SPA
+  .all("*", async ({ path, set }) => {
     try {
+      // Check if the request maps to a static file in public/gsp
+      if (path.includes(".")) {
+        const filePath = `./public/gsp${path}`;
+        try {
+          const file = await readFile(filePath);
+          const ext = path.split(".").pop()?.toLowerCase();
+          const mimeTypes: Record<string, string> = {
+            png: "image/png",
+            jpg: "image/jpeg",
+            jpeg: "image/jpeg",
+            gif: "image/gif",
+            svg: "image/svg+xml",
+            ico: "image/x-icon",
+            webp: "image/webp",
+            css: "text/css",
+            js: "application/javascript",
+            json: "application/json",
+          };
+          if (ext && mimeTypes[ext]) {
+            set.headers["Content-Type"] = mimeTypes[ext];
+          }
+          return file;
+        } catch {
+          // File not found, fall through to index.html
+        }
+      }
       const html = await readFile("./public/gsp/index.html");
       set.headers["Content-Type"] = "text/html";
       return html;
