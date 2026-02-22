@@ -4,8 +4,9 @@ import { Database } from "bun:sqlite";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 
 export async function migrateDatabase() {
-  console.log("Migrating database");
-  const sqlite = new Database("./data/gspro.db");
+  const dbPath = process.env.DB_PATH || "./data/gspro.db";
+  console.log(`Migrating database at ${dbPath}`);
+  const sqlite = new Database(dbPath);
   const db = drizzle(sqlite);
   try {
     await migrate(db, { migrationsFolder: "./src/db/migrations" });

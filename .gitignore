@@ -175,3 +175,7 @@ dist
 .DS_Store
 
 data/gspro.db
+
+# Deployment artifacts
+deploy-tmp/
+*.local-backup
