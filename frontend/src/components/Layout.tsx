@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { Switch } from "./ui/switch";
 import { useUnits } from "@/contexts/UnitContext";
+import sigLogo from "/sig-logo.png";
 
 // Masters broadcast gradient background
 const mastersBackground = `
@@ -43,7 +44,7 @@ const Layout: React.FC = () => {
             {/* Top row on mobile: Logo and unit toggle */}
             <div className="flex justify-between items-center">
               <Link to="/courses" className="flex items-center gap-2">
-                <img src="/sig-logo.png" alt="SIG" className="h-8 sm:h-10" />
+                <img src={sigLogo} alt="SIG" className="h-8 sm:h-10" />
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-50 tracking-tight italic">
                   SIG Courses
                 </h1>
