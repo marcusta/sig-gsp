@@ -1,4 +1,6 @@
-const SGT_CDN_ORIGIN = "https://sgt-static.b-cdn.net";
+// CDN has hotlink protection (requires Referer: simulatorgolftour.com),
+// so we use the origin server which serves /cmp/ images without restriction.
+const SGT_SPLASH_ORIGIN = "https://simulatorgolftour.com";
 const SGT_ORIGIN = "https://simulatorgolftour.com";
 const SPLASH_PATH_PREFIX = "/public/assets/courseImages/splashes/";
 const SPLASH_CMP_PATH_PREFIX = "/public/assets/courseImages/splashes/cmp/";
@@ -44,7 +46,7 @@ export function getSgtSplashUrl(
   if (value.startsWith("/")) {
     const cdnPath = toCdnSplashPath(value);
     if (cdnPath) {
-      return appendVersion(`${SGT_CDN_ORIGIN}${cdnPath}`, version);
+      return appendVersion(`${SGT_SPLASH_ORIGIN}${cdnPath}`, version);
     }
     return `${SGT_ORIGIN}${value}`;
   }
@@ -55,7 +57,7 @@ export function getSgtSplashUrl(
       const parsed = new URL(value);
       const cdnPath = toCdnSplashPath(parsed.pathname);
       if (cdnPath) {
-        return appendVersion(`${SGT_CDN_ORIGIN}${cdnPath}`, version);
+        return appendVersion(`${SGT_SPLASH_ORIGIN}${cdnPath}`, version);
       }
       return value;
     } catch {
