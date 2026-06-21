@@ -2,6 +2,7 @@
 // so we use the origin server which serves /cmp/ images without restriction.
 const SGT_SPLASH_ORIGIN = "https://simulatorgolftour.com";
 const SGT_ORIGIN = "https://simulatorgolftour.com";
+const SGT_AVATAR_CDN_HOST = "sgt-static.b-cdn.net";
 const SPLASH_PATH_PREFIX = "/public/assets/courseImages/splashes/";
 const SPLASH_CMP_PATH_PREFIX = "/public/assets/courseImages/splashes/cmp/";
 
@@ -66,4 +67,40 @@ export function getSgtSplashUrl(
   }
 
   return fallback;
+}
+
+// Player avatars are served from a CDN (sgt-static.b-cdn.net) with hotlink
+// protection: it 403s unless the request carries Referer: simulatorgolftour.com,
+// which a cross-origin <img> on our domain never sends. The origin server
+// serves the same /sgt-api/avatar/... paths without that restriction, so
+// rewrite CDN avatar URLs to the origin host at render time.
+export function getSgtAvatarUrl(
+  input: string | null | undefined
+): string | undefined {
+  if (!input || input.trim() === "") {
+    return undefined;
+  }
+
+  const value = input.trim();
+
+  // Relative path from DB -> serve from origin
+  if (value.startsWith("/")) {
+    return `${SGT_ORIGIN}${value}`;
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    try {
+      const parsed = new URL(value);
+      if (parsed.hostname === SGT_AVATAR_CDN_HOST) {
+        parsed.protocol = "https:";
+        parsed.hostname = "simulatorgolftour.com";
+        return parsed.toString();
+      }
+      return value;
+    } catch {
+      return undefined;
+    }
+  }
+
+  return undefined;
 }

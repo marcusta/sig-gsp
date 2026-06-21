@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchTopRivalries } from "@/api/useApi";
 import { TopRivalry } from "@/types";
+import { getSgtAvatarUrl } from "@/lib/sgt-assets";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Select,
@@ -108,7 +109,7 @@ export default function TopRivalriesPage() {
                   <div className="flex items-center gap-3 p-3 bg-emerald-950/30 rounded-lg">
                     {rivalry.player1.avatarUrl ? (
                       <img
-                        src={rivalry.player1.avatarUrl}
+                        src={getSgtAvatarUrl(rivalry.player1.avatarUrl)}
                         alt=""
                         className="w-12 h-12 rounded-full object-cover ring-2 ring-emerald-700/50 shrink-0"
                       />
@@ -151,7 +152,7 @@ export default function TopRivalriesPage() {
                   <div className="flex items-center gap-3 p-3 bg-amber-950/30 rounded-lg">
                     {rivalry.player2.avatarUrl ? (
                       <img
-                        src={rivalry.player2.avatarUrl}
+                        src={getSgtAvatarUrl(rivalry.player2.avatarUrl)}
                         alt=""
                         className="w-12 h-12 rounded-full object-cover ring-2 ring-amber-700/50 shrink-0"
                       />
@@ -199,7 +200,7 @@ export default function TopRivalriesPage() {
                     <div className="flex flex-col items-end">
                       {rivalry.player1.avatarUrl ? (
                         <img
-                          src={rivalry.player1.avatarUrl}
+                          src={getSgtAvatarUrl(rivalry.player1.avatarUrl)}
                           alt=""
                           className="w-16 h-16 rounded-full object-cover ring-2 ring-emerald-700/50"
                         />
@@ -232,7 +233,7 @@ export default function TopRivalriesPage() {
                     <div className="flex flex-col items-start">
                       {rivalry.player2.avatarUrl ? (
                         <img
-                          src={rivalry.player2.avatarUrl}
+                          src={getSgtAvatarUrl(rivalry.player2.avatarUrl)}
                           alt=""
                           className="w-16 h-16 rounded-full object-cover ring-2 ring-amber-700/50"
                         />

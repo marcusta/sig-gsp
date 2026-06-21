@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getRivalryComment } from "@/data/rivalryComments";
+import { getSgtAvatarUrl } from "@/lib/sgt-assets";
 import {
   Select,
   SelectContent,
@@ -279,7 +280,7 @@ export default function PlayerProfilePage() {
           <div className="flex items-center gap-4 sm:block">
             {player.avatarUrl ? (
               <img
-                src={player.avatarUrl}
+                src={getSgtAvatarUrl(player.avatarUrl)}
                 alt=""
                 className="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-emerald-900/40 shrink-0"
               />
@@ -542,7 +543,7 @@ export default function PlayerProfilePage() {
                       <div className="flex items-center gap-3">
                         {rivalry.player.avatarUrl ? (
                           <img
-                            src={rivalry.player.avatarUrl}
+                            src={getSgtAvatarUrl(rivalry.player.avatarUrl)}
                             alt=""
                             className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover ring-2 shrink-0 ${rivalry.balance > 0 ? "ring-emerald-700/50" : rivalry.balance < 0 ? "ring-red-800/50" : "ring-amber-900/30"}`}
                           />

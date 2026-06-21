@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { CourseRecords, RecordChangeEvent } from "@/types";
+import { getSgtAvatarUrl } from "@/lib/sgt-assets";
 import { Badge } from "./ui/badge";
 import { fetchCourseRecordHistory } from "@/api/useApi";
 import {
@@ -178,7 +179,7 @@ export const CourseRecordsView: React.FC<CourseRecordsViewProps> = ({
                   <div className="w-12 h-12 flex items-center justify-center">
                     {entry.avatarUrl ? (
                       <img
-                        src={entry.avatarUrl}
+                        src={getSgtAvatarUrl(entry.avatarUrl)}
                         alt={entry.playerName}
                         className="w-12 h-12 rounded-full"
                       />

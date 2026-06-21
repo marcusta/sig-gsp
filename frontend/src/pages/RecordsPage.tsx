@@ -7,6 +7,7 @@ import {
   fetchRecordMovers,
 } from "@/api/useApi";
 import { Badge } from "@/components/ui/badge";
+import { getSgtAvatarUrl } from "@/lib/sgt-assets";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -339,7 +340,7 @@ export default function RecordsPage() {
                               <div className="flex items-center gap-3">
                                 {entry.player.avatarUrl ? (
                                   <img
-                                    src={entry.player.avatarUrl}
+                                    src={getSgtAvatarUrl(entry.player.avatarUrl)}
                                     alt=""
                                     className="w-10 h-10 rounded-full object-cover ring-2 ring-amber-900/30"
                                   />
