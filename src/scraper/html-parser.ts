@@ -87,12 +87,16 @@ function parseRecordFromDataAttrs(
   const countryCode = countryMatch ? countryMatch[1] : null;
 
   // Extract avatar URL from lazy load attribute
+  // SGT may return either a relative path (/sgt-api/avatar/...) or an
+  // absolute CDN URL (https://sgt-static.b-cdn.net/...). Only prepend the
+  // site domain for relative paths, otherwise the URL gets doubled.
   const $avatar = $playerCell.find("img[data-lazyloadurl]");
-  const avatarPath = $avatar.attr("data-lazyloadurl");
-  const avatarUrl =
-    avatarPath && avatarPath.trim() !== ""
-      ? `https://simulatorgolftour.com${avatarPath}`
-      : null;
+  const avatarPath = $avatar.attr("data-lazyloadurl")?.trim();
+  const avatarUrl = avatarPath
+    ? /^https?:\/\//.test(avatarPath)
+      ? avatarPath
+      : `https://simulatorgolftour.com${avatarPath}`
+    : null;
 
   // Parse score
   const score = scoreAttr?.trim() || "E";
