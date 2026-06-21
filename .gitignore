@@ -174,7 +174,16 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
-data/gspro.db
+# SQLite databases, WAL/SHM sidecars, and backups
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.db.old*
+data/*.db.quarantined
+
+# Scratch scrape output
+sgt-scrape/
+data/oaks.json
 
 # Claude Code local settings
 .claude/settings.local.json
