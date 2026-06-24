@@ -1,12 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const cheerio = require('cheerio');
 
 // Configuration
 const config = {
     baseDirectory: 'd:/sig/gspro-prefetcher/sgt/',
-    coursesUrl: 'https://simulatorgolftour.com/sgt-api/courses/list?_=1727193337239',
+    // Course metadata + SGT ids come from the course manifest (JSON). This
+    // replaces the old courses/list HTML scrape, which SGT changed to return
+    // an empty body - that broke sgt_id linking for every newly synced course.
+    manifestUrl: 'https://simulatorgolftour.com/course_manifest.json',
     //targetUrl: 'https://simple-sgt.fly.dev/gspro-course-api/update-from-filesystem',
     targetUrl: 'https://app.swedenindoorgolf.se/gsp/api/update-from-filesystem',
     //syncListUrl: 'https://simple-sgt.fly.dev/gspro-course-api/course-sync-list'
@@ -26,12 +28,17 @@ const log = {
 // Helper Functions
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function fetchCoursesHtml() {
+async function fetchManifest() {
     try {
-        const response = await axios.get(config.coursesUrl);
+        const response = await axios.get(config.manifestUrl, {
+            headers: { 'User-Agent': 'GSPro-Course-Viewer/1.0' }
+        });
+        if (!Array.isArray(response.data)) {
+            throw new Error('manifest response was not an array');
+        }
         return response.data;
     } catch (error) {
-        log.error(`Error fetching courses page: ${error.message}`);
+        log.error(`Error fetching course manifest: ${error.message}`);
         throw error;
     }
 }
@@ -46,18 +53,28 @@ async function fetchSyncList() {
     }
 }
 
-function extractCoursesData(html) {
-    const $ = cheerio.load(html);
+// Build the course lookup from the manifest. Keyed by course name (lowercased)
+// for the primary match, with CourseFolder as a secondary key so a name that
+// drifts from SGT's display name can still resolve by its stable folder name.
+// Splash comes from remoteThumbnailImage; the manifest has no flyover/youtube,
+// so flyoverPath is left undefined (the server preserves any existing value
+// rather than wiping it - empty string would overwrite).
+function buildCourseDataFromManifest(manifest) {
     const courseData = {};
-    $('div.course-card').each((index, element) => {
-        const courseId = $(element).attr('data-course-id');
-        const courseName = $(element).find('div[data-sort-key="NAME"]').text().trim();
-        const lazyLoadUrl = $(element).find('.course-image').attr('data-lazyloadurl');
-        const flyoverPath = $(element).find('div[data-action-type="flyover"]').attr('data-flyover-path');
-        if (courseName && courseId) {
-            courseData[courseName.toLowerCase()] = { courseId, lazyLoadUrl, flyoverPath };
+    for (const c of manifest) {
+        if (!c.courseId || !c.Name) continue;
+        const entry = {
+            courseId: String(c.courseId),
+            lazyLoadUrl: c.remoteThumbnailImage || undefined,
+            flyoverPath: undefined
+        };
+        const nameKey = c.Name.toLowerCase();
+        if (!courseData[nameKey]) courseData[nameKey] = entry;
+        if (c.CourseFolder) {
+            const folderKey = c.CourseFolder.toLowerCase();
+            if (!courseData[folderKey]) courseData[folderKey] = entry;
         }
-    });
+    }
     return courseData;
 }
 
@@ -145,7 +162,14 @@ function processDirectory(directoryName, courseData, syncListItem) {
     }
 
     const opcdVersion = getOpcdVersion(directoryPath);
-    const courseInfo = courseData[courseName.toLowerCase()];
+    // Match by GKD course name first, then fall back to the directory/folder
+    // name (which maps to the manifest's CourseFolder and is more stable).
+    const courseInfo =
+        courseData[courseName.toLowerCase()] ||
+        courseData[directoryName.toLowerCase()];
+    if (!courseInfo) {
+        log.error(`No SGT manifest match for "${courseName}" (dir "${directoryName}") - sgt_id will be unset`);
+    }
 
     const gkdFileName = findFileIgnoreCase(directoryPath, `${directoryName}.gkd`);
     const gkdFilePath = path.join(directoryPath, gkdFileName);
@@ -178,9 +202,10 @@ async function main(specificDirectory = null) {
     const processed = [];
     const skipped = [];
     try {
-        log.info("Fetching courses HTML...");
-        const coursesHtml = await fetchCoursesHtml();
-        const courseData = extractCoursesData(coursesHtml);
+        log.info("Fetching course manifest...");
+        const manifest = await fetchManifest();
+        const courseData = buildCourseDataFromManifest(manifest);
+        log.info(`Loaded ${manifest.length} courses from manifest`);
 
         log.info("Fetching sync list...");
         const syncList = await fetchSyncList();
