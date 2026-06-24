@@ -191,4 +191,4 @@ Since snapshot generation is decoupled from scraping, you need to set up a sched
 - Frontend build output is copied to `public/gsp/` and served by backend
 - The app is designed for Linux/Mac but should work on Windows (PowerShell or WSL)
 - Local database file: `data/gspro.db` (SQLite)
-- Production database file: `/srv/sig-gsp/gspro.db` on `marcus@app.swedenindoorgolf.se`
+- Production database file: `/srv/sig-gsp/data/gspro.db` on `marcus@app.swedenindoorgolf.se` (WAL mode, written by the scrape every 2h; the older `/srv/sig-gsp/gspro.db` is stale and unused. Path is overridable via the `DB_PATH` env var.)
