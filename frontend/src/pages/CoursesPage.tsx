@@ -346,8 +346,9 @@ const CoursesPage: React.FC = () => {
         advancedFilters.par[1] === DEFAULT_ADVANCED_FILTERS.par[1]) ||
         (course.par >= advancedFilters.par[0] &&
           course.par <= advancedFilters.par[1])) &&
-      (course.holes >= advancedFilters.holes[0] &&
-        course.holes <= advancedFilters.holes[1]) &&
+      (course.holes === 0 ||
+        (course.holes >= advancedFilters.holes[0] &&
+          course.holes <= advancedFilters.holes[1])) &&
       (advancedFilters.isPar3 === undefined ||
         course.isPar3 === advancedFilters.isPar3) &&
       (advancedFilters.rangeEnabled === undefined ||
