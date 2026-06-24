@@ -26,6 +26,17 @@ import { courses } from "./db/schema";
 import logger from "./logger";
 
 const MANIFEST_URL = "https://simulatorgolftour.com/course_manifest.json";
+// The course list page's XHR feed. Includes courses distributed by GSPro
+// directly (not via SGT) which are absent from course_manifest.json but still
+// have records on SGT - e.g. "The Golf Club at the Highlands" (3427). We union
+// its lightweight {name, courseId} entries in so those courses get skeletons.
+const PAGE_DATA_URL =
+  "https://simulatorgolftour.com/sgt-api/courses/page-data";
+
+/** Build the splash URL SGT uses, by course id (same pattern as the manifest). */
+function splashUrlFor(courseId: number | string): string {
+  return `https://simulatorgolftour.com/public/assets/courseImages/splashes/cmp/splash_${courseId}.jpg?v=1.1`;
+}
 
 /** Subset of manifest fields we use to seed a skeleton course. */
 interface ManifestCourse {
@@ -43,9 +54,16 @@ interface ManifestCourse {
   LastUpdated?: string;
 }
 
+/** Subset of the page-data XHR feed we use. */
+interface PageDataResponse {
+  map?: { name: string; courseId: number }[];
+}
+
 export interface ManifestSyncResult {
-  /** Total courses in the manifest */
+  /** Total courses considered (manifest + page-data-only) */
   total: number;
+  /** Courses sourced only from page-data (GSPro-distributed, not in manifest) */
+  fromPageData: number;
   /** Existing unlinked courses we matched by name and set sgtId on */
   linked: number;
   /** New skeleton courses inserted */
@@ -68,6 +86,7 @@ function normalizeCourseName(name: string): string {
 export async function syncCourseManifest(): Promise<ManifestSyncResult> {
   const result: ManifestSyncResult = {
     total: 0,
+    fromPageData: 0,
     linked: 0,
     created: 0,
     skipped: 0,
@@ -90,6 +109,39 @@ export async function syncCourseManifest(): Promise<ManifestSyncResult> {
     result.errors.push(msg);
     return result;
   }
+
+  // Union in courses that only appear in the course list page's XHR feed
+  // (GSPro-distributed courses missing from the manifest). Non-fatal: if this
+  // fetch fails we still proceed with the manifest alone.
+  try {
+    const manifestIds = new Set(manifest.map((c) => c.courseId));
+    const pdResponse = await axios.get(PAGE_DATA_URL, {
+      timeout: 30000,
+      headers: {
+        "User-Agent": "GSPro-Course-Viewer/1.0",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    });
+    const pageMap = (pdResponse.data as PageDataResponse)?.map ?? [];
+    for (const pc of pageMap) {
+      if (!pc.courseId || !pc.name || manifestIds.has(pc.courseId)) continue;
+      manifestIds.add(pc.courseId);
+      manifest.push({
+        courseId: pc.courseId,
+        Name: pc.name,
+        remoteThumbnailImage: splashUrlFor(pc.courseId),
+      });
+      result.fromPageData++;
+    }
+    if (result.fromPageData > 0) {
+      logger.info(
+        `Manifest sync: +${result.fromPageData} courses from page-data not in manifest`
+      );
+    }
+  } catch (error) {
+    logger.warn(`Page-data union skipped (non-fatal): ${error}`);
+  }
+
   result.total = manifest.length;
 
   // Load our current courses once.
