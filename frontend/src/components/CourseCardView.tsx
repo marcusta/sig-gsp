@@ -47,8 +47,8 @@ const getTextColor = (teeName: string): string => {
 const transformToScoreCardData = (
   courseData: CourseWithData
 ): ScoreCardData => {
-  // Get all enabled holes
-  const enabledHoles = courseData.gkData.Holes.filter((h) => h.Enabled);
+  // Get all enabled holes (skeleton courses have no gkData)
+  const enabledHoles = courseData.gkData?.Holes.filter((h) => h.Enabled) ?? [];
 
   // Transform tee boxes
   const teeBoxes = courseData.teeBoxes.map((tee) => {
@@ -102,15 +102,19 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
   const [showScoreCard, setShowScoreCard] = useState(false);
   const [showYouTube, setShowYouTube] = useState(false);
 
+  // Skeleton courses (manifest-only) have no hole/tee data yet.
+  const isSkeleton = course.holes === 0;
+
   const { data: courseData } = useQuery<CourseWithData>({
     queryKey: ["course", course.id],
     queryFn: () => fetchCourseById(course.id),
-    enabled: showScoreCard,
+    enabled: showScoreCard && !isSkeleton,
   });
 
-  const scoreCardData = courseData
-    ? transformToScoreCardData(courseData)
-    : null;
+  const scoreCardData =
+    courseData && courseData.gkData
+      ? transformToScoreCardData(courseData)
+      : null;
 
   const handleScoreCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -179,14 +183,16 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
         />
 
         <div className="absolute top-2 right-2 z-30 flex gap-2">
-          <Button
-            variant="secondary"
-            size="icon"
-            onClick={handleScoreCardClick}
-            className="h-8 w-8 bg-slate-800/60 backdrop-blur-sm border border-amber-900/30 text-amber-100/90 hover:bg-slate-700/70 hover:text-amber-50"
-          >
-            <FileText className="h-4 w-4" />
-          </Button>
+          {!isSkeleton && (
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={handleScoreCardClick}
+              className="h-8 w-8 bg-slate-800/60 backdrop-blur-sm border border-amber-900/30 text-amber-100/90 hover:bg-slate-700/70 hover:text-amber-50"
+            >
+              <FileText className="h-4 w-4" />
+            </Button>
+          )}
           {course.sgtYoutubeUrl && (
             <Button
               variant="secondary"
@@ -200,20 +206,36 @@ const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
         </div>
 
         <div className="relative z-10 p-4">
-          <h3 className="text-lg font-semibold tracking-wide text-amber-50">{course.name}</h3>
-          <p className="text-xs text-amber-100/50 leading-relaxed italic mt-1">
-            {course.location} by <span className="font-medium text-amber-100/70">{course.designer}</span>
-            <br />
-            {course.isPar3
-              ? `${course.holes} par 3 holes`
-              : `${course.holes} holes par ${course.par}`}{" "}
-            at{" "}
-            {convertAltitude(course.altitude / 3.28084, unitSystem).toFixed(0)}
-            {getAltitudeUnit(unitSystem)}
-            {course.opcdVersion && (
-              <span className="text-xs text-amber-200/40">
-                , {course.opcdVersion}
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-lg font-semibold tracking-wide text-amber-50">{course.name}</h3>
+            {isSkeleton && (
+              <span className="shrink-0 rounded-md border border-amber-700/40 bg-amber-900/30 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-200/80">
+                Records only
               </span>
+            )}
+          </div>
+          <p className="text-xs text-amber-100/50 leading-relaxed italic mt-1">
+            {isSkeleton ? (
+              <>
+                {course.location && <>{course.location}<br /></>}
+                Course data pending
+              </>
+            ) : (
+              <>
+                {course.location} by <span className="font-medium text-amber-100/70">{course.designer}</span>
+                <br />
+                {course.isPar3
+                  ? `${course.holes} par 3 holes`
+                  : `${course.holes} holes par ${course.par}`}{" "}
+                at{" "}
+                {convertAltitude(course.altitude / 3.28084, unitSystem).toFixed(0)}
+                {getAltitudeUnit(unitSystem)}
+                {course.opcdVersion && (
+                  <span className="text-xs text-amber-200/40">
+                    , {course.opcdVersion}
+                  </span>
+                )}
+              </>
             )}
           </p>
         </div>

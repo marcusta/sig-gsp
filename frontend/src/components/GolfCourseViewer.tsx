@@ -39,7 +39,9 @@ const GolfCourseViewer: React.FC<{
 }> = ({ course, onShowScoreCard }) => {
   const { unitSystem } = useUnits();
   const longestTee = course.teeBoxes.sort((a, b) => b.length - a.length)[0];
-  const courseData = course.gkData;
+  // Non-null: CoursePage only renders this viewer for fully-ingested courses
+  // (skeleton courses with null gkData get a partial view instead).
+  const courseData = course.gkData!;
   const [currentHoleNumber, setCurrentHoleNumber] = useState(1);
   const [selectedTeeType, setSelectedTeeType] = useState<string>(
     longestTee.name

@@ -18,7 +18,8 @@ interface CourseListViewProps {
 }
 
 const transformToScoreCardData = (courseData: CourseWithData): ScoreCardData => {
-  const enabledHoles = courseData.gkData.Holes.filter((h) => h.Enabled);
+  // skeleton courses have no gkData
+  const enabledHoles = courseData.gkData?.Holes.filter((h) => h.Enabled) ?? [];
 
   const teeBoxes = courseData.teeBoxes.map((tee) => {
     const holes = enabledHoles.map((hole) => {
@@ -211,11 +212,13 @@ const CourseListRow: React.FC<{ course: Course; search: string }> = ({
   const [showScoreCard, setShowScoreCard] = useState(false);
   const [showYouTube, setShowYouTube] = useState(false);
   const hasSgtId = Boolean(course.sgtId);
+  // Skeleton courses (manifest-only) have no hole/tee data yet.
+  const isSkeleton = course.holes === 0;
 
   const { data: courseData } = useQuery<CourseWithData>({
     queryKey: ["course", course.id],
     queryFn: () => fetchCourseById(course.id),
-    enabled: showScoreCard,
+    enabled: showScoreCard && !isSkeleton,
   });
 
   const scoreCardData = useMemo(
@@ -246,9 +249,18 @@ const CourseListRow: React.FC<{ course: Course; search: string }> = ({
                 {course.name}
               </h3>
             </Link>
-            <p className="mt-1 text-xs text-amber-200/60">
-              {course.holes} holes • par {course.par}
-            </p>
+            {isSkeleton ? (
+              <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-amber-200/70">
+                <span className="rounded border border-amber-700/40 bg-amber-900/30 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-200/80">
+                  Records only
+                </span>
+                Course data pending
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-amber-200/60">
+                {course.holes} holes • par {course.par}
+              </p>
+            )}
           </div>
 
           <div className="min-w-0 text-center">
@@ -261,15 +273,17 @@ const CourseListRow: React.FC<{ course: Course; search: string }> = ({
           </div>
 
           <div className="flex items-center justify-end gap-1.5">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setShowScoreCard(true)}
-              className="h-8 w-8 border-amber-900/30 text-amber-100/90 hover:bg-slate-800/40"
-              title="Scorecard"
-            >
-              <FileText className="h-4 w-4" />
-            </Button>
+            {!isSkeleton && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowScoreCard(true)}
+                className="h-8 w-8 border-amber-900/30 text-amber-100/90 hover:bg-slate-800/40"
+                title="Scorecard"
+              >
+                <FileText className="h-4 w-4" />
+              </Button>
+            )}
             {course.sgtYoutubeUrl ? (
               <Button
                 variant="outline"
@@ -299,9 +313,18 @@ const CourseListRow: React.FC<{ course: Course; search: string }> = ({
                 {course.name}
               </h3>
             </Link>
-            <p className="mt-1 text-xs text-amber-200/60">
-              {course.holes} holes • par {course.par}
-            </p>
+            {isSkeleton ? (
+              <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-amber-200/70">
+                <span className="rounded border border-amber-700/40 bg-amber-900/30 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-200/80">
+                  Records only
+                </span>
+                Course data pending
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-amber-200/60">
+                {course.holes} holes • par {course.par}
+              </p>
+            )}
           </div>
 
           <div className="text-xs">
@@ -314,15 +337,17 @@ const CourseListRow: React.FC<{ course: Course; search: string }> = ({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setShowScoreCard(true)}
-              className="h-8 w-8 border-amber-900/30 text-amber-100/90 hover:bg-slate-800/40"
-              title="Scorecard"
-            >
-              <FileText className="h-4 w-4" />
-            </Button>
+            {!isSkeleton && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowScoreCard(true)}
+                className="h-8 w-8 border-amber-900/30 text-amber-100/90 hover:bg-slate-800/40"
+                title="Scorecard"
+              >
+                <FileText className="h-4 w-4" />
+              </Button>
+            )}
             {course.sgtYoutubeUrl ? (
               <Button
                 variant="outline"

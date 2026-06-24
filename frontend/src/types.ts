@@ -146,7 +146,8 @@ export interface NewCourse {
 }
 
 export interface CourseWithData extends Course {
-  gkData: CourseData;
+  // null for skeleton courses (holes === 0, manifest-only, GKD not yet ingested)
+  gkData: CourseData | null;
 }
 
 export interface TeeBox {
