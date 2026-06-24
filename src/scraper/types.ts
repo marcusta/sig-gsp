@@ -45,6 +45,10 @@ export interface ScrapeResult {
   playersUpdated: number;
   recordsCreated: number;
   recordsUpdated: number;
+  /** Courses auto-linked to an SGT id by name match during this run */
+  coursesLinked: number;
+  /** Feed rows for courses we couldn't match to one of ours (logged, not fatal) */
+  coursesUnmatched: number;
   errors: string[];
   timings?: ScrapeTimings;
 }

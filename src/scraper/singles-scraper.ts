@@ -44,6 +44,15 @@ const SINGLES_API_URL =
   "https://simulatorgolftour.com/sgt-api/courses/course-records";
 
 /**
+ * Normalize a course name for matching between our DB and the SGT feed.
+ * Lowercases and strips everything but alphanumerics so punctuation and
+ * spacing differences don't block a match.
+ */
+function normalizeCourseName(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
  * Scrape all singles records (Tips + SGT) from SGT
  */
 export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
@@ -71,6 +80,8 @@ export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
     playersUpdated: 0,
     recordsCreated: 0,
     recordsUpdated: 0,
+    coursesLinked: 0,
+    coursesUnmatched: 0,
     errors: [],
     timings,
   };
@@ -111,19 +122,40 @@ export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
     logger.info("Pre-loading caches for batch processing...");
     const cacheLoadStart = performance.now();
 
-    // Phase 1: Pre-load all courses with SGT IDs
+    // Phase 1: Pre-load all courses
+    // - courseCache: linked courses keyed by their SGT id (for the fast path)
+    // - unlinkedByName: enabled courses missing an SGT id, keyed by normalized
+    //   name, so we can auto-link them to feed rows. Names that collide are
+    //   dropped (ambiguous -> never auto-link, to avoid mis-mapping).
     const coursesCacheStart = performance.now();
     const allCourses = await db.query.courses.findMany({
-      columns: { id: true, sgtId: true, name: true },
+      columns: { id: true, sgtId: true, name: true, enabled: true },
     });
     const courseCache: CourseCache = new Map(
       allCourses
-        .filter((c) => c.sgtId !== null)
+        .filter((c) => c.sgtId && c.sgtId.trim() !== "")
         .map((c) => [c.sgtId!, { id: c.id, name: c.name }])
     );
+
+    const unlinkedByName = new Map<string, { id: number; name: string }>();
+    const ambiguousNames = new Set<string>();
+    for (const c of allCourses) {
+      if (!c.enabled) continue;
+      if (c.sgtId && c.sgtId.trim() !== "") continue;
+      const key = normalizeCourseName(c.name);
+      if (!key) continue;
+      if (unlinkedByName.has(key)) {
+        ambiguousNames.add(key);
+        continue;
+      }
+      unlinkedByName.set(key, { id: c.id, name: c.name });
+    }
+    for (const key of ambiguousNames) unlinkedByName.delete(key);
+
     timings.coursesCacheMs = Math.round(performance.now() - coursesCacheStart);
     logger.info(
-      `Loaded ${courseCache.size} courses into cache in ${timings.coursesCacheMs}ms`
+      `Loaded ${courseCache.size} linked courses into cache in ${timings.coursesCacheMs}ms ` +
+        `(${unlinkedByName.size} unlinked enabled courses available for name auto-linking)`
     );
 
     // Phase 2: Pre-load all players
@@ -170,10 +202,32 @@ export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
 
         try {
           // Find our course by SGT ID using cache (Phase 1)
-          const course = courseCache.get(row.sgtCourseId);
+          let course = courseCache.get(row.sgtCourseId);
           if (!course) {
-            // Course not in our DB - skip (expected for courses we don't track)
-            continue;
+            // No linked course for this SGT id. Try to auto-link by name to an
+            // enabled course of ours that has no SGT id yet (one-to-one match
+            // only - ambiguous names were dropped during cache loading). This
+            // self-heals courses synced from the filesystem that were never
+            // linked, so their records stop being silently dropped.
+            const nameKey = normalizeCourseName(row.courseName);
+            const candidate = nameKey ? unlinkedByName.get(nameKey) : undefined;
+            if (!candidate) {
+              // Genuinely unknown course (not one of ours) - skip as before.
+              continue;
+            }
+
+            await tx
+              .update(courses)
+              .set({ sgtId: row.sgtCourseId })
+              .where(eq(courses.id, candidate.id));
+            course = { id: candidate.id, name: candidate.name };
+            courseCache.set(row.sgtCourseId, course);
+            unlinkedByName.delete(nameKey);
+            result.coursesLinked++;
+            logger.info(
+              `Auto-linked course "${candidate.name}" (id ${candidate.id}) ` +
+                `to SGT id ${row.sgtCourseId} by name match`
+            );
           }
 
           // Process Tips record
@@ -230,6 +284,23 @@ export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
 
     timings.transactionMs = Math.round(performance.now() - transactionStart);
     logger.info(`Transaction completed in ${timings.transactionMs}ms`);
+
+    // Surface enabled courses we still couldn't link (their name never showed
+    // up in the SGT feed). These are the actionable leftovers - usually courses
+    // not on SGT (practice ranges) or a name that differs from SGT's.
+    result.coursesUnmatched = unlinkedByName.size;
+    if (result.coursesLinked > 0) {
+      logger.info(`Auto-linked ${result.coursesLinked} courses by name this run`);
+    }
+    if (result.coursesUnmatched > 0) {
+      const sample = Array.from(unlinkedByName.values())
+        .slice(0, 30)
+        .map((c) => c.name)
+        .join(", ");
+      logger.warn(
+        `${result.coursesUnmatched} enabled courses remain unlinked (no SGT feed name match): ${sample}`
+      );
+    }
 
     result.success = true;
     logger.info(

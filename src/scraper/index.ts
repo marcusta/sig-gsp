@@ -22,6 +22,8 @@ export interface ScrapeRunResult {
     playersUpdated: number;
     recordsCreated: number;
     recordsUpdated: number;
+    coursesLinked: number;
+    coursesUnmatched: number;
   };
 }
 
@@ -73,7 +75,10 @@ export async function runRecordsScrape(): Promise<ScrapeRunResult> {
 
     const summary =
       `Run #${runId}: ${result.recordsCreated} created, ` +
-      `${result.recordsUpdated} updated, ${result.playersCreated} new players`;
+      `${result.recordsUpdated} updated, ${result.playersCreated} new players` +
+      (result.coursesLinked > 0
+        ? `, ${result.coursesLinked} courses auto-linked`
+        : "");
     logger.info(summary);
 
     return {
@@ -89,6 +94,8 @@ export async function runRecordsScrape(): Promise<ScrapeRunResult> {
         playersUpdated: result.playersUpdated,
         recordsCreated: result.recordsCreated,
         recordsUpdated: result.recordsUpdated,
+        coursesLinked: result.coursesLinked,
+        coursesUnmatched: result.coursesUnmatched,
       },
     };
   } catch (error) {
