@@ -10,6 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { getSgtAvatarUrl } from "@/lib/sgt-assets";
 import { Button } from "@/components/ui/button";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -33,6 +39,71 @@ import {
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 50;
+
+const scoreColor = (score: number) =>
+  score < 0
+    ? "text-emerald-400/70"
+    : score > 0
+    ? "text-red-400/70"
+    : "text-amber-100/30";
+
+const fmtScore = (score: number) => `${score > 0 ? "+" : ""}${score}`;
+
+// A leaderboard count cell (count + cumulative-score subtext) with a hover
+// tooltip breaking down count / average / cumulative under-par, and explaining
+// what the subtext number means.
+function RecordStatCell({
+  label,
+  count,
+  avg,
+  total,
+  countClassName,
+  showDash = false,
+}: {
+  label: string;
+  count: number;
+  avg: number | null;
+  total: number;
+  countClassName: string;
+  showDash?: boolean;
+}) {
+  if (showDash && count <= 0) {
+    return <span className="text-amber-100/20">—</span>;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="flex flex-col items-center gap-0.5 cursor-default">
+          <span className={countClassName}>{count}</span>
+          <span className={`text-xs tabular-nums ${scoreColor(total)}`}>
+            {fmtScore(total)}
+          </span>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-[15rem]">
+        <div className="font-semibold text-amber-100 mb-1">{label}</div>
+        <div className="space-y-0.5 tabular-nums">
+          <div>
+            <span className="text-amber-200/60">Records held:</span> {count}
+          </div>
+          <div>
+            <span className="text-amber-200/60">Avg per record:</span>{" "}
+            {avg != null ? fmtScore(Number(avg.toFixed(1))) : "—"}
+          </div>
+          <div>
+            <span className="text-amber-200/60">Cumulative:</span>{" "}
+            {fmtScore(total)} under par
+          </div>
+        </div>
+        <div className="mt-1.5 text-[11px] leading-snug text-amber-200/50">
+          The subtext is the cumulative strokes under par across all{" "}
+          {label.toLowerCase()} records this player holds.
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 // Calculate days into current week (Monday = 0, Sunday = 6)
 function getDaysIntoCurrentWeek(): number {
@@ -128,6 +199,7 @@ export default function RecordsPage() {
   };
 
   return (
+    <TooltipProvider delayDuration={150}>
     <div>
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -390,51 +462,33 @@ export default function RecordsPage() {
                               </div>
                             </td>
                             <td className="px-4 py-3 text-center">
-                              {entry.tipsRecords > 0 ? (
-                                <div className="flex flex-col items-center gap-0.5">
-                                  <span className="font-bold text-amber-100/80 text-lg tabular-nums">
-                                    {entry.tipsRecords}
-                                  </span>
-                                  <span
-                                    className={`text-xs tabular-nums ${entry.tipsTotalScore < 0 ? "text-emerald-400/70" : entry.tipsTotalScore > 0 ? "text-red-400/70" : "text-amber-100/30"}`}
-                                  >
-                                    {entry.tipsTotalScore > 0 ? "+" : ""}
-                                    {entry.tipsTotalScore}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className="text-amber-100/20">—</span>
-                              )}
+                              <RecordStatCell
+                                label="Tips"
+                                count={entry.tipsRecords}
+                                avg={entry.tipsAvgScore}
+                                total={entry.tipsTotalScore}
+                                countClassName="font-bold text-amber-100/80 text-lg tabular-nums"
+                                showDash
+                              />
                             </td>
                             <td className="px-4 py-3 text-center">
-                              {entry.sgtRecords > 0 ? (
-                                <div className="flex flex-col items-center gap-0.5">
-                                  <span className="font-bold text-blue-400/90 text-lg tabular-nums">
-                                    {entry.sgtRecords}
-                                  </span>
-                                  <span
-                                    className={`text-xs tabular-nums ${entry.sgtTotalScore < 0 ? "text-emerald-400/70" : entry.sgtTotalScore > 0 ? "text-red-400/70" : "text-amber-100/30"}`}
-                                  >
-                                    {entry.sgtTotalScore > 0 ? "+" : ""}
-                                    {entry.sgtTotalScore}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className="text-amber-100/20">—</span>
-                              )}
+                              <RecordStatCell
+                                label="SGT"
+                                count={entry.sgtRecords}
+                                avg={entry.sgtAvgScore}
+                                total={entry.sgtTotalScore}
+                                countClassName="font-bold text-blue-400/90 text-lg tabular-nums"
+                                showDash
+                              />
                             </td>
                             <td className="px-4 py-3 text-center">
-                              <div className="flex flex-col items-center">
-                                <span className="font-black text-emerald-400 text-2xl tabular-nums">
-                                  {entry.totalRecords}
-                                </span>
-                                <span
-                                  className={`text-xs tabular-nums ${entry.totalScore < 0 ? "text-emerald-400/70" : entry.totalScore > 0 ? "text-red-400/70" : "text-amber-100/30"}`}
-                                >
-                                  {entry.totalScore > 0 ? "+" : ""}
-                                  {entry.totalScore}
-                                </span>
-                              </div>
+                              <RecordStatCell
+                                label="Total"
+                                count={entry.totalRecords}
+                                avg={entry.totalAvgScore}
+                                total={entry.totalScore}
+                                countClassName="font-black text-emerald-400 text-2xl tabular-nums"
+                              />
                             </td>
                           </tr>
                         ))}
@@ -558,5 +612,6 @@ export default function RecordsPage() {
           </div>
         </div>
     </div>
+    </TooltipProvider>
   );
 }
