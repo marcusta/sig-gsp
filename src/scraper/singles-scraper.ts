@@ -19,6 +19,7 @@ import {
   recordModes,
 } from "../db/schema";
 import logger from "../logger";
+import { syncCourseManifest } from "../course-manifest";
 import { parseSinglesResponse } from "./html-parser";
 import { upsertPlayerWithCacheTx } from "./player-service";
 import type {
@@ -87,6 +88,22 @@ export async function scrapeSinglesRecords(): Promise<ScrapeResult> {
   };
 
   try {
+    // Pre-seed courses from the SGT manifest first, so every course that has
+    // records on SGT exists and is linked before we match records against it.
+    // This is resilient to the external course collector being down/behind.
+    // A manifest failure is non-fatal - we still scrape with what we have.
+    try {
+      const manifestResult = await syncCourseManifest();
+      if (manifestResult.created > 0 || manifestResult.linked > 0) {
+        logger.info(
+          `Manifest pre-seed: +${manifestResult.created} skeleton courses, ` +
+            `${manifestResult.linked} linked before scraping records`
+        );
+      }
+    } catch (manifestError) {
+      logger.warn(`Manifest pre-seed skipped: ${manifestError}`);
+    }
+
     // Fetch the HTML (outside transaction - network I/O)
     console.log("Fetching singles records from SGT...");
     logger.info("Fetching singles records from SGT...");

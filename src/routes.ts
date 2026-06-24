@@ -19,7 +19,7 @@ import {
   type CourseRecord,
   type Player,
 } from "db/schema";
-import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { readFile } from "fs/promises";
 import { createHash } from "node:crypto";
@@ -52,7 +52,9 @@ function invalidateCoursesApiCache() {
 async function buildCoursesApiCache(): Promise<CoursesApiCache> {
   const courseList = await db.query.courses.findMany({
     with: { teeBoxes: true, tags: true },
-    where: eq(courses.enabled, true),
+    // holes > 0 excludes manifest-only skeleton courses (records still flow and
+    // appear in the activity feed; they surface here once enriched with GKD data)
+    where: and(eq(courses.enabled, true), gt(courses.holes, 0)),
   });
   const courseListWithTags = await addTagsToCourses(courseList as any);
   const coursesWithRecordFlags = await addRecordFlagsToCourses(
@@ -124,7 +126,10 @@ const routes = new Elysia()
     const search =
       typeof query.search === "string" ? query.search.trim().toLowerCase() : "";
 
-    const enabledCondition = enabledOnly ? eq(courses.enabled, true) : undefined;
+    // holes > 0 hides manifest-only skeleton courses from the browser.
+    const enabledCondition = enabledOnly
+      ? and(eq(courses.enabled, true), gt(courses.holes, 0))
+      : gt(courses.holes, 0);
     const searchCondition = search
       ? sql`(
           lower(${courses.name}) LIKE ${`%${search}%`}
